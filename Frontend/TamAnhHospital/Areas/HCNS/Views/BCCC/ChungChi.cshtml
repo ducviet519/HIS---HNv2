@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "Quản lý chứng chỉ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .head-section, .middle-section { margin-bottom: 10px; }
+        .head-section .input-group { display: flex; }
+    .form-group { margin-bottom: 0; }
+    .middle-action { border: 1px solid #ddd; padding: 5px; }
+    #fo-table_wrapper .row:first-child { display: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+</style>
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Quản lý chứng chỉ</h4>
+        </div>
+
+        <div class="form" id="searchForm">
+            <input type="hidden" value="search" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Nhân viên (Mã | Tên)</label>
+                        <input type="text" class="form-control input-sm" placeholder="Điền thông tin" id="TextSearch" name="TextSearch" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Khoa phòng</label>
+                        @Html.DropDownList("KhoaPhong", new SelectList(ViewBag.DS_KhoaPhong, "Key", "Value"), "-- Chọn giá trị --", new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <input type="submit" value="Tìm kiếm" class="btn btn-info btn-sm" id="btnSearch" style="margin-top: 22px;" />
+                </div>
+            </div>
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                <a href="javascript:;" id="btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>
+                <a href="javascript:;" onclick="window.location.reload(false);" class="btn btn-default btn-sm">Tải lại trang</a>
+
+                <input type="text" class="form-control input-sm" placeholder="Điền từ khóa cần tìm kiếm" id="fsearch" style="float: right;" />
+            </div>
+        </div>
+
+        <div id="table-data">
+            @Html.Action("TableData_ChungChi", "BCCC", new { areas = "HCNS.Controllers" })
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.head-section .form').keypress(keypressHandler);
+        $("#btnCreate").click(function () {
+            $(this).callModal("/hcns/bccc/Add_ChungChi");
+        });
+        $("#btnSearch").click(function () {
+            var _text = $("#TextSearch").val();
+            var _loaibc = $("#KhoaPhong option:selected").val();
+
+            var action = $("#action").val();
+
+            var urlParams = "a=" + action;
+            if ($.trim(_text) != "")
+                urlParams += "&text=" + encodeURIComponent($.trim(_text));
+            if (_loaibc != "")
+                urlParams += "&kp=" + _loaibc;
+
+            $("#table-data").load("/hcns/bccc/TableData_ChungChi?" + urlParams);
+        });
+    });
+</script>

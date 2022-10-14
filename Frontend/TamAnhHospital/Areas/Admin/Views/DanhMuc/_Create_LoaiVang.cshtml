@@ -1,0 +1,107 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục loại vắng</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Mã</label>
+                            @Html.TextBox("cre_lv_ma", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Mô tả</label>
+                            @Html.TextBox("cre_lv_mota", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Viết tắt</label>
+                            @Html.TextBox("cre_lv_viettat", "", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Sử dụng</label>
+                            @Html.DropDownList("cre_lv_isyes", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "1", Text = "Có", Selected = true},
+                                new SelectListItem() { Value = "0", Text = "Không" }
+                            }, new { @class = "form-control input-sm chosen-ddl" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Đếm</label>
+                            @Html.DropDownList("cre_lv_iscount", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "1", Text = "Có", Selected = true},
+                                new SelectListItem() { Value = "0", Text = "Không" }
+                            }, new { @class = "form-control input-sm chosen-ddl" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Số công</label>
+                            @Html.TextBox("cre_lv_score", "", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>                    
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_lv_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_lv_btnCreate").click(function (e) {
+            var _AbsentCode = $("#cre_lv_ma").val();
+            var _AbsentDescription = $("#cre_lv_mota").val();
+            var _AbsentSymbol = $("#cre_lv_viettat").val();
+            var _IsYes = $("#cre_lv_isyes").val();
+            var _IsCount = $("#cre_lv_iscount").val();
+            var _Score = $("#cre_lv_score").val();
+            if (_AbsentCode == '') {
+                $(this).callToast("error", 'Chưa nhập mã loại vắng', '');
+                return;
+            }
+            if (_AbsentDescription == '') {
+                $(this).callToast("error", 'Chưa nhập thông tin mô tả', '');
+                return;
+            }
+            if (_AbsentSymbol == '') {
+                $(this).callToast("error", 'Chưa nhập viết tắt cho loại vắng', '');
+                return;
+            }
+            if (_Score == '') {
+                $(this).callToast("error", 'Chưa nhập số công', '');
+                return;
+            }
+
+            var obj = {
+                "AbsentCode": _AbsentCode,
+                "AbsentDescription": _AbsentDescription,
+                "AbsentSymbol": _AbsentSymbol,
+                "IsYes": _IsYes,
+                "IsCount": _IsCount,
+                "Score": _Score,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_LoaiVang", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Mã loại vắng đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

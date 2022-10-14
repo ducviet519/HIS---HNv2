@@ -1,0 +1,63 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 600px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục Lịch làm việc</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Lịch làm việc</label>
+                            @Html.TextBox("cre_lichlv_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>InOutID</label>
+                            @Html.DropDownList("cre_lichlv_inoutid", ViewBag.INOUTID as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_lichlv_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_lichlv_btnCreate").click(function (e) {
+            var _SchName = $("#cre_lichlv_ten").val();
+            var _InOutID = $("select[name='cre_lichlv_inoutid'] option:selected").val();
+            if (_SchName == '') {
+                $(this).callToast("error", 'Chưa nhập lịch làm việc', '');
+                return;
+            }
+
+            var obj = {
+                "SchName": _SchName,
+                "InOutID": _InOutID,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_LichLamViec", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Lịch làm việc đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

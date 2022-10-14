@@ -1,0 +1,258 @@
+﻿@model System.App.Entities.HCNS.Absent
+<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+
+<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .panel-body { padding: 15px; max-height: 500px; overflow: auto; }
+        .panel-body input, .panel-body select { max-width: inherit; }
+        .panel-body .form-group { margin-bottom: 10px; }
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+        .panel-body textarea { max-width: 100%; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    #load-day > div { float: left; width: 49px; margin-bottom: 5px; }
+        #load-day > div > input[type='checkbox'] { float: left; margin: 1px 5px 0 0; }
+    #staticModal .info { background-color: #e7f3fe; border-left: 6px solid #2196F3; padding: 8px; margin-bottom: 10px; }
+        #staticModal .info p { margin-bottom: 0; font-size: 11px; color: #696969; }
+</style>
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                @using (Html.BeginForm("Push_KhaiBaoVang", "NhanVien", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.UserEnrollNumber)
+
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-list"></i>Khai báo thông tin vắng</h4>
+                    </div><!-- ./panel-heading -->
+
+                    if (ViewBag.Locked == 0)
+                    {
+                        <div class="panel-body form">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="info">
+                                        <p><strong>Chú ý:</strong></p>
+                                        <p>- Nhập mã số hoặc họ tên vào ô thông tin để tìm kiếm.</p>
+                                        <p>- Hệ thống sẽ khóa khai báo vắng từ ngày 25 đến 28 hàng tháng, trong thời gian này sẽ không thao tác thêm mới hoặc xóa khai báo được.</p>
+                                        <p>- Hệ thống không tiếp nhận những ca khai báo ngày nghỉ ngoài kỳ lương. (VD: ngày khai báo là 20/03 thì chỉ được khai báo những ngày từ 25/02 đến 24/03)</p>
+                                        <p>- Có thể chọn nhiều ngày cùng lúc để khai báo</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="KhoaPhong">Khoa/phòng khai báo</label>
+                                        <select class="form-control input-sm jselect" id="KhoaPhong" name="KhoaPhong">
+                                            @foreach (var item in ViewBag.KhoaPhong as Dictionary<int, string>)
+                                            {
+                                                <option value="@item.Key">@item.Value</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="TimeDate">Chọn nhân viên</label>
+                                        @Html.EditorFor(model => model.UserFullName, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label for="Nam">Năm</label>
+                                        @*@Html.TextBoxFor(x => x.TimeDate, new { @class = "form-control input-sm chonngay", autocomplete = "off", style = "margin-top: 0;" })*@
+                                        <select class="form-control input-sm" id="Nam" name="Nam">
+                                            @for (int i = 2018; i <= 2025; i++)
+                                            {
+                                                <option value="@i.ToString()" @(i == DateTime.UtcNow.AddHours(7).Year ? "selected" : "")>@i.ToString()</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label for="Thang">Tháng</label>
+                                        @*@Html.TextBoxFor(x => x.TimeDate, new { @class = "form-control input-sm chonngay", autocomplete = "off", style = "margin-top: 0;" })*@
+                                        <select class="form-control input-sm" id="Thang" name="Thang">
+                                            @for (int i = 1; i <= 12; i++)
+                                            {
+                                                <option value="@i.ToString()" @(i == DateTime.UtcNow.AddHours(7).Month ? "selected" : "")>@i.ToString("00")</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-xs-8">
+                                    <div class="form-group">
+                                        <label for="AbsentCode">Lý do</label>
+                                        @Html.DropDownListFor(x => x.AbsentCode, new SelectList(ViewBag.DS_AbsentSymbol, "Key", "Value", "A05"), new { @class = "form-control input-sm jselect" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Ngày nghỉ</label>
+                                        <div class="clearfix" id="load-day">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="Lydo">Ghi chú</label>
+                                        @Html.TextAreaFor(x => x.Lydo, new { @class = "form-control", autocomplete = "off" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p style="color:#ff0000; font-size: 18px; margin-bottom: 0; padding: 10px;">@(ViewBag.LockMessage).</p>
+                    }
+
+                    <div class="panel-footer">
+                        <div class="form-inline">
+                            @if (ViewBag.Locked == 0)
+                            {
+                                <div class="form-group"><input type="submit" value="Cập nhật" class="btn btn-primary" id="btnSubmit" /></div>
+                            }
+                            <div class="form-group"><input type="button" class="btn btn-default" data-dismiss="modal" value="Đóng" /></div>
+                        </div>
+                    </div><!-- ./panel-footer -->
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        var getDaysInMonth = function (month, year) {
+            // Here January is 1 based
+            //Day 0 is the last day in the previous month
+            return new Date(year, month, 0).getDate();
+            // Here January is 0 based
+            // return new Date(year, month+1, 0).getDate();
+        };
+        $("#Thang").change(function () {
+            var year = $("#Nam option:selected").val();
+            var month = $("#Thang option:selected").val();
+            var days = getDaysInMonth(month, year);
+            var _html = "";
+            for (i = 1; i <= days; ++i) {
+                _html += "<div><input type='checkbox' name='ngay' value='" + i + "' /> " + i + "</div>";
+            }
+            $("#load-day").html(_html);
+        });
+        //init
+        var year = $("#Nam option:selected").val();
+        var month = $("#Thang option:selected").val();
+        var days = getDaysInMonth(month, year);
+        var _html = "";
+        for (i = 1; i <= days; ++i) {
+            _html += "<div><input type='checkbox' name='ngay' value='" + i + "' /> " + i + "</div>";
+        }
+        $("#load-day").html(_html);
+
+        $("#staticModalContainer #KhoaPhong").change(function () {
+            //var val = $(this).find("option:selected").val();
+
+            //if (val == '') {
+            //    $("#UserFullName").attr("disabled", true);
+            //}
+            //else {
+            //    $("#UserFullName").attr("disabled", false);
+            //}
+            $("#staticModalContainer #UserFullName").val("");
+            $("#staticModalContainer #UserEnrollNumber").val("");
+        });
+
+        //end init
+        $("#UserFullName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/hcns/nhanvien/GetUser",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefix: request.term, kp: $("#KhoaPhong").find("option:selected").val() },
+                    success: function (data) {
+                        response($.map(JSON.parse(data), function (item) {
+                            var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+                            return { label: display, value: display, id: item.UserEnrollNumber };
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#modalForm #UserEnrollNumber").val(ui.item.id);
+                $("#modalForm #UserFullName").val(ui.item.label);
+            }
+        });
+
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+            var userEnroll = $("#modalForm #UserEnrollNumber").val();
+            var dayChecked = $('input[name="ngay"]:checkbox:checked').length;
+            var absentCodeChoose = $("#modalForm #AbsentCode option:selected").val();
+            var ghichu = $("#modalForm #Lydo").val().trim();
+
+            if (userEnroll == '') {
+                $(this).callToast("error", '', 'Thông tin nhân viên không đúng, vui lòng chọn lại.');
+                return false;
+            }
+            if (dayChecked == 0) {
+                $(this).callToast("error", '', 'Bạn cần chọn ngày để khai báo.');
+                return false;
+            }
+
+            if ((absentCodeChoose == 'A09' || absentCodeChoose == 'A03') && ghichu == '') {
+                $(this).callToast("error", '', 'Bạn cần ghi rõ lý do nghỉ ở phần ghi chú.');
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        //setTimeout(location.reload.bind(location), 2000);
+                        $("#info").val(userEnroll);
+                        $("#btnSearch").focus().click();
+                    }
+                    else {
+                        if (data.message == '') {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc lịch đặt bị trùng.");
+                        } else {
+                            $(this).callToast("error", '', data.message);
+                        }
+
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+        $('.chonngay').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $(".jselect").chosen();
+    });
+</script>

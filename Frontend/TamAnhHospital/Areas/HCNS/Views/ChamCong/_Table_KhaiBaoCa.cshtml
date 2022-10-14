@@ -1,0 +1,216 @@
+﻿<style>
+    table { width: 100% !important; }
+
+        table tr th { white-space: nowrap; font-size: 10px; padding: 5px !important; }
+
+            table tr th::before, table tr th::after { content: "" !important; }
+
+    .dataTables_wrapper > .row:first-child { display: none; }
+
+    table tbody td { padding: 5px !important; text-align: center; line-height: 16px !important; }
+
+        table tbody td.text-left { padding-left: 5px !important; }
+
+    .bg-yellow { background-color: #fff8cf; }
+
+    table tbody tr td:nth-child(1) { background-color: #fff8cf; }
+
+    table tbody tr td:nth-child(2) { background-color: #fff8cf; }
+
+    table tbody tr td:nth-child(3) { background-color: #fff8cf; }
+
+    .row { margin-bottom: 10px; }
+
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    .form input, .form select { max-width: 100%; }
+
+    .box-table { overflow: auto; width: 100%; max-height: 500px; border: 1px solid #ccc; height: 100%; }
+
+        .box-table td, th { }
+
+        .box-table th { background: #e2e2e2; }
+
+        .box-table table { table-layout: fixed; width: 100%; margin-bottom: 0; }
+
+        .box-table td:first-child, .box-table th:first-child { position: sticky; left: 0; z-index: 3; }
+
+        .box-table td:nth-child(2), .box-table th:nth-child(2) { position: sticky; left: 30px; z-index: 3; }
+
+        .box-table td:nth-child(3), .box-table th:nth-child(3) { position: sticky; left: 85px; z-index: 3; }
+        /*.box-table td:nth-child(4), .box-table th:nth-child(4) { position: sticky; left: 265px; z-index: 1; }*/
+        .box-table thead tr th { position: sticky; top: 0; z-index: 2; }
+
+        .box-table th:nth-child(1), .box-table th:nth-child(2), .box-table th:nth-child(3) { z-index: 3; }
+</style>
+
+@{
+    var totalDay = ViewBag.TotalDay ?? 0;
+    var startdate = (DateTime)ViewBag.StartDate;
+    var enddate = (DateTime)ViewBag.EndDate;
+    var auth = ViewBag.Auth as string;
+}
+
+<div class="box-table">
+    <table class="table table-bordered table-hover " id="table-data">
+        <thead>
+            <tr>
+                <th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 30px; width: 30px; z-index: 5;"><input type="checkbox" id="checkAll" /></th>
+                <th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 55px; width: 55px; z-index: 5;">Mã NV</th>
+                <th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 180px; width: 180px; z-index: 5;">Họ và tên</th>
+                <th class="text-center" rowspan="1" style="background-color: #ecf7ff; min-width: 70px; width: 70px; z-index: 5; ">Tổng công</th>
+                <th class="text-center" rowspan="1" style="background-color: #ecf7ff; min-width: 70px; width: 70px; z-index: 5; ">Công chuẩn</th>
+                @*<th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 180px; width: 180px;">Khoa/Phòng</th>*@
+
+                @for (int i = 0; i <= totalDay; i++)
+                {
+                    <th class="text-center" style="min-width: 50px; width: 50px;">
+                        @{
+                            var _nextDate = startdate.AddDays(i);
+                            var _dayOfWeek = _nextDate.DayOfWeek.ToString();
+
+                            var _dayName = "";
+                            switch (_dayOfWeek)
+                            {
+                                case "Sunday":
+                                    _dayName = "CN";
+                                    break;
+                                case "Monday":
+                                    _dayName = "T2";
+                                    break;
+                                case "Tuesday":
+                                    _dayName = "T3";
+                                    break;
+                                case "Wednesday":
+                                    _dayName = "T4";
+                                    break;
+                                case "Thursday":
+                                    _dayName = "T5";
+                                    break;
+                                case "Friday":
+                                    _dayName = "T6";
+                                    break;
+                                case "Saturday":
+                                    _dayName = "T7";
+                                    break;
+                            }
+                        }
+                        @(_dayName == "CN" ? Html.Raw("<span style='color:#ff0000;'>" + _dayName + "</span>") : Html.Raw(_dayName))
+                        @(_dayName == "CN" ? Html.Raw("<span style='color:#ff0000; display: block;'>" + startdate.AddDays(i).Day.ToString("00") + "/" + startdate.AddDays(i).ToString("MM") + "</span>") : Html.Raw("<span style='display: block;'>" + startdate.AddDays(i).Day.ToString("00") + "/" + @startdate.AddDays(i).ToString("MM") + "</span>"))
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{ var data = ViewBag.Data as System.Data.DataTable; }
+
+            @if (data.Rows.Count > 0)
+            {
+                foreach (System.Data.DataRow row in data.Rows)
+                {
+                    <tr>
+                        <td style="white-space: nowrap; min-width: 30px;" class="text-center"><input type="checkbox" name="checkUser" class="checkUser" value="@row["UserEnrollNumber"].ToString()" /></td>
+                        <td style="white-space: nowrap; min-width: 55px;">@row["UserFullCode"].ToString()</td>
+                        <td style="white-space: nowrap; min-width: 180px;" class="text-left">
+
+                            @if (auth.Contains("user") || ViewBag.Locked == 1)
+                            {
+                                <span>@row["UserFullName"].ToString()</span>
+                            }
+                            else
+                            {
+                                <a class="link-khaibaoca" href="javascript:;" data-id="@row["UserEnrollNumber"].ToString()">@row["UserFullName"].ToString()</a>
+                            }
+                        </td>
+                        <td style="white-space: nowrap; min-width: 70px; background: #ecf7ff; ">@row["TongCong"].ToString()</td>
+                        <td style="white-space: nowrap; min-width: 70px; background: #ecf7ff; ">@row["CongChuan"].ToString()</td>
+                        @*<td style="white-space: nowrap; min-width: 180px;" class="text-left">@row["Description"].ToString()</td>*@
+
+                        @for (int i = 0; i <= totalDay; i++)
+                        {
+                            var _nextDate = startdate.AddDays(i).ToString("dd/MM");
+                            var val = row["" + _nextDate + ""].ToString();
+                            if (!string.IsNullOrEmpty(val))
+                            {
+                                var ca1 = val.Split('|')[0];
+                                var ca2 = val.Split('|')[1];
+                                <td style="font-size: 10px; min-width: 50px; max-width: 50px; position: relative; z-index:1;">
+                                    @if (ca1.Split('/')[1].ToString() == "1")
+                                    {
+                                        <input type="hidden" class="user" value="@row["UserEnrollNumber"].ToString()" />
+                                        <input type="hidden" class="date" value="@startdate.AddDays(i).ToString("dd/MM/yyyy")" />
+
+                                        if (!auth.Contains("user") && ViewBag.Locked == 0)
+                                        {
+                                            @Html.Raw("<a href='javascript:;' class='xoa-ca-phu' style='position: absolute; right: 0px; top: 0px; z-index:2; color:#fff;padding: 0px 2px;background: #ff4040;font-size: 9px; line-height: 12px;' data-toggle=\"tooltip\" data-placement=\"top\" title=\"Xóa khai báo\"><i class=\"fa fa-remove\"></i></a>")
+                                        }
+                                        <span style='color:#0083ff;'>@ca1.Split('/')[0].ToString()</span>
+                                    }
+                                    else
+                                    {
+                                        <span style=''>@ca1.Split('/')[0].ToString()</span>
+                                    }
+
+                                    @(string.IsNullOrEmpty(ca2) ? Html.Raw("") : Html.Raw("</br><span style='padding: 3px 5px; color:#ff0000;'>" + ca2 + "</span>"))
+                                </td>
+                            }
+                            else
+                            {
+                                <td>-</td>
+                            }
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#checkAll', function () {
+            $('.checkUser').not(this).prop('checked', this.checked);
+        });
+        $(".link-khaibaoca").click(function (e) {
+            e.preventDefault();
+            var userid = $(this).attr("data-id");
+            var s = encodeURIComponent($("#sdate").val());
+            var e = encodeURIComponent($("#edate").val());
+
+            $(this).callModal("/hcns/chamcong/add_khaibaoca?user=" + userid + "&s=" + s + "&e=" + e);
+        });
+
+        $('.xoa-ca-phu').on('click', function (e) {
+            e.preventDefault();
+            var $parent = $(this).parent("td");
+            var $user = $parent.find(".user").val();
+            var $date = $parent.find(".date").val();
+            var __url = "/hcns/chamcong/xoa_khaibaoca_phu?user=" + $user + "&date=" + encodeURIComponent($date);
+            if (confirm("Bạn muốn xóa dữ liệu ca phụ ngày: " + $date + "?")) {
+                $.ajax({
+                    type: "POST",
+                    url: __url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+                            $("#btnSearch").focus().click();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                            } else {
+                                $(this).callToast("error", '', "Bạn chưa được phân quyền để thực hiện chức năng này.");
+                            }
+
+                        }
+                    }, error: function () {
+                        $(this).callToast("error", '', "Bạn chưa được phân quyền để thực hiện chức năng này.");
+                    }
+                });
+
+            }
+        });
+    });
+</script>

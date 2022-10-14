@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Báo cáo nhân lực điều dưỡng hiện tại</h2>
+
+<div class="row">
+    <div class="col-md-6 col-xs-6" id="kp">
+        @Html.Action("NLDD_KhoaPhong_Table", "NLDD", new { areas = "HCNS.Controllers" })
+    </div>
+
+    <div class="col-md-6 col-xs-6" id="kpct">
+        @Html.Action("NLDD_KhoaPhongCT_Table", "NLDD", new { areas = "HCNS.Controllers" })
+    </div>
+</div>

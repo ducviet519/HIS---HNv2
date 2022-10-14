@@ -1,0 +1,199 @@
+﻿@model System.App.Entities.DanhMuc_CaLamViec
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục Ca làm việc</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Mã ca</label>
+                            @Html.TextBox("upd_calv_shiftcode", Model.ShiftCode, new { @class = "form-control input-sm", @readonly = true })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Giờ bắt đầu ca</label>
+                            @Html.TextBox("upd_calv_onduty", Model.Onduty, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Giờ kết thúc ca</label>
+                            @Html.TextBox("upd_calv_offduty", Model.Offduty, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Qua đêm</label>
+                            @if (Model.DayCount == "1")
+                            {
+                                @Html.DropDownList("upd_calv_daycount", new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "0", Text = "Không" },
+                                    new SelectListItem() { Value = "1", Text = "Có", Selected = true }
+                                }, new { @class = "form-control chosen-ddl input-sm" })}
+                            else
+                            {
+                                @Html.DropDownList("upd_calv_daycount", new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "0", Text = "Không", Selected = true },
+                                    new SelectListItem() { Value = "1", Text = "Có" }
+                                }, new { @class = "form-control chosen-ddl input-sm" })
+                            }
+
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Phút được CC vào</label>
+                            @Html.TextBox("upd_calv_ontimein", Model.OnTimeIn, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Phút hết CC vào</label>
+                            @Html.TextBox("upd_calv_cutin", Model.CutIn, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Phút được CC ra</label>
+                            @Html.TextBox("upd_calv_ontimeout", Model.OnTimeOut, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Phút hết CC ra</label>
+                            @Html.TextBox("upd_calv_cutout", Model.CutOut, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Giờ bắt đầu ăn trưa</label>
+                            @Html.TextBox("upd_calv_onlunch", Model.OnLunch, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Giờ kết thúc ăn trưa</label>
+                            @Html.TextBox("upd_calv_offlunch", Model.OffLunch, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Tổng sổ phút làm việc</label>
+                            @Html.TextBox("upd_calv_workingtime", Model.WorkingTime, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Số ngày công</label>
+                            @Html.TextBox("upd_calv_workingday", Model.Workingday, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>OT ngày nghỉ</label>
+                            @if (Model.IsHolidayOT == "True")
+                            {
+                                @Html.DropDownList("upd_calv_isholidayot", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "0", Text = "Không" },
+                                new SelectListItem() { Value = "1", Text = "Có", Selected = true }
+                                }, new { @class = "form-control chosen-ddl input-sm" })
+                            }
+                            else
+                            {
+                                @Html.DropDownList("upd_calv_isholidayot", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "0", Text = "Không", Selected = true },
+                                new SelectListItem() { Value = "1", Text = "Có" }
+                                }, new { @class = "form-control chosen-ddl input-sm" })
+                            }
+                        </div>
+                        @*<div class="form-group col-md-3">
+                                <label>Loại ca</label>
+                                @if (Model.WKOTLevel == "0")
+                                {
+                                    @Html.DropDownList("upd_calv_wkotlevel", new List<SelectListItem>() {
+                                       new SelectListItem() { Value = "0", Text = "Cấp 0", Selected = true },
+                                       new SelectListItem() { Value = "1", Text = "Cấp 1" },
+                                       new SelectListItem() { Value = "2", Text = "Cấp 2" }
+                                    }, new { @class = "form-control chosen-ddl input-sm" })
+                                }
+                                else if (Model.WKOTLevel == "1")
+                                {
+                                    @Html.DropDownList("upd_calv_wkotlevel", new List<SelectListItem>() {
+                                        new SelectListItem() { Value = "0", Text = "Cấp 0" },
+                                        new SelectListItem() { Value = "1", Text = "Cấp 1", Selected = true },
+                                        new SelectListItem() { Value = "2", Text = "Cấp 2" }
+                                    }, new { @class = "form-control chosen-ddl input-sm" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("upd_calv_wkotlevel", new List<SelectListItem>() {
+                                        new SelectListItem() { Value = "0", Text = "Cấp 0" },
+                                        new SelectListItem() { Value = "1", Text = "Cấp 1" },
+                                        new SelectListItem() { Value = "2", Text = "Cấp 2", Selected = true }
+                                    }, new { @class = "form-control chosen-ddl input-sm" })
+                                }
+                            </div>*@
+                        <div class="form-group col-md-3">
+                            <label>Loại ca</label>
+                            @Html.DropDownList("upd_calv_wkotlevel", ViewBag.LoaiCa as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_calv_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_calv_btnUpdate").click(function (e) {
+            var _ShiftCode = $("#upd_calv_shiftcode").val();
+            var _Onduty = $("#upd_calv_onduty").val();
+            var _Offduty = $("#upd_calv_offduty").val();
+            var _DayCount = $("select[name='upd_calv_daycount'] option:selected").val();
+            var _OnTimeIn = $("#upd_calv_ontimein").val();
+            var _CutIn = $("#upd_calv_cutin").val();
+            var _OnTimeOut = $("#upd_calv_ontimeout").val();
+            var _CutOut = $("#upd_calv_cutout").val();
+            var _OnLunch = $("#upd_calv_onlunch").val();
+            var _OffLunch = $("#upd_calv_offlunch").val();
+            var _WorkingTime = $("#upd_calv_workingtime").val();
+            var _Workingday = $("#upd_calv_workingday").val();
+            var _IsHolidayOT = $("select[name='upd_calv_isholidayot'] option:selected").val();
+            var _WKOTLevel = $("select[name='upd_calv_wkotlevel'] option:selected").val();
+
+            var obj = {
+                "ShiftID": @Model.ShiftID,
+                "ShiftCode": _ShiftCode,
+                "Onduty": _Onduty,
+                "Offduty": _Offduty,
+                "DayCount": _DayCount,
+                "OnTimeIn": _OnTimeIn,
+                "CutIn": _CutIn,
+                "OnTimeOut": _OnTimeOut,
+                "CutOut": _CutOut,
+                "OnLunch": _OnLunch,
+                "OffLunch": _OffLunch,
+                "WorkingTime": _WorkingTime,
+                "Workingday": _Workingday,
+                "IsHolidayOT": _IsHolidayOT,
+                "WKOTLevel": _WKOTLevel,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_CaLamViec", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Mã ca làm việc đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

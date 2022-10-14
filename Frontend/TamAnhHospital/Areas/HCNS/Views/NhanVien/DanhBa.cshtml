@@ -1,0 +1,262 @@
+﻿@{
+    ViewBag.Title = "DanhBa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var auth = ViewBag.Auth as string[];
+}
+<link rel="stylesheet" href="~/Areas/IVF/Content/TimeLapse.css" />
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Thông tin danh bạ điện thoại</h4>
+        </div>
+
+        <div class="form">
+            <fieldset>
+                <legend>Điều kiện tìm kiếm:</legend>
+                <form id="fsearch" class="form-inline">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label>Khoa/Phòng</label>
+                            @Html.DropDownList("khoaphong", ViewBag.DSKHOAPHONG as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Tòa nhà</label>
+                            @Html.DropDownList("toanha", ViewBag.DSTOANHA as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Tầng</label>
+                            @Html.DropDownList("tang", ViewBag.DSTANG as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Số ĐT</label>
+                            @Html.TextBox("sodienthoai", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="btn-group col-md-1" style="margin-top: 22px; ">
+                            <button type="button" class="btn btn-sm btn-primary" id="btnTimKiem">Tìm kiếm</button>
+                        </div>
+                        <div class="btn-group col-md-1" style="margin-top: 22px; ">
+                            <button type="button" class="btn btn-sm btn-info" id="btnExcel">Xuất Excel</button>
+                        </div>
+                    </div> <!-- form-row -->
+                </form>
+            </fieldset>           
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                @if (auth.Contains(System.App.Entities.Common.StaticParams.HCNS_Update_DanhBaDienThoai))
+                {
+                    <a href="javascript:;" id="btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>
+                }
+                @*<a href="javascript:;" id="btnEdit" class="btnCreate btn btn-primary btn-sm" style="width: 87px;">Cập nhật</a>*@
+            </div>
+        </div>
+
+        <div class="inner-content" style="margin-bottom: 10px;">
+            <table class="table table-condensed table-bordered table-hover" id="data-table" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tòa nhà</th>
+                        <th>Tầng</th>
+                        <th>Khoa/Phòng/Bộ phận</th>
+                        <th>Vị trí</th>
+                        <th>Số điện thoại</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" class="text-center">Chưa có dữ liệu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+    });
+
+    function Reload_DataTable(id, columns, source) {
+        $.fn.dataTable.moment('DD/MM/YYYY');
+        id = "#" + id;
+        if ($.fn.dataTable.isDataTable(id)) {
+            $(id).DataTable().destroy();
+            $(id).find('tbody').empty();
+        }
+        var _tabledata = $(id).DataTable({
+            "ajax": {
+                "url": source,
+                "type": "GET",
+                "datatype": "json",
+            },
+            "pageLength": 20,
+            "processing": true,
+            "columns": columns,
+            "deferRender": true,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            "createdRow": function (row, data, dataIndex) {
+                $(row).attr("onclick", "onClick_Row('" + data.ID + "')");
+            },
+            "language": {
+                "sProcessing": "Đang tải dữ liệu...",
+                "sLengthMenu": "Xem _MENU_ mục",
+                "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm:",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "Đầu",
+                    "sPrevious": "Trước",
+                    "sNext": "Tiếp",
+                    "sLast": "Cuối"
+                }
+            },
+            "initComplete": function (settings, json) {
+                //$("#ls-tongso").html(this.api().page.info().recordsTotal);
+            }
+        });
+        _tabledata.on('page.dt order.dt draw.dt', function () {
+            _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + _tabledata.page.info().start;
+            });
+        }).draw();
+
+        $(id).on('processing.dt', function (e, settings, processing) {
+            $('#processingIndicator').css('display', processing ? 'block' : 'none');
+        }).dataTable();
+
+        $(id).on('page.dt', function () {
+            // $("input[name='dsdc-checkAll']").removeAttr("checked");
+        });
+    }
+
+    var _columns = [
+        { "data": {}, "class": "no-sort" },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.TOANHA;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.TANG;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.KHOAPHONG;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.VITRI;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.SODIENTHOAI;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                if ('@auth.Contains(System.App.Entities.Common.StaticParams.HCNS_Update_DanhBaDienThoai)' == 'True') {
+                    return "<a href=\"javascript:;\" onclick=\"Update_DanhBa('" + data.ID + "')\">Cập nhật</a>";
+                }            
+                return "";
+            }, "class": "text-center"
+        }
+    ];
+
+    function Load_Data() {
+        var objsearch = {
+            KHOAPHONG: $("#khoaphong").val(),
+            TOANHA: $("#toanha").val(),
+            TANG: $("#tang").val(),
+            SODIENTHOAI: $("#sodienthoai").val()
+        };
+        Reload_DataTable("data-table", _columns, "/hcns/nhanvien/DS_DanhBa_Search?" + $.param(objsearch));
+    }
+
+    var _id = '';
+    function onClick_Row(id) {
+        _id = id;
+    }
+
+    function Update_DanhBa(id) {
+        if (id == '') {
+            $(this).callToast("error", 'Xin mời chọn dòng dữ liệu cần cập nhật', '');
+            return;
+        }
+        var objsearch = {
+            ID: id
+        };
+        $(this).callModal("/hcns/nhanvien/Edit_DanhBa?" + $.param(objsearch));
+    };
+
+    $(function () {
+        $("#btnTimKiem").click(function (e) {
+            e.preventDefault();
+            Load_Data();
+        });
+
+        Load_Data();
+
+        $("#btnCreate").click(function (e) {
+            $(this).callModal("/hcns/nhanvien/Create_DanhBa?");
+            e.preventDefault();
+        });
+
+        //$("#btnEdit").click(function (e) {
+        //    if (_id == '') {
+        //        $(this).callToast("error", 'Xin mời ấn vào dòng dữ liệu để lựa chọn dòng cần cập nhật', '');
+        //        return;
+        //    }
+        //    var objsearch = {
+        //        ID: _id
+        //    };
+        //    $(this).callModal("/hcns/nhanvien/Edit_DanhBa?" + $.param(objsearch));
+        //    e.preventDefault();
+        //});
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnTimKiem').focus().click();//give your submit an ID
+            }
+        }
+
+        $('.head-section .form').keypress(keypressHandler);
+
+        $("#btnExcel").click(function () {
+            var objsearch = {
+                KHOAPHONG: $("#khoaphong").val(),
+                TOANHA: $("#toanha").val(),
+                TANG: $("#tang").val(),
+                SODIENTHOAI: $("#sodienthoai").val()
+            };
+            var url = "/hcns/nhanvien/DS_DanhBa_Excel?" + $.param(objsearch);
+            window.location = url;
+        });
+    });
+</script>

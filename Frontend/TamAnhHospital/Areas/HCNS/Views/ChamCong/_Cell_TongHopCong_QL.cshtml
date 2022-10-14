@@ -1,0 +1,445 @@
+﻿
+@model System.App.Entities.HCNS.HCNS_NhanVien
+
+@{
+    var sdate = ""; var edate = "";
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM25");
+
+    if (int.Parse(currentDate) > int.Parse(limitDate))
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("25/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).AddMonths(1).ToString("24/MM/yyyy");
+    }
+    else
+    {
+        sdate = DateTime.UtcNow.AddHours(7).AddMonths(-1).ToString("25/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("24/MM/yyyy");
+    }
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-search">
+            <div class="row">
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">Xem từ ngày</label>
+                    <input type="text" id="sdate" class="form-control input-sm" value="@ViewBag.StartDate" autocomplete="off" required />
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">đến ngày</label>
+                    <input type="text" id="edate" class="form-control input-sm" value="@ViewBag.EndDate" autocomplete="off" required />
+                </div>
+                <div class="col-md-2 col-xs-2">
+                    <label>Khoa/Phòng</label>
+                    @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value", Model.KhoaPhong), new { @class = "form-control input-sm chosen-ddl" })
+                </div>
+                <div class="col-md-2 col-xs-2">
+                    <label>Loại nhân viên</label>
+                    @Html.DropDownList("loainv", ViewBag.LoaiNV as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                </div>
+                <div class="col-md-1 col-xs-3">
+                    <label for="UserFullName">Nhân viên</label>
+                    <input type="text" id="UserFullName" class="form-control input-sm" value="" autocomplete="off" />
+                </div>
+                <div class="col-md-5 col-xs-2">
+                    <button type="button" id="btnSearch" class="btn btn-primary btn-sm" style="margin-top: 22px;">Tìm kiếm</button>
+                    <button type="button" id="btnExport" class="btn btn-success btn-sm" style="margin-top: 22px; margin-left: 5px;">Xuất file</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box-table">
+    <table class="table table-bordered table-hover" id="table-data" style="width: 100%;">
+        <thead>
+            <tr>
+                <th class="text-center">STT</th>
+                <th class="text-center">Mã NV</th>
+                <th class="text-center">Họ và tên</th>
+                <th class="text-center">Khoa/Phòng</th>
+                <th class="text-center">Trước TĐL</th>
+                <th class="text-center">Sau TĐL</th>
+                <th class="text-center">Hệ số muộn</th>
+                <th class="text-center">Tổng muộn</th>
+                <th class="text-center">Hệ số sớm</th>
+                <th class="text-center">Tổng sớm</th>
+                <th class="text-center">Phụ cấp</th>
+                <th class="text-center">Tổng suất ăn</th>
+                <th class="text-center">Công thực</th>
+                <th class="text-center">Công chuẩn</th>
+                <th class="text-center">Quên chấm công</th>
+                <th class="text-center">Nghỉ PD</th>
+                <th class="text-center">Nghỉ BHXH</th>
+                <th class="text-center">Nghỉ KL</th>
+                <th class="text-center">Số ngày thừa</th>
+                <th class="text-center">Ghi chú</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th class="text-center wsearch">1</th>
+                <th class="text-center wsearch">2</th>
+                <th class="text-center wsearch">3</th>
+                <th class="text-center wsearch">4</th>
+                <th class="text-center wsearch">5</th>
+                <th class="text-center wsearch">6</th>
+                <th class="text-center wsearch">7</th>
+                <th class="text-center wsearch">8</th>
+                <th class="text-center wsearch">9</th>
+                <th class="text-center wsearch">10</th>
+                <th class="text-center wsearch">11</th>
+                <th class="text-center wsearch">12</th>
+                <th class="text-center wsearch">13</th>
+                <th class="text-center wsearch">14</th>
+                <th class="text-center wsearch">15</th>
+                <th class="text-center wsearch">16</th>
+                <th class="text-center wsearch">17</th>
+                <th class="text-center wsearch">18</th>
+                <th class="text-center wsearch">19</th>
+                <th class="text-center wsearch">20</th>
+            </tr>
+        </tfoot>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#btnExport").click(function (e) {
+            var kp = $("#Department option:selected").val();
+            var loainv = $("#loainv option:selected").val();
+            var ngaybd = $("#sdate").val();
+            var ngaykt = $("#edate").val();
+            var manv = $("#UserFullName").val();
+
+            var url = "/hcns/chamcong/ExportExcelTongHopCong?ngaybd=" + ngaybd + "&ngaykt=" + ngaykt + "&manv=" + manv + "&kp=" + kp + "&loainv=" + loainv;
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data, status) {
+                    window.location = url;
+                }
+            });
+            e.preventDefault();
+        });
+
+        var _columns = [
+            ///1
+            { "data": {}, "class": "text-center", "width": "50px" },
+            /*******************************/
+            ///2
+            { "data": "MA_NV", "class": "nowrap", "width": "70px" },
+            /*******************************/
+            ///3
+            { "data": "HO_TEN", "class": "nowrap" },
+            /*******************************/
+            ///4
+            { "data": "KHOA_PHONG", "class": "nowrap" },
+            /*******************************/
+            ///5
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.CONG_TRUOC_TD_LUONG_FIX_D + "</span>" + data.CONG_TRUOC_TD_LUONG_FIX_D;
+                }
+            },
+            /*******************************/
+            ///6
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.CONG_SAU_TD_LUONG_FIX_D + "</span>" + data.CONG_SAU_TD_LUONG_FIX_D;
+                }
+            },
+            /*******************************/
+            ///7
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.HE_SO_MUON + "</span>" + data.HE_SO_MUON;
+                }
+            },
+            /*******************************/
+            ///8
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.TONG_MUON_D + "</span>" + data.TONG_MUON_D;
+                }
+            },
+            /*******************************/
+            ///9
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.HE_SO_SOM + "</span>" + data.HE_SO_SOM;
+                }
+            },
+            /*******************************/
+            ///10
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.TONG_SOM_D + "</span>" + data.TONG_SOM_D;
+                }
+            },
+            /*******************************/
+            ///11
+            //{
+            //    "data": {}, "render": function (data) {
+            //        return "<span style=\"display: none;\">" + data.PHU_CAP_TRUC_D + "</span>" + data.PHU_CAP_TRUC_D;
+            //    }
+            //},
+            ///*******************************/
+            /////12
+            //{
+            //    "data": {}, "render": function (data) {
+            //        return "<span style=\"display: none;\">" + data.PHU_CAP_TRUC_DEM_D + "</span>" + data.PHU_CAP_TRUC_DEM_D;
+            //    }
+            //},
+
+            //{
+            //    "data": {}, "render": function (data) {
+            //        return data.PHU_CAP_TR08H;
+            //    }
+            //},
+
+            //{
+            //    "data": {}, "render": function (data) {
+            //        return data.PHU_CAP_TR20H;
+            //    }
+            //},
+
+            {
+                "data": {}, "render": function (data) {
+                    return data.DienGiaiPC;
+                }
+            },
+
+            /*******************************/
+            ///13
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.TONG_SUAT_AN_D + "</span>" + data.TONG_SUAT_AN_D;
+                }
+            },
+            /*******************************/
+            ///14
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.CONG_THUC + "</span>" + data.CONG_THUC;
+                }
+            },
+            /*******************************/
+            ///15
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.CONG_CHUAN + "</span>" + data.CONG_CHUAN;
+                }
+            },
+            /*******************************/
+            ///16
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.SO_LAN_KHONG_VR + "</span>" + data.SO_LAN_KHONG_VR;
+                }
+            },
+            /*******************************/
+            ///17
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.NGHI_PHONG_DICH_D + "</span>" + data.NGHI_PHONG_DICH_D;
+                }
+            },
+            /*******************************/
+            ///18
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.NGHI_BHXH_D + "</span>" + data.NGHI_BHXH_D;
+                }
+            },
+            /*******************************/
+            ///19
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.NGHI_KL_D + "</span>" + data.NGHI_KL_D;
+                }
+            },
+            /*******************************/
+            ///20
+            {
+                "data": {}, "render": function (data) {
+                    return "<span style=\"display: none;\">" + data.NGAY_THUA_R + "</span>" + data.NGAY_THUA_R;
+                }
+            },
+            /*******************************/
+            ///21
+            {
+                "data": "GHI_CHU"
+            }
+        ];
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $("#UserFullName").focusout(function () {
+            if ($(this).val() == "") {
+                $("#UserEnrollNumber").val("");
+            }
+        });
+        $('.form-search').keypress(keypressHandler);
+
+        $('.timepicker').datepicker({ format: 'dd/mm/yyyy' });
+
+        Reload_DataTable("table-data", _columns, "/hcns/chamcong/TongHopCong_View?from=" + encodeURIComponent($("#sdate").val()) + "&to=" + encodeURIComponent($("#edate").val()) + "&kp=" + $("#Department option:selected").val() + "&user=" + $("#UserFullName").val().trim() + "&loainv=" + $("#loainv option:selected").val());
+
+        $("#btnSearch").click(function () {
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+
+            var startDate = new Date(formatDate(_from));
+            var endDate = new Date(formatDate(_to));
+            var songay = (endDate - startDate) / 1000 / 60 / 60 / 24;
+
+            if (songay >= 32) {
+                $(this).callToast("error", 'Cảnh báo', "Không được chọn khoảng tìm kiếm quá 32 ngày.");
+                return;
+            }
+            Reload_DataTable("table-data", _columns, "/hcns/chamcong/TongHopCong_View?from=" + encodeURIComponent($("#sdate").val()) + "&to=" + encodeURIComponent($("#edate").val()) + "&kp=" + $("#Department option:selected").val() + "&user=" + $("#UserFullName").val().trim() + "&loainv=" + $("#loainv option:selected").val());
+        });
+
+        function formatDate(str) {
+            var d = str.split("/")[0];
+            var m = str.split("/")[1];
+            var y = str.split("/")[2];
+            var date = m + "/" + d + "/" + y
+
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('/');
+        }
+
+        function Reload_DataTable(id, columns, source) {
+            id = "#" + id;
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+            $('#table-data tfoot th.wsearch').each(function () {
+                var title = $(this).text();
+                $(this).html('<input type="text" class="form-control" style=\"min-width: 60px;\" />');
+            });
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 20,
+                "autoWidth": true,
+                "processing": true,
+                "columns": columns,
+                "deferRender": false,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "drawCallback": function () {
+                    //$('[data-toggle="tooltip"]').tooltip();
+                },
+                "createdRow": function (row, data, dataIndex) {
+                    // Set the data-status attribute, and add a class
+                    $(row)
+                        .attr('data-toggle', "tooltip")
+                        .attr('data-placement', "top")
+                        .attr('title', data.MA_NV + " | " + data.HO_TEN)
+                        .attr("style", "background-color: " + (data.KiemTraBuThua == 0 ? "white" : "#ffbcbc"));
+                },
+                //"scrollX": true,
+                //"scrollCollapse": true,
+                //"fixedColumns": {
+                //    leftColumns: 4
+                //},
+                "language": {
+                    "sProcessing": "Đang tải dữ liệu...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+            _tabledata.columns().every(function () {
+                var that = this;
+                $('input', this.footer()).on('keyup change clear', function () {
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value)
+                            .draw();
+                    }
+                });
+            });
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+        }
+    });
+    $(function () {
+        $('#table-data').DataTable();
+
+        $('#table-data tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                $("#table-data").find($('tr.selected')).removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
+        var stickyHeaderTop = $('#table-data').offset().top;
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() > stickyHeaderTop) {
+                $('.dataTables_scrollHead, .DTFC_LeftHeadWrapper').css('transform', 'translateY(0%)');
+                $('.DTFC_LeftHeadWrapper').css({ position: 'fixed', top: '0px', zIndex: '1', left: 'auto' });
+                $('.dataTables_scrollHead').css({ position: 'fixed', top: '0px', zIndex: '1' });
+                $('.DTFC_ScrollWrapper').css({ height: '' });
+
+            }
+            else {
+                $('.DTFC_LeftHeadWrapper, .DTFC_LeftHeadWrapper').css({ position: 'relative', top: '0px' });
+                $('.dataTables_scrollHead').css({ position: 'relative', top: '0px' });
+                $('.dataTables_scrollHead').css('transform', 'translateY(0%)');
+            }
+        });
+
+        $(".dataTables_scrollBody").find("thead tr:nth-child(2)").remove();
+    });
+
+// Check the initial Poistion of the Sticky Header
+
+</script>

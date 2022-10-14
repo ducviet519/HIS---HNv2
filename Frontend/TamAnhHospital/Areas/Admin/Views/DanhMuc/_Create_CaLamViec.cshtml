@@ -1,0 +1,156 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục Ca làm việc</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Mã ca</label>
+                            @Html.TextBox("cre_calv_shiftcode", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Giờ bắt đầu ca</label>
+                            @Html.TextBox("cre_calv_onduty", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Giờ kết thúc ca</label>
+                            @Html.TextBox("cre_calv_offduty", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Qua đêm</label>
+                            @Html.DropDownList("cre_calv_daycount", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "0", Text = "Không" },
+                                new SelectListItem() { Value = "1", Text = "Có" }
+                            }, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Phút được CC vào</label>
+                            @Html.TextBox("cre_calv_ontimein", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Phút hết CC vào</label>
+                            @Html.TextBox("cre_calv_cutin", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Phút được CC ra</label>
+                            @Html.TextBox("cre_calv_ontimeout", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Phút hết CC ra</label>
+                            @Html.TextBox("cre_calv_cutout", "", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Giờ bắt đầu ăn trưa</label>
+                            @Html.TextBox("cre_calv_onlunch", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Giờ kết thúc ăn trưa</label>
+                            @Html.TextBox("cre_calv_offlunch", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Tổng sổ phút làm việc</label>
+                            @Html.TextBox("cre_calv_workingtime", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Số ngày công</label>
+                            @Html.TextBox("cre_calv_workingday", "", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>OT ngày nghỉ</label>
+                            @Html.DropDownList("cre_calv_isholidayot", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "0", Text = "Không" },
+                                new SelectListItem() { Value = "1", Text = "Có" }
+                            }, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Loại ca</label>
+                            @*@Html.DropDownList("cre_calv_wkotlevel", new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "0", Text = "Cấp 0" },
+                                    new SelectListItem() { Value = "1", Text = "Cấp 1" },
+                                    new SelectListItem() { Value = "2", Text = "Cấp 2" }
+                                }, new { @class = "form-control chosen-ddl input-sm" })*@
+                            @Html.DropDownList("cre_calv_wkotlevel", ViewBag.LoaiCa as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_calv_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_calv_btnCreate").click(function (e) {
+            var _ShiftCode = $("#cre_calv_shiftcode").val();
+            var _Onduty = $("#cre_calv_onduty").val();
+            var _Offduty = $("#cre_calv_offduty").val();
+            var _DayCount = $("select[name='cre_calv_daycount'] option:selected").val();
+            var _OnTimeIn = $("#cre_calv_ontimein").val();
+            var _CutIn = $("#cre_calv_cutin").val();
+            var _OnTimeOut = $("#cre_calv_ontimeout").val();
+            var _CutOut = $("#cre_calv_cutout").val();
+            var _OnLunch = $("#cre_calv_onlunch").val();
+            var _OffLunch = $("#cre_calv_offlunch").val();
+            var _WorkingTime = $("#cre_calv_workingtime").val();
+            var _Workingday = $("#cre_calv_workingday").val();
+            var _IsHolidayOT = $("select[name='cre_calv_isholidayot'] option:selected").val();
+            var _WKOTLevel = $("select[name='cre_calv_wkotlevel'] option:selected").val();
+            if (_ShiftCode == '') {
+                $(this).callToast("error", 'Chưa nhập mã ca làm việc', '');
+                return;
+            }
+
+            var obj = {
+                "ShiftCode": _ShiftCode,
+                "Onduty": _Onduty,
+                "Offduty": _Offduty,
+                "DayCount": _DayCount,
+                "OnTimeIn": _OnTimeIn,
+                "CutIn": _CutIn,
+                "OnTimeOut": _OnTimeOut,
+                "CutOut": _CutOut,
+                "OnLunch": _OnLunch,
+                "OffLunch": _OffLunch,
+                "WorkingTime": _WorkingTime,
+                "Workingday": _Workingday,
+                "IsHolidayOT": _IsHolidayOT,
+                "WKOTLevel": _WKOTLevel,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_CaLamViec", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Mã ca làm việc đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

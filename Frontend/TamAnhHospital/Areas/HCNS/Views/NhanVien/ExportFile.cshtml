@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "ExportExcel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var sdate = "";
+    var edate = "";
+    sdate = DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy");
+    edate = DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy");
+}
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Export File</h4>
+        </div>
+
+        <div class="form">
+            <fieldset>
+                <legend>Điều kiện xuất file:</legend>
+                <form id="fsearch" class="form-inline">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label>Loại file</label>
+                            @Html.DropDownList("fileexcel", ViewBag.FileExcel as List<SelectListItem>, new { @class = "form-control chosen-dll input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Từ ngày</label>
+                            <input type="text" class="form-control input-sm datepicker" id="tungay" name="tungay" autocomplete="off" value="@sdate" />
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Đến ngày</label>
+                            <input type="text" class="form-control input-sm datepicker" id="denngay" name="denngay" autocomplete="off" value="@edate" />
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Khoa/phòng</label>
+                            @Html.DropDownList("khoaphong", new SelectList(ViewBag.KhoaPhong, "Key", "Value"), "--- Tất cả ---", new { @class = "form-control input-sm chosen-dll" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Mã nhân viên</label>
+                            @Html.TextBox("manv", "", new { @class = "form-control input-sm" })
+                        </div>
+                        @*<div class="btn-group col-md-1" style="margin-top: 22px; ">
+                            <button type="button" class="btn btn-sm btn-primary" id="btnTimKiem">Tìm kiếm</button>
+                        </div>*@
+                        <div class="btn-group col-md-1" style="margin-top: 22px; ">
+                            <button type="button" class="btn btn-sm btn-info" id="btnExcel">Xuất Excel</button>
+                        </div>
+                    </div> <!-- form-row -->
+                </form>
+            </fieldset>           
+        </div>
+    </div><!-- ./head-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-dll").chosen();
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnExcel').focus().click();
+            }
+        }
+
+        $('.head-section .form').keypress(keypressHandler);
+
+        $("#btnExcel").click(function (e) {
+            var url = "/hcns/nhanvien/Export_Excel?LoaiFile=" + $("#fileexcel option:selected").val() + "&tungay=" + $("#tungay").val() + "&denngay=" + $("#denngay").val() + "&khoaphong=" + $("#khoaphong option:selected").val() + "&manv=" + $("#manv").val();
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data, status) {
+                    window.location = url;
+                }
+            });
+
+            e.preventDefault();
+        });
+    });
+</script>

@@ -1,0 +1,86 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 850px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục Quyền khoa phòng</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Tên khoa phòng</label>
+                            @Html.DropDownList("cre_rd_ten", ViewBag.DEPTS as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label><input type="checkbox" name="cre_ru_chkAll" onclick="CheckAll(this);" /> Check all</label>
+                        </div>
+                        @foreach (var item in ViewBag.NHOM as IEnumerable<System.App.Entities.DS_DropDownList>)
+                        {
+                            <div class="form-group col-md-3">
+                                <label><input type="checkbox" name="cre_rd_chk" value="@item.ID" /> @item.MoTa</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_rd_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function CheckAll(control) {
+        var val = $(control).prop("checked");
+
+        if (val) {
+            $("input[name='cre_rd_chk']").prop("checked", true);
+        } else {
+            $("input[name='cre_rd_chk']").prop("checked", false);
+        }
+    }
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_rd_btnCreate").click(function (e) {
+            var _Dept = $("select[name='cre_rd_ten'] option:selected").val()
+            var id_Objects = [];
+            $("input[name=\"cre_rd_chk\"]:checked").each(function () {
+                id_Objects.push($(this).val());
+            });
+            if (_Dept == '') {
+                $(this).callToast("error", 'Chưa nhập tên khoa phòng', '');
+                return;
+            }
+
+            var obj = {
+                "Dept": _Dept,
+                "Object": id_Objects.toString(),
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_Quyen_KhoaPhong", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Tên khoa phòng đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

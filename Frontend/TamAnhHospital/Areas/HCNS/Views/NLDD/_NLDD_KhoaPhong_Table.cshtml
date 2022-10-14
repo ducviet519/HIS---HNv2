@@ -1,0 +1,38 @@
+﻿@model IEnumerable<System.App.Entities.Report.NLDD_KhoaPhong>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h4>Báo cáo tổng hợp theo khoa phòng</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered table-hover" id="tbl_kp">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Khoa/Phòng</th>
+                    <th>Điều dưỡng</th>
+                    <th>Nữ hộ sinh</th>
+                    <th>Kỹ thuật viên</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach(var o in Model)
+                {
+                <tr>
+                    <td>@o.Number</td>
+                    <td>@o.KhoaPhong</td>
+                    <td>@o.DieuDuong</td>
+                    <td>@o.NuHoSinh</td>
+                    <td>@o.KyThuatVien</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#tbl_kp').callDataTableCustomSearch('vi', '', '');
+    });
+</script>

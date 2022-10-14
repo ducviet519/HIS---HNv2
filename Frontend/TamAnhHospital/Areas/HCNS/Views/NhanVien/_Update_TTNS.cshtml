@@ -1,0 +1,477 @@
+﻿@model System.App.Entities.HCNS.HCNS_NhanVien
+
+<style type="text/css">
+    .modal-lg { width: 940px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .panel-body { padding: 15px; max-height: 480px; overflow: auto; }
+        .panel-body input, .panel-body select { max-width: inherit; }
+        .panel-body .form-group { margin-bottom: 10px; }
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+        .panel-body textarea { max-width: 100%; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .form .datepicker { margin-top: 0 !important; }
+    .panel .box { position: relative; }
+        .panel .box .image-box { position: absolute; left: 0; top: 0; z-index: 100; }
+            .panel .box .image-box .image-display { margin-bottom: 5px; }
+    .upload-btn-wrapper { position: relative; overflow: hidden; display: block; }
+        .upload-btn-wrapper .btn { border: 1px solid #3882b6; color: #3882b6; background-color: white; padding: 5px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; display: block; width: 100%; }
+        .upload-btn-wrapper input[type=file] { font-size: 22px; position: absolute; left: 0; top: 0; opacity: 0; }
+</style>
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog modal-lg">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                @using (Html.BeginForm("Update_TTNS", "NhanVien", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.UserEnrollNumber)
+
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-list"></i> NHÂN VIÊN: [@Model.UserEnrollNumber] @Model.UserFullName.ToUpper() - THAY ĐỔI LƯƠNG NGÀY: @Model.NgayThayDoiLuong</h4>
+                    </div><!-- ./panel-heading -->
+
+                    <div class="panel-body form">
+                        <div class="box clearfix" style="padding-left: 125px; overflow: hidden;">
+                            <div class="image-box" style="width: 115px;">
+                                <div class="image-display">
+                                    @if (String.IsNullOrEmpty(Model.AnhDaiDien))
+                                    {
+                                        <img id="blah" src="~/uploads/thumb.png" width="115" height="142" />
+                                    }
+                                    else
+                                    {
+                                        <img id="blah" src="~/uploads/hcns/@Model.AnhDaiDien" width="115" height="142" />
+                                    }
+                                </div>
+                                <div class="upload-btn-wrapper">
+                                    <button class="btn">Upload a file</button>
+                                    <input type="file" id="imageUploadForm" name="image" />
+                                </div>
+
+                                <div class="form-group" style="margin-top: 10px;">
+                                    <label class="">Ngày tính phép</label>
+                                    @Html.TextBoxFor(x => x.NgayTinhPhep, new { @class = "form-control input-sm datepicker" })
+                                </div>
+                                @*<input type="file" id="imageUploadForm" name="image" />*@
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="NoiSinh">Nơi sinh</label>
+                                        <select class="form-control input-sm" id="NoiSinh" name="NoiSinh">
+                                            @foreach (var item in ViewBag.DS_NoiSinh as Dictionary<int, string>)
+                                            {
+                                                if (!String.IsNullOrEmpty(Model.NoiSinh) && item.Key == int.Parse(Model.NoiSinh))
+                                                {
+                                                    <option value="@item.Key" selected>@item.Value</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Key">@item.Value</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-xs-5">
+                                    <div class="form-group">
+                                        <label for="NoiSinhCT">Nơi sinh chi tiết</label>
+                                        @Html.TextBoxFor(x => x.NoiSinhCT, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label for="NgaySinh">Ngày sinh</label>
+                                        @Html.TextBoxFor(x => x.NgaySinh, new { @class = "form-control input-sm datepicker" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label for="GioiTinh">Giới tính</label>
+                                        <select class="form-control input-sm" id="GioiTinh" name="GioiTinh">
+                                            @foreach (var item in ViewBag.DS_GioiTinh as Dictionary<int, string>)
+                                            {
+                                                if (!String.IsNullOrEmpty(Model.GioiTinh) && item.Key == int.Parse(Model.GioiTinh))
+                                                {
+                                                    <option value="@item.Key" selected>@item.Value</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Key">@item.Value</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div><!-- .\row -->
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="DoiTuong">Đối tượng</label>
+                                        @Html.DropDownListFor(x => x.DoiTuong, new SelectList(ViewBag.DS_DoiTuong, "Key", "Value"), "--- Chọn đối tượng ---", new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label for="LoaiCMT">Loại CMT</label>
+                                        <select class="form-control input-sm" id="LoaiCMT" name="LoaiCMT">
+                                            <option value="">-- Chọn --</option>
+
+                                            @foreach (var item in ViewBag.DS_LoaiCMT as Dictionary<int, string>)
+                                            {
+                                                if (!String.IsNullOrEmpty(Model.LoaiCMT) && item.Key == int.Parse(Model.LoaiCMT))
+                                                {
+                                                    <option value="@item.Key" selected>@item.Value</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Key">@item.Value</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label for="SoCMT">Số CMT</label>
+                                        @Html.TextBoxFor(x => x.SoCMT, new { @class = "form-control input-sm", autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label for="CapNgay">Ngày cấp</label>
+                                        @Html.TextBoxFor(x => x.CapNgay, new { @class = "form-control input-sm datepicker", autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="NoiCap">Nơi cấp</label>
+                                        @Html.DropDownListFor(x => x.NoiCap, new SelectList(ViewBag.DS_NoiCapCMT, "Key", "Value"), "--- Chọn ---", new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="TATitle">Học hàm học vị</label>
+                                        @Html.TextBoxFor(x => x.TATitle, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label for="">TT hôn nhân</label>
+                                        <select class="form-control input-sm" id="TTHonNhan" name="TTHonNhan">
+                                            <option value="">-- Chọn --</option>
+                                            <option value="1" @(Model.TTHonNhan == "1" ? "selected" : "")>Độc thân</option>
+                                            <option value="2" @(Model.TTHonNhan == "2" ? "selected" : "")>Đã lập GĐ</option>
+                                            <option value="3" @(Model.TTHonNhan == "3" ? "selected" : "")>Đã ly hôn</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <label for="TonGiao">Tôn giáo</label>
+                                    @Html.DropDownListFor(x => x.TonGiao, new SelectList(ViewBag.DS_TonGiao, "Key", "Value"), new { @class = "form-control input-sm" })
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <label for="QuocTich">Quốc tịch</label>
+                                    @Html.DropDownListFor(x => x.QuocTich, new SelectList(ViewBag.DS_QuocGia, "Key", "Value"), new { @class = "form-control input-sm" })
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <label for="QuocTich">Dân tộc</label>
+                                    @Html.DropDownListFor(x => x.DanToc, new SelectList(ViewBag.DS_DanToc, "Key", "Value"), new { @class = "form-control input-sm" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="NgayPhuCap">Ngày phụ cấp</label>
+                                        @Html.TextBoxFor(x => x.NgayPhuCap, new { @class = "form-control input-sm datepicker", autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="NgayThayDoiLuong">Ngày thay đổi lương</label>
+                                        @Html.TextBoxFor(x => x.NgayThayDoiLuong, new { @class = "form-control input-sm datepicker", autocomplete = "off" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="TTSK">Tình trạng sức khỏe</label>
+                                        @Html.TextBoxFor(x => x.TTSK, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="MSTCN">Mã số thuế cá nhân</label>
+                                        @Html.TextBoxFor(x => x.MSTCN, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="infor-box">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="title-box">Thông tin bảo hiểm</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="SoBHXH">Số sổ BHXH</label>
+                                        @Html.TextBoxFor(x => x.SoBHXH, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="SoTheBHXH">Số thẻ BHXH</label>
+                                        @Html.TextBoxFor(x => x.SoTheBHXH, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="NgayTGBHXH">Ngày tham gia</label>
+                                        @Html.TextBoxFor(x => x.NgayTGBHXH, new { @class = "form-control datepicker input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="MucDongBHXH">Mức đóng</label>
+                                        @Html.TextBoxFor(x => x.MucDongBHXH, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="LoaiDongBHXH">Loại đóng</label>
+                                        <select class="form-control input-sm" id="LoaiDongBHXH" name="LoaiDongBHXH">
+                                            <option value="0" @(Model.LoaiDongBHXH == "0" ? "selected" : "")>Không xác định</option>
+                                            <option value="1" @(Model.LoaiDongBHXH == "1" ? "selected" : "")>Đang tham gia BHXH</option>
+                                            <option value="2" @(Model.LoaiDongBHXH == "2" ? "selected" : "")>Chưa tham gia BHXH</option>
+                                            <option value="3" @(Model.LoaiDongBHXH == "3" ? "selected" : "")>Không tham gia BHXH</option>
+                                            <option value="4" @(Model.LoaiDongBHXH == "4" ? "selected" : "")>Có khám gia nhưng đang nghỉ thai sản, nghỉ ốm, nghỉ không lương</option>
+                                            <option value="5" @(Model.LoaiDongBHXH == "5" ? "selected" : "")>Chưa tham gia (Đang học việc, thử việc)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="infor-box">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="title-box">Tài khoản ngân hàng</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="SoTK1">Số tài khoản 1</label>
+                                        @Html.TextBoxFor(x => x.SoTK1, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="NganHang1">Ngân hàng 1</label>
+                                        @Html.TextBoxFor(x => x.NganHang1, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div><div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="SoTK2">Số tài khoản 2</label>
+                                        @Html.TextBoxFor(x => x.SoTK2, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div><div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="NganHang2">Ngân hàng 2</label>
+                                        @Html.TextBoxFor(x => x.NganHang2, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="infor-box">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="title-box">Địa chỉ thường trú</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="QGThT">Quốc gia</label>
+                                        @Html.DropDownListFor(x => x.QGThT, new SelectList(ViewBag.DS_QuocGia, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="TinhThT">Tỉnh / Thành</label>
+                                        @Html.DropDownListFor(x => x.TinhThT, new SelectList(ViewBag.DS_ThanhPho, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="QuanThT">Quận / Huyện</label>
+                                        <div id="QuanThT_block">
+                                            @Html.DropDownListFor(x => x.QuanThT, new SelectList(ViewBag.DS_QuanHuyenThT, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="PhuongThT">Phường / Xã</label>
+                                        <div id="PhuongXaThT_block">
+                                            @Html.DropDownListFor(x => x.PhuongThT, new SelectList(ViewBag.DS_PhuongXaThT, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="DcThT">Địa chỉ thường trú</label>
+                                        @Html.TextBoxFor(x => x.DcThT, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="infor-box">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="title-box">Địa chỉ tạm trú</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="QGTT">Quốc gia</label>
+                                        @Html.DropDownListFor(x => x.QGTT, new SelectList(ViewBag.DS_QuocGia, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="TinhTT">Tỉnh / Thành</label>
+                                        @Html.DropDownListFor(x => x.TinhTT, new SelectList(ViewBag.DS_ThanhPho, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="QuanTT">Quận / Huyện</label>
+                                        <div id="QuanTT_block">
+                                            @Html.DropDownListFor(x => x.QuanTT, new SelectList(ViewBag.DS_QuanHuyenTT, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="PhuongTT">Phường / Xã</label>
+                                        <div id="PhuongXaTT_block">
+                                            @Html.DropDownListFor(x => x.PhuongTT, new SelectList(ViewBag.DS_PhuongXaTT, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="DcTT">Địa chỉ tạm trú</label>
+                                        @Html.TextBoxFor(x => x.DcTT, new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- ./panel-body -->
+
+                    <div class="panel-footer">
+                        <div class="form-inline">
+                            <div class="form-group"><input type="submit" value="Xác nhận" class="btn btn-primary" id="btnSubmit" /></div>
+                            <div class="form-group"><input type="button" class="btn btn-default" data-dismiss="modal" value="Đóng" /></div>
+                        </div>
+                    </div><!-- ./panel-footer -->
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#TinhThT").change(function () {
+            var id = $("#modalForm #TinhThT option:selected").val();
+            $("#QuanThT_block").load("/hcns/nhanvien/DDL_QuanHuyenThT?tinhthanh=" + id);
+            $("#PhuongXaThT_block").load("/hcns/nhanvien/DDL_PhuongXaThT");
+        });
+
+        $("#TinhTT").change(function () {
+            var id = $("#modalForm #TinhTT option:selected").val();
+            $("#QuanTT_block").load("/hcns/nhanvien/DDL_QuanHuyenTT?tinhthanh=" + id);
+            $("#PhuongXaTT_block").load("/hcns/nhanvien/DDL_PhuongXaTT");
+        });
+        $("#QuanThT").change(function () {
+            var id = $("#modalForm #QuanThT option:selected").val();
+            $("#PhuongXaThT_block").load("/hcns/nhanvien/DDL_PhuongXaThT?quanhuyen=" + id);
+        });
+        $("#QuanTT").change(function () {
+            var id = $("#modalForm #QuanTT option:selected").val();
+            $("#PhuongXaTT_block").load("/hcns/nhanvien/DDL_PhuongXaTT?quanhuyen=" + id);
+        });
+
+        $("#imageUploadForm").change(function () {
+            readURL(this);
+            var formData = new FormData();
+            var totalFiles = document.getElementById("imageUploadForm").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("imageUploadForm").files[i];
+                formData.append("imageUploadForm", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '/hcns/nhanvien/Upload?id=' + $("#modalForm #UserEnrollNumber").val(),
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false
+            }).done(function () {
+                alert('success');
+            });
+        });
+
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.r == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        //setTimeout(location.reload.bind(location), 2000);
+                    }
+                    else {
+                        $(this).callToast("error", '', 'Đã có lỗi trong quá trình thao tác dữ liệu.');
+                    }
+                }
+            });
+            return false;
+            e.preventDefault();
+        });
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+    });
+</script>

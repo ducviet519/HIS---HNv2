@@ -1,0 +1,116 @@
+﻿@{
+    ViewBag.Title = "PLSK";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    AjaxOptions options = new AjaxOptions
+    {
+        UpdateTargetId = "plskContent",
+        //Confirm = "Are you sure to start search?",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "divLoading"
+    };
+}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h5>Phân loại sức khỏe</h5>
+    </div>
+    <div class="panel-body" style="position: relative;">
+        <div id="divLoading" style="color: #fff900;background-color: rgba(0, 0, 0, 0.5);font-size: larger;display: none;position: absolute;top: 0;left: 0;right: 0;height: 100%;z-index: 9999;padding: 10px;text-align: center;">
+            Loading ....
+        </div>
+        @using (Ajax.BeginForm("PLSK_Table", options))
+        {
+            <div class="filter-areas">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Tìm nhanh</label>
+                            <input type="text" name="sknv_filter" id="sknv_filter" class="form-control input-sm" />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Khoa phòng</label>
+                            @Html.DropDownList("KhoaPhong", new SelectList(ViewBag.Departments, "Key", "Value"), "--- Chọn khoa phòng ---", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Loại</label>
+                            <select class="form-control input-sm" name="PhanLoai">
+                                <option value="">-- Chọn phân loại --</option>
+                                <option value="1">Loại 1</option>
+                                <option value="2">Loại 2</option>
+                                <option value="3">Loại 3</option>
+                                <option value="4">Loại 4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <label>Lần</label>
+                            <select class="form-control input-sm" name="LanK">
+                                <option value="">-- Chọn số lần --</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Năm</label>
+                            <select class="form-control input-sm" name="Nam">
+                                <option value="">-- Chọn năm --</option>
+                                @for (int x = 2017; x < DateTime.Now.Year; x++)
+                                {
+                                    <option value="@x">@x</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Kết luận bệnh</label>
+                            <input type="text" name="KetLuan" id="KetLuan" class="form-control input-sm" />
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary btn-sm search" value="Tìm kiếm" style="margin-top: 22px;" />
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <label id="tyle" style="margin-top: 30px;color:#ff0000;"></label>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div id="plskContent">
+            @Html.Action("PLSK_Table", "SKNV", new { areas = "HCNS.Controllers" })
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+        //$(function(){
+        //    $("#search").click(function (e) {
+        //        var obj = {
+
+        //        };
+        //        $.ajax({
+        //            type: "GET",
+        //            url: "/hcns/sknv/PLSK_Table",
+        //            data: { obj = obj },
+        //            success: function (data, status) {
+
+        //            }, error: function () {
+        //                $(this).callToast("error", 'Lỗi trong quá trình xử lý dữ liệu, vui lòng restart lại trình duyệt.', '');
+        //            }
+        //        });
+        //        e.preventDefault();
+        //    });
+        //});
+</script>

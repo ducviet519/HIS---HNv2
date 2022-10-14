@@ -1,0 +1,125 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.Absent>
+<script type="text/javascript">
+    function Edit(user, date) {
+        $(this).callModal("/hcns/nhanvien/update_khaibaovang?user=" + user + "&time=" + encodeURIComponent(date));
+    }
+    function Remove(user,code,date) {
+            $.ajax({
+                url: "@Url.Action("XoaKhaiBao", "NhanVien")",
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ user: user, code: code, date: date }),
+                async: true,
+                processData: false,
+                cache: false,
+                beforeSend: function () {
+                    return confirm("Bạn muốn thực hiện chức năng xóa?");
+                },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+
+                        $(".row_" + date.split('/').join('')).hide(300);
+                    } else {
+                        $(this).callToast("error", '', data.message);
+                    }
+                },
+                error: function (xhr) {
+                    $(this).callToast("error", '', "Thao tác xóa không thành công");
+                }
+            });
+        }
+</script>
+<style type="text/css">
+    #absent-table_wrapper > .row:first-child { display: none; }
+    #absent-table thead tr { background-color: #3882b6; }
+        #absent-table thead tr th { color: #fff; border-color: #2476af; padding-right: 8px; }
+            #absent-table thead tr th:before, #hcns-table thead tr th:after { content: ""; }
+    #absent-table tbody td { word-wrap: normal !important; }
+    .nowrap { white-space: nowrap !important; }
+    th, td { white-space: nowrap; }
+    tr.date-early td { color: #ff0000; }
+    /*custom fix column_table*/
+    table.dataTable thead > tr > th.sorting_asc, table.dataTable thead > tr > th.sorting_desc, table.dataTable thead > tr > th.sorting, table.dataTable thead > tr > td.sorting_asc, table.dataTable thead > tr > td.sorting_desc, table.dataTable thead > tr > td.sorting { padding-right: 0 !important; border-bottom: 3px solid #ddd; }
+    .DTFC_LeftHeadWrapper .DTFC_Cloned { border-top: 0; }
+        .DTFC_LeftHeadWrapper .DTFC_Cloned thead th { border-bottom: 2px solid #ddd !important; border-top: 1px solid #ddd !important; }
+    .DTFC_LeftBodyWrapper .DTFC_Cloned { border-top: 0 !important; }
+        .DTFC_LeftBodyWrapper .DTFC_Cloned tbody tr { border-bottom: 0 !important; background: #fff; }
+            .DTFC_LeftBodyWrapper .DTFC_Cloned tbody tr td { padding-top: 9px; }
+</style>
+
+<table class="table table-bordered table-hover" id="absent-table">
+    <thead>
+        <tr>
+            <th width="50"></th>
+            <th class="nowrap">Mã nhân viên</th>
+            <th class="nowrap">Họ và tên</th>
+            <th class="nowrap">Lý do vắng</th>
+            <th class="nowrap">Ngày khai báo</th>
+            <th class="nowrap">Ngày nghỉ</th>
+            @*<th class="nowrap">Khai báo</th>*@
+            <th class="nowrap">Ghi chú</th>
+            <th class="nowrap">Người khai báo</th>
+            <th width="40"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model as IEnumerable<System.App.Entities.HCNS.Absent>)
+            {
+        <tr class="row_@item.TimeDate.Replace("/","") @(item.Warning ? "date-early" : "")">
+            <td><a href="javascript:;" onclick="Edit(@item.UserEnrollNumber, '@item.TimeDate')">Sửa</a></td>
+            <td class="nowrap">@item.UserFullCode</td>
+            <td class="nowrap">@item.UserFullName</td>
+            <td class="nowrap">@item.AbsentDescription</td>
+            <td class="nowrap">@item.AddedTime</td>
+            <td class="nowrap">@item.TimeDate</td>
+
+            @*@if (Convert.ToInt32(item.DiffDate) == 0)
+                {
+                    <td class="nowrap">Trong ngày</td>
+                }
+                else if (Convert.ToInt32(item.DiffDate) > 0)
+                {
+                    <td class="nowrap">Trước @System.Math.Abs(item.DiffDate).ToString("00") ngày</td>
+                }
+                else
+                {
+                    <td class="nowrap">Sau @System.Math.Abs(item.DiffDate).ToString("00") ngày</td>
+                }*@
+            <td class="nowrap">@(String.IsNullOrEmpty(item.Lydo) ? "-" : item.Lydo)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.UserAccount) ? "-" : item.UserAccount)</td>
+            <td class="text-center"><a href="javascript:;" class="remove" onclick="Remove('@item.UserEnrollNumber', '@item.AbsentCode', '@item.TimeDate')" style="color:#ff0000;"><i class="fa fa-remove"></i></a></td>
+        </tr>
+            }
+        }
+        else
+        {
+        <tr>
+            <td colspan="10" class="text-center">Chưa có dữ liệu</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        if ($('#absent-table tbody tr').length > 1) {
+            $(document).ready(function () {
+                var table = $("#absent-table").DataTable({
+                    pageLength: 10,
+                    scrollY: "360px",
+                    scrollX: false,
+                    scrollCollapse: true,
+                    language: { "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Vietnamese.json" }
+                });
+
+                $("#fsearch").on('keyup', function () {
+                    table.search(this.value).draw();
+                });
+            });
+        }
+
+    });
+</script>

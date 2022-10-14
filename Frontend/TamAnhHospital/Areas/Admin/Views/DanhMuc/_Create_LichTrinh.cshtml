@@ -1,0 +1,178 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 500px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục Lịch trình</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Lịch làm việc</label>
+                            @Html.DropDownList("cre_lt_SchID", ViewBag.SCHEDULES as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label style="margin-top:30px">Chủ nhật:</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Ca làm việc</label>
+                            @Html.DropDownList("cre_lt_ShiftID1", ViewBag.SHIFTS as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label style="margin-top:30px">Thứ hai:</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Ca làm việc</label>
+                            @Html.DropDownList("cre_lt_ShiftID2", ViewBag.SHIFTS as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label style="margin-top:30px">Thứ ba:</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Ca làm việc</label>
+                            @Html.DropDownList("cre_lt_ShiftID3", ViewBag.SHIFTS as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label style="margin-top:30px">Thứ tư:</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Ca làm việc</label>
+                            @Html.DropDownList("cre_lt_ShiftID4", ViewBag.SHIFTS as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label style="margin-top:30px">Thứ năm:</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Ca làm việc</label>
+                            @Html.DropDownList("cre_lt_ShiftID5", ViewBag.SHIFTS as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label style="margin-top:30px">Thứ sáu:</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Ca làm việc</label>
+                            @Html.DropDownList("cre_lt_ShiftID6", ViewBag.SHIFTS as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label style="margin-top:30px">Thứ bảy:</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Ca làm việc</label>
+                            @Html.DropDownList("cre_lt_ShiftID7", ViewBag.SHIFTS as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_lt_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_lt_btnCreate").click(function (e) {
+            var _SchID = $("select[name='cre_lt_SchID'] option:selected").val();
+            var _ShiftID1 = $("select[name='cre_lt_ShiftID1'] option:selected").val();
+            var _ShiftID2 = $("select[name='cre_lt_ShiftID2'] option:selected").val();
+            var _ShiftID3 = $("select[name='cre_lt_ShiftID3'] option:selected").val();
+            var _ShiftID4 = $("select[name='cre_lt_ShiftID4'] option:selected").val();
+            var _ShiftID5 = $("select[name='cre_lt_ShiftID5'] option:selected").val();
+            var _ShiftID6 = $("select[name='cre_lt_ShiftID6'] option:selected").val();
+            var _ShiftID7 = $("select[name='cre_lt_ShiftID7'] option:selected").val();  
+            if (_SchID == '') {
+                $(this).callToast("error", 'Chưa chọn lịch làm việc', '');
+                return;
+            }
+            if (_ShiftID1 == '') {
+                $(this).callToast("error", 'Chưa chọn ca làm việc', '');
+                return;
+            }
+            if (_ShiftID2 == '') {
+                $(this).callToast("error", 'Chưa chọn ca làm việc', '');
+                return;
+            }
+            if (_ShiftID3 == '') {
+                $(this).callToast("error", 'Chưa chọn ca làm việc', '');
+                return;
+            }
+            if (_ShiftID4 == '') {
+                $(this).callToast("error", 'Chưa chọn ca làm việc', '');
+                return;
+            }
+            if (_ShiftID5 == '') {
+                $(this).callToast("error", 'Chưa chọn ca làm việc', '');
+                return;
+            }
+            if (_ShiftID6 == '') {
+                $(this).callToast("error", 'Chưa chọn ca làm việc', '');
+                return;
+            }
+            if (_ShiftID7 == '') {
+                $(this).callToast("error", 'Chưa chọn ca làm việc', '');
+                return;
+            }
+
+            var obj = {
+                "SchID": _SchID,
+                "ShiftID1": _ShiftID1,
+                "ShiftID2": _ShiftID2,
+                "ShiftID3": _ShiftID3,
+                "ShiftID4": _ShiftID4,
+                "ShiftID5": _ShiftID5,
+                "ShiftID6": _ShiftID6,
+                "ShiftID7": _ShiftID7,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_LichTrinh", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Lịch trình đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

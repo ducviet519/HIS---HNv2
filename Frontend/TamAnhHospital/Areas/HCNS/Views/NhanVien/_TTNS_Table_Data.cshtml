@@ -1,0 +1,121 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.HCNS_NhanVien>
+<style type="text/css">
+    #hcns-table_wrapper > .row:first-child { display: none; }
+    #hcns-table thead tr { background-color: #3882b6; }
+        #hcns-table thead tr th { color: #fff; border-color: #2476af; padding-right: 0; }
+            #hcns-table thead tr th:before, #hcns-table thead tr th:after { content: ""; }
+    #hcns-table tbody td { word-wrap: normal !important; }
+    .nowrap { white-space: nowrap !important; }
+    th, td { white-space: nowrap; }
+    table.dataTable thead > tr > th.sorting_asc, table.dataTable thead > tr > th.sorting_desc, table.dataTable thead > tr > th.sorting, table.dataTable thead > tr > td.sorting_asc, table.dataTable thead > tr > td.sorting_desc, table.dataTable thead > tr > td.sorting { padding-right: 0 !important; border-bottom: 3px solid #ddd; }
+    .DTFC_LeftHeadWrapper .DTFC_Cloned { border-top: 0; }
+        .DTFC_LeftHeadWrapper .DTFC_Cloned thead th { border-bottom: 2px solid #ddd !important; border-top: 1px solid #ddd !important; }
+    .DTFC_LeftBodyWrapper .DTFC_Cloned { border-top: 0 !important; }
+        .DTFC_LeftBodyWrapper .DTFC_Cloned tbody tr { border-bottom: 0 !important; background: #fff; }
+            .DTFC_LeftBodyWrapper .DTFC_Cloned tbody tr td { border-top: 1px solid #ddd; }
+    .dropdown-divider { height: 0; margin: .5rem 0; overflow: hidden; border-top: 1px solid #e9ecef; }
+    .dropdown-menu { text-align: left; font-size: 12px; }
+</style>
+
+<table class="table table-bordered table-hover" id="hcns-table" width="100%">
+    <thead>
+        <tr>
+            <th width="20"></th>
+            <th class="nowrap">Mã NV</th>
+            <th class="nowrap">Họ và tên</th>
+            <th class="nowrap">Giới tính</th>
+            <th class="nowrap">TT hôn nhân</th>
+            <th class="nowrap">Chức danh</th>
+            <th class="nowrap">Khoa / Phòng</th>
+            <th class="nowrap">Ngày sinh</th>
+            <th class="nowrap">Nơi sinh</th>
+            <th class="nowrap">Quốc tịch</th>
+            <th class="nowrap">Dân tộc</th>
+            <th class="nowrap">Loại thẻ</th>
+            <th class="nowrap">Số CMT</th>
+            <th class="nowrap">Ngày cấp</th>
+            <th class="nowrap">Nơi cấp</th>
+            <th class="nowrap">Thường trú</th>
+            <th class="nowrap">Tài khoản 1</th>
+            <th class="nowrap">Tài khoản 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model as IEnumerable<System.App.Entities.HCNS.HCNS_NhanVien>)
+            {
+                <tr>
+                    <td class="text-center nowrap">
+                        <!-- Example single danger button -->
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Sửa
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="javascript:;" data-href="/hcns/nhanvien/update_TTNS?id=@item.UserEnrollNumber" class="btnEdit dropdown-item"><i class="fa fa-edit"></i> Sửa thông tin</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item btnHired" href="javascript:;" data-href="/hcns/nhanvien/Update_NghiViec?id=@item.UserEnrollNumber"><i class="fa fa-ban"></i> Cho nghỉ việc</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="nowrap">@item.UserFullCode</td>
+                    <td class="nowrap">@item.UserFullName</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.GioiTinh) ? "-" : item.GioiTinh)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.ThongTinHonNhan) ? "-" : item.ThongTinHonNhan)</td>
+                    <td class="nowrap" style="max-width: 200px;">@item.ChucDanh</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.Ten_PhongKhoaHC) ? "-" : item.Ten_PhongKhoaHC)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.NgaySinh) ? "-" : item.NgaySinh)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.NoiSinh) ? "-" : item.NoiSinh)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.QuocTich) ? "-" : item.QuocTich)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.DanToc) ? "-" : item.DanToc)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.LoaiCMT) ? "-" : item.LoaiCMT)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.SoCMT) ? "-" : item.SoCMT)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.CapNgay) ? "-" : item.CapNgay)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.NoiCap) ? "-" : item.NoiCap)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.DcTT) ? "-" : item.DcTT)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.SoTK1) ? "-" : item.SoTK1)</td>
+                    <td class="nowrap">@(String.IsNullOrEmpty(item.SoTK2) ? "-" : item.SoTK2)</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="12" class="text-center">Chưa có dữ liệu</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        if ($('#hcns-table tbody tr').length > 1) {
+            //$('#hcns-table').callDataTableCustomSearchPage('vi', '8', '#fsearch', 10);
+
+            $(document).ready(function () {
+                var table = $("#hcns-table").DataTable({
+                    //scrollY: "360px",
+                    scrollX: true,
+                    "pageLength": 20,
+                    //scrollCollapse: true,
+                    language: { "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Vietnamese.json" },
+                    //fixedColumns: {
+                    //    leftColumns: 3
+                    //}
+                });
+
+                $("#fsearch").on('keyup', function () {
+                    table.search(this.value).draw();
+                });
+            });
+        }
+        $(".btnEdit").click(function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+        $(".btnHired").click(function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+    });
+</script>

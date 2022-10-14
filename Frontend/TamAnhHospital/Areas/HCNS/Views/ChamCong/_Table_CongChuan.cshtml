@@ -1,0 +1,84 @@
+﻿<style>
+    table { width: 100% !important; }
+        table tr th { white-space: nowrap; font-size: 10px; padding: 5px 0px !important; }
+            table tr th::before, table tr th::after { content: "" !important; }
+    .dataTables_wrapper > .row:first-child { display: none; }
+    table tbody td { padding: 2px 0 !important; text-align: center; line-height: 16px !important; }
+        table tbody td.text-left { padding-left: 5px !important; }
+    .bg-yellow { background-color: #fff8cf; }
+    table tbody tr td:nth-child(1) { background-color: #fff8cf; }
+    table tbody tr td:nth-child(2) { background-color: #fff8cf; }
+    table tbody tr td:nth-child(3) { background-color: #fff8cf; }
+    .row { margin-bottom: 10px; }
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input, .form select { max-width: 100%; }
+</style>
+
+@{
+    var dateInfo = ViewBag.Date == null ? DateTime.UtcNow.AddHours(7) : (DateTime)ViewBag.Date;
+    var totalDay = ViewBag.TotalDay ?? 0;
+    var startdate = (DateTime)ViewBag.StartDate;
+    var enddate = (DateTime)ViewBag.EndDate;
+    var jsonData = Html.Raw(ViewBag.JsonData);
+}
+
+<table class="table table-bordered table-hover" id="table-data">
+    <thead>
+        <tr>
+            <th class="text-center" rowspan="1" style="background-color: #fff8cf;">Mã NV</th>
+            <th class="text-center" rowspan="1" style="background-color: #fff8cf;">Họ và tên</th>
+            <th class="text-center" rowspan="1" style="background-color: #fff8cf;">Số công / Tổng</th>
+
+            @for (int i = 0; i < totalDay; i++)
+            {
+            <th class="text-center">
+                @{
+                        var _nextDate = dateInfo.AddDays(i);
+                        var _dayOfWeek = _nextDate.DayOfWeek.ToString();
+                        var _dayName = "";
+                        switch (_dayOfWeek)
+                        {
+                            case "Sunday":
+                                _dayName = "CN";
+                                break;
+                            case "Monday":
+                                _dayName = "T2";
+                                break;
+                            case "Tuesday":
+                                _dayName = "T3";
+                                break;
+                            case "Wednesday":
+                                _dayName = "T4";
+                                break;
+                            case "Thursday":
+                                _dayName = "T5";
+                                break;
+                            case "Friday":
+                                _dayName = "T6";
+                                break;
+                            case "Saturday":
+                                _dayName = "T7";
+                                break;
+                        }
+                }
+                @(_dayName == "CN" ? Html.Raw("<span style='color:#ff0000;'>" + _dayName + "</span>") : Html.Raw(_dayName))
+                @(_dayName == "CN" ? Html.Raw("<span style='color:#ff0000; display: block;'>" + dateInfo.AddDays(i).Day.ToString("00") + "/" + dateInfo.AddDays(i).ToString("MM") + "</span>") : Html.Raw("<span style='display: block;'>" + dateInfo.AddDays(i).Day.ToString("00") + "/" + @dateInfo.AddDays(i).ToString("MM") + "</span>"))
+            </th>
+                        }
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<div id="wdr-component"></div>
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('change', '.all', function () {
+            var cVal = $(this).val();
+            var parent_row = $(this).parent().parent();
+            $(parent_row).find("select").val(cVal);
+        });
+    });
+</script>

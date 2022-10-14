@@ -1,0 +1,29 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.ZK_Machine>
+
+@{
+    ViewBag.Title = "Thông tin thiết bị";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .card { border: 1px solid #17a2b8; }
+    .card-header { background: #17a2b8 !important; padding: 5px 0; }
+        .card-header b { display: block; }
+    .card-body { padding: 10px; }
+</style>
+<div class="form-row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="card">
+                <div class="card-header text-center" style="color:#fff;">
+                    <b>@item.DeviceName</b>
+                    <i>@item.IPAddress</i>
+                </div>
+
+                @Html.Action("ThongTin", "ZK", new { Area = "HCNS", ip = item.IPAddress, totalUser = item.UserCount, totalFinger = item.FPCount, totalAtt = item.AttLogCount })
+            </div>
+
+        </div>
+    }
+</div>
+

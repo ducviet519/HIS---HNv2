@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "PLSK";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    AjaxOptions options = new AjaxOptions
+    {
+        UpdateTargetId = "plskContent",
+        InsertionMode = InsertionMode.Replace,
+        LoadingElementId = "divLoading"
+    };
+}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h5>Theo dõi sức khỏe</h5>
+    </div>
+    <div class="panel-body" style="position: relative;">
+        <div id="divLoading" style="color: #fff900; background-color: rgba(0, 0, 0, 0.5);font-size: larger;display: none;position: absolute;top: 0;left: 0;right: 0;height: 100%;z-index: 9999;padding: 10px;text-align: center;">
+            Loading ....
+        </div>
+        @using (Ajax.BeginForm("TDSK_Table", options))
+        {
+        <div class="filter-areas">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Tìm nhanh</label>
+                        <input type="text" name="sknv_filter" id="sknv_filter" class="form-control input-sm" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Khoa phòng</label>
+                        @Html.DropDownList("KhoaPhong", new SelectList(ViewBag.Departments, "Key", "Value"), "--- Chọn khoa phòng ---", new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Năm</label>
+                        <select class="form-control input-sm">
+                            <option value="2019">2019</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary btn-sm search" value="Tìm kiếm" style="margin-top: 22px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
+        <div id="plskContent">
+            @Html.Action("TDSK_Table", "SKNV", new { areas = "HCNS.Controllers" })
+        </div>
+    </div>
+</div>

@@ -1,0 +1,290 @@
+﻿<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+@model System.App.Entities.HCNS.UserWStats
+
+@{
+    var user = ViewBag.User ?? new System.App.Entities.HCNS.HCNS_NhanVien() as System.App.Entities.HCNS.HCNS_NhanVien;
+    var userAuth = ViewBag.UserAuth as string;
+    var tungay = (DateTime)ViewBag.From;
+    var denngay = (DateTime)ViewBag.To;
+    var countdate = (denngay - tungay).TotalDays;
+
+    List<SelectListItem> selectListS1Items = new List<SelectListItem>();
+
+    foreach (var item in ViewBag.S1 as IEnumerable<System.App.Entities.HCNS.WorkStatsType>)
+    {
+        selectListS1Items.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Des });
+    }
+    var selectListS1 = new SelectList(selectListS1Items, "Value", "Text", 2);
+
+    List<SelectListItem> selectListS2Items = new List<SelectListItem>();
+    foreach (var item in ViewBag.S2 as IEnumerable<System.App.Entities.HCNS.WorkStatsType>)
+    {
+        selectListS2Items.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Des });
+    }
+    var selectListS2 = new SelectList(selectListS2Items, "Value", "Text", 2);
+
+    List<SelectListItem> selectListS3Items = new List<SelectListItem>();
+    foreach (var item in ViewBag.S3 as IEnumerable<System.App.Entities.HCNS.WorkStatsType>)
+    {
+        selectListS3Items.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Des });
+    }
+    var selectListS3 = new SelectList(selectListS3Items, "Value", "Text", 2);
+
+    List<SelectListItem> selectListTTItems = new List<SelectListItem>();
+    foreach (var item in ViewBag.TTOps as Dictionary<int, string>)
+    {
+        selectListTTItems.Add(new SelectListItem() { Value = item.Key.ToString(), Text = item.Value });
+    }
+    var selectListTT = new SelectList(selectListTTItems, "Value", "Text");
+
+    List<SelectListItem> selectListLTGItems = new List<SelectListItem>();
+    foreach (var item in ViewBag.LTGOps as Dictionary<int, string>)
+    {
+        selectListLTGItems.Add(new SelectListItem() { Value = item.Key.ToString(), Text = item.Value });
+    }
+    var selectListLTG = new SelectList(selectListLTGItems, "Value", "Text");
+}
+
+<style type="text/css">
+    .modal-lg { width: 700px; }
+
+    .panel-heading { background: #3882B6; }
+
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+
+            .panel-heading h4 i { margin-right: 5px; }
+
+    .form input[type='text'], form select, form textarea { max-width: none; }
+
+    .form .row { margin-left: -5px; margin-right: -5px; }
+
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    .form .infor-box { margin-bottom: 10px; }
+
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+
+    .ui-autocomplete { z-index: 9999; }
+</style>
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog modal-lg">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Cập nhật thời gian làm việc</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                @using (Html.BeginForm("Push_Update_ThoiGianLamViec", "ChamCong", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.KhoaPhong, new { @Value = ViewBag.KhoaPhong })
+                    @Html.HiddenFor(x => x.Confirmed)
+                    <div class="panel-body form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @if (userAuth != "user")
+                                {
+                                    <label for="TimeDate">Chọn nhân viên</label>
+                                    @Html.EditorFor(model => model.UserFullName, new { htmlAttributes = new { @class = "form-control input-sm", required = true } })
+                                    @Html.HiddenFor(x => x.UserEnrollNumber)
+                                }
+                                else
+                                {
+                                    <p style="font-size: 12px;"><b>Thông tin: </b>[@user.UserFullCode] @user.UserFullName</p>
+                                    @Html.HiddenFor(x => x.UserEnrollNumber, new { @Value = user.UserEnrollNumber })
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Đi muộn về sớm</label>
+                                <!-- danh sách ca -->
+                                @Html.DropDownListFor(x => x.WStats1, selectListS1, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Làm thêm giờ</label>
+                                <!-- danh sách ca -->
+                                @Html.DropDownListFor(x => x.WStats2, selectListS2, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Trực trưa</label>
+                                <!-- danh sách ca -->
+                                @Html.DropDownListFor(x => x.WStats3, selectListS3, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Lý do muộn/sớm</label>
+                                @Html.TextBoxFor(x => x.Note, new { @class = "form-control input-sm", autocomplete = "off" })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Loại lý do làm thêm giờ</label>
+                                <!-- danh sách ca -->
+                                @Html.DropDownListFor(x => x.LTGType, selectListLTG, "-- Chọn lý do --", new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="col-md-4">
+                                <label>Loại lý do trực trưa</label>
+                                <!-- danh sách ca -->
+                                @Html.DropDownListFor(x => x.TTType, selectListTT, "-- Chọn lý do --", new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        @*<div class="row">
+                            <div class="col-md-12">
+                                <label>Lý do khác</label>
+                                @Html.TextBoxFor(x => x.Note, new { @class = "form-control input-sm", autocomplete = "off" })
+                            </div>
+                        </div>*@
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Danh sách ngày khai báo</label>
+                                <div class="clearfix"></div>
+                                <div style="width: 20%;" class="pull-left">
+                                    <label style="line-height:22px;"><input type="checkbox" id="checkAll" class="pull-left" style="margin-right: 5px;" /> Chọn tất cả</label>
+                                </div>
+                                <div class="clearfix"></div>
+                                @for (int i = 0; i <= countdate; i++)
+                                {
+                                    <div style="width: 20%;" class="pull-left">
+                                        <label style="line-height:22px;"><input type="checkbox" name="chk_date" value="@tungay.AddDays(i).ToString("yyyyMMdd")" class="pull-left" style="margin-right: 5px;"> @tungay.AddDays(i).ToString("dd/MM")</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-footer text-center">
+                        <input type="submit" value="Xác nhận" class="btn btn-primary btn-sm" id="btnSubmit" />
+                        <input type="button" value="Đóng" class="btn btn-default btn-sm" data-dismiss="modal" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#checkAll', function () {
+            $('input[name="chk_date"]').not(this).prop('checked', this.checked);
+        });
+        $("#UserFullName").focusout(function () {
+            if ($(this).val() == "") {
+                $("#modalForm #UserEnrollNumber").val("");
+            }
+        });
+        $("#UserFullName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/hcns/chamcong/getuser",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefix: request.term, user: @user.UserEnrollNumber, kp: $("#KhoaPhong").val() },
+                    success: function (data) {
+                        response($.map(JSON.parse(data), function (item) {
+                            var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+                            return { label: display, value: display, id: item.UserEnrollNumber, code: item.UserFullCode };
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#modalForm #UserEnrollNumber").val(ui.item.id);
+                //$("#modalForm #UserFullName").val(ui.item.label);
+                //$("#modalForm #UserFullCode").val(ui.item.code);
+            }
+        });
+
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+            var userEnroll = $("#modalForm #UserEnrollNumber").val();
+            var day = $('#modalForm input[name="chk_date"]:checked').length;
+            var w1 = $("#WStats1 option:selected").val();
+            var w2 = $("#WStats2 option:selected").val();
+            var w3 = $("#WStats3 option:selected").val();
+            var LTGType = $("#LTGType option:selected").val();
+            var TTType = $("#TTType option:selected").val();
+            var note = $("#Note").val();
+
+            if (w1 == "" && w2 == "" && w3 == "") {
+                $(this).callToast("error", '', 'Bạn chưa chọn hướng xử lý loại thời gian làm việc.');
+                return false;
+            }
+            if (day == 0) {
+                $(this).callToast("error", '', 'Bạn cần chọn ngày để khai báo.');
+                return false;
+            }
+
+            if (userEnroll == '') {
+                $(this).callToast("error", '', 'Thông tin nhân viên không đúng, vui lòng chọn lại.');
+                return false;
+            }
+            if (w1 != "" && note == "") {
+                $(this).callToast("error", '', 'Cần chọn loại lý do sớm / muộn.');
+                return false;
+            }
+            if (w2 != "" && LTGType == "") {
+                $(this).callToast("error", '', 'Cần chọn loại lý do làm thêm giờ.');
+                return false;
+            }
+            if (w3 != "" && TTType == "") {
+                $(this).callToast("error", '', 'Cần chọn loại lý do trực trưa.');
+                return false;
+            }
+            //if (note == '') {
+            //    $(this).callToast("error", '', 'Chưa điền lý do đề xuất.');
+            //    return false;
+            //}
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        //$("#nhanvien").val(userEnroll);
+                        $("#btnSearch").focus().click();
+                        $("#Confirmed").val(false);
+                    }
+                    else {
+                        if (data.result == false && data.message != '') {
+                            if (confirm(decodeURIComponent("Các ngày đã được khai báo\n" + data.message + "\nXác nhận cập nhật?"))) {
+                                $("#Confirmed").val(true);
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: url,
+                                    data: form.serialize(),
+                                    success: function (data) {
+                                        if (data.result == true) {
+                                            $(this).callToast("success", '', 'Cập nhật thành công');
+                                            //$("#nhanvien").val(userEnroll);
+                                            $("#btnSearch").focus().click();
+                                        } else {
+                                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc lịch đặt bị trùng.");
+                                        }
+                                        $("#Confirmed").val(false);
+                                    }
+                                });
+                            }
+                        } else {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc lịch đặt bị trùng.");
+                        }
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+        $("#WStats1").chosen();
+        $("#WStats2").chosen();
+        $("#WStats3").chosen();
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+    });
+</script>

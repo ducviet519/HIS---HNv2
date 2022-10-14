@@ -1,0 +1,1490 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\..\Backend\Entities\Entities.projitems" Label="Shared" />
+  <Import Project="..\..\Backend\Repositories\Repositories.projitems" Label="Shared" />
+  <Import Project="..\..\Backend\Services\Services.projitems" Label="Shared" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{58E3B4F5-6451-4CD9-BFD7-6FDB72933A7A}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TamAnhHospital</RootNamespace>
+    <AssemblyName>TamAnhHospital</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ClosedXML, Version=0.96.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ClosedXML.0.96.0\lib\net46\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.ReportAppServer.CommLayer, Version=10.2.3600.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>bin\CrystalDecisions.ReportAppServer.CommLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Web, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="Dapper, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Dapper.1.50.5\lib\net451\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="DapperExtensions, Version=1.6.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DapperExtensions.1.6.3\lib\net45\DapperExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.16.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DocumentFormat.OpenXml.2.16.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelNumberFormat, Version=1.1.0.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
+    </Reference>
+    <Reference Include="FastMember.Signed, Version=1.3.0.0, Culture=neutral, PublicKeyToken=9e8f22703bef9a29, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FastMember.Signed.1.3.0\lib\net45\FastMember.Signed.dll</HintPath>
+    </Reference>
+    <Reference Include="Ghostscript.NET, Version=1.2.1.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ghostscript.NET.1.2.1\lib\net40\Ghostscript.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.11.25.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HtmlAgilityPack.1.11.25\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Configuration.Abstractions.6.0.0\lib\net461\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Primitives.6.0.0\lib\net461\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Oracle.ManagedDataAccess.12.2.20220118\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess.EntityFramework">
+      <HintPath>..\..\lib\Oracle.ManagedDataAccess.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.Web">
+      <HintPath>..\..\lib\Oracle.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.IO.FileSystem.Primitives.4.0.1\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.IO.Packaging.4.0.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.2.2.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.6\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.2.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.2.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.2.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.WindowsServer.2.2.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web">
+      <HintPath>..\..\packages\Microsoft.ApplicationInsights.Web.2.2.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\DanhMucController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\BCCCController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\BCSKController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\ChamCongController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\CongVanController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\DangKySuatAnController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\DaoTaoChungChiController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\DoiChieuSuatAnController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\HDLDController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\NhanVienController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\RoomController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\SKNVController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\SuatAnController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\TrainingCourseController.cs" />
+    <Compile Include="Areas\HCNS\Controllers\ZKController.cs" />
+    <Compile Include="Areas\HCNS\HCNSAreaRegistration.cs" />
+    <Compile Include="Areas\HCNS\Models\DataPoint.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Models\ActiveDirectoryValidator.cs" />
+    <Compile Include="Models\CustomPrincipal.cs" />
+    <Compile Include="Models\DataSet_Reports.cs">
+      <DependentUpon>DataSet_Reports.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DataSet_Reports.Designer.cs">
+      <DependentUpon>DataSet_Reports.xsd</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="App_Start\Ninject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Admin\Content\site.css" />
+    <Content Include="Areas\HCNS\Content\hcns.css" />
+    <Content Include="Content\404.css" />
+    <Content Include="Content\ajax-loading.css" />
+    <Content Include="Content\bootstrap-toggle.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\btr-menu.min.css" />
+    <Content Include="Content\buttons.dataTables.min.css" />
+    <Content Include="Content\chosen.min.css" />
+    <Content Include="Content\datatables\datatables.bootstrap4.min.css" />
+    <Content Include="Content\datatables\datatables.group.min.css" />
+    <Content Include="Content\datatables\datatables.min.css" />
+    <Content Include="Content\datatables\datatables.plugin.min.css" />
+    <Content Include="Content\datatables\fixedHeader.dataTables.min.css" />
+    <Content Include="Content\datepicker.css" />
+    <Content Include="Content\easy-autocomplete.min.css" />
+    <Content Include="Content\easy-autocomplete.themes.min.css" />
+    <Content Include="Content\easycal.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\jquery-ui.css" />
+    <Content Include="Content\jquery.scrollbar.css" />
+    <Content Include="Content\jquery.toast.min.css" />
+    <Content Include="Content\lcd.css" />
+    <Content Include="Content\lightbox.css" />
+    <Content Include="Content\login.css" />
+    <Content Include="Content\paper.css" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_cs.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_da.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_de.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_en.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_es.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_fi.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_fr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_hu.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_it.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_ja.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_ko.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_nb.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_nl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_pl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_pt.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_ru.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_sk.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_sv.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_th.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_tr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_zh_CN.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\CRViewer_res_zh_TW.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_cs.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_da.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_de.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_en.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_es.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_fi.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_fr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_hu.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_it.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_ja.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_ko.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_nb.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_nl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_pl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_pt.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_ru.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_sk.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_sv.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_th.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_tr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_zh_CN.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\csprintdlg_res_zh_TW.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\LCIDTable.xml" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_cs.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_da.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_de.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_en.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_es.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_fi.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_fr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_hu.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_it.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_ja.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_ko.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_nb.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_nl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_pl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_pt.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_ru.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_sk.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_sv.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_th.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_tr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_zh_CN.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\PrintControl_res_zh_TW.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\pvlocale-1-0.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_cs.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_da.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_de.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_en.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_es.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_fi.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_fr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_hu.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_it.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_ja.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_ko.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_nb.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_nl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_pl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_pt.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_ru.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_sk.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_sv.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_th.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_tr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_zh_CN.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\sviewhlp_res_zh_TW.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_cs.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_da.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_de.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_en.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_es.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_fi.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_fr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_hu.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_it.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_ja.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_ko.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_nb.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_nl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_pl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_pt.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_ru.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_sk.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_sv.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_th.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_tr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_zh_CN.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\swebrs_res_zh_TW.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_cs.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_da.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_de.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_en.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_es.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_fi.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_fr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_hu.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_it.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_ja.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_ko.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_nb.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_nl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_pl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_pt.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_ru.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_sk.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_sv.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_th.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_tr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_zh_CN.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\csprintdlg_res_zh_TW.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_cs.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_da.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_de.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_en.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_es.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_fi.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_fr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_hu.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_it.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_ja.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_ko.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_nb.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_nl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_pl.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_pt.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_ru.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_sk.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_sv.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_th.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_tr.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_zh_CN.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\PrintControl_res_zh_TW.dll" />
+    <Content Include="crystalreportviewers13\ActiveXControls\win64_x64\pvlocale-1-0.dll" />
+    <Content Include="crystalreportviewers13\allInOne.js" />
+    <Content Include="crystalreportviewers13\allStrings_cs.js" />
+    <Content Include="crystalreportviewers13\allStrings_da.js" />
+    <Content Include="crystalreportviewers13\allStrings_de.js" />
+    <Content Include="crystalreportviewers13\allStrings_en.js" />
+    <Content Include="crystalreportviewers13\allStrings_es.js" />
+    <Content Include="crystalreportviewers13\allStrings_fi.js" />
+    <Content Include="crystalreportviewers13\allStrings_fr.js" />
+    <Content Include="crystalreportviewers13\allStrings_hu.js" />
+    <Content Include="crystalreportviewers13\allStrings_it.js" />
+    <Content Include="crystalreportviewers13\allStrings_ja.js" />
+    <Content Include="crystalreportviewers13\allStrings_ko.js" />
+    <Content Include="crystalreportviewers13\allStrings_nb.js" />
+    <Content Include="crystalreportviewers13\allStrings_nl.js" />
+    <Content Include="crystalreportviewers13\allStrings_pl.js" />
+    <Content Include="crystalreportviewers13\allStrings_pt.js" />
+    <Content Include="crystalreportviewers13\allStrings_ru.js" />
+    <Content Include="crystalreportviewers13\allStrings_sk.js" />
+    <Content Include="crystalreportviewers13\allStrings_sv.js" />
+    <Content Include="crystalreportviewers13\allStrings_th.js" />
+    <Content Include="crystalreportviewers13\allStrings_tr.js" />
+    <Content Include="crystalreportviewers13\allStrings_zh_CN.js" />
+    <Content Include="crystalreportviewers13\allStrings_zh_TW.js" />
+    <Content Include="crystalreportviewers13\crsmarttag.asp" />
+    <Content Include="crystalreportviewers13\crystalimagehandler.asp" />
+    <Content Include="crystalreportviewers13\css\cedefault.css" />
+    <Content Include="crystalreportviewers13\css\default.css" />
+    <Content Include="crystalreportviewers13\css\exception.css" />
+    <Content Include="crystalreportviewers13\css\prompting.css" />
+    <Content Include="crystalreportviewers13\html\calendar.html" />
+    <Content Include="crystalreportviewers13\html\calendarbottom.html" />
+    <Content Include="crystalreportviewers13\html\calendartop.html" />
+    <Content Include="crystalreportviewers13\imagehandlerdotnetbridge.aspx" />
+    <Content Include="crystalreportviewers13\images\buttonl.gif" />
+    <Content Include="crystalreportviewers13\images\buttonm.gif" />
+    <Content Include="crystalreportviewers13\images\buttonr.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortActive100.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortActive150.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortActive200.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortActive250.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortActive300.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortActive350.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortActive400.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortActive50.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortHover100.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortHover150.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortHover200.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortHover250.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortHover300.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortHover350.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortHover400.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortHover50.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortInactive100.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortInactive150.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortInactive200.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortInactive250.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortInactive300.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortInactive400.gif" />
+    <Content Include="crystalreportviewers13\images\isort\DownArrowSortInactive50.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortActive100.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortActive150.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortActive200.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortActive250.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortActive300.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortActive350.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortActive400.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortActive50.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortHover100.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortHover150.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortHover200.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortHover250.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortHover300.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortHover350.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortHover400.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortHover50.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortInactive100.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortInactive150.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortInactive200.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortInactive250.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortInactive300.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortInactive400.gif" />
+    <Content Include="crystalreportviewers13\images\isort\UpArrowSortInactive50.gif" />
+    <Content Include="crystalreportviewers13\js\calendar.js" />
+    <Content Include="crystalreportviewers13\js\calendar_param.js" />
+    <Content Include="crystalreportviewers13\js\crviewerinclude.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\api.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ArgumentNormalizer.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\bobjcallback.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ButtonList.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\Calendar.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\Colors.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\common.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\crv.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\Dialogs.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\dom.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\encoding.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\event.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\GroupTree.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\GroupTreeListener.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\GroupTreeNode.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\html.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ImageSprites.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\allInOne.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\allInOneBG.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\arrow_button_depressed.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\arrow_button_hover.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\breadcrumbSep.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\calendar.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\catalyst.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\clearValues.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\clear_x.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\closePanel.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\delete.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\drill_cursor.cur" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\export.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\filledCircle.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\first.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\grouptree_toggle.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\hollowCircle.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\last.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\leftTriangle.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\line.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\logo.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\magnify.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\min.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\next.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\open_parameter_arrow.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\panelHeaderBG.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\panelNavigatorItemHL.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\panelNavigatorItemSelectedBG.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\panel_toggle.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\param_datafetching.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\param_dirty.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\param_info.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\param_run.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\param_warning.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\plus.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\prev.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\print.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\refresh.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\rightTriangle.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\search.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\separator.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\StackedTab.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\style.css" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_background.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_buttongroup_background.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_buttongroup_left.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_buttongroup_right.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_button_depressed.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_button_hover.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_menuarrow_depressed.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_menuarrow_hover.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_pagenav_buttons.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\toolbar_separator_icon.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\undo.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\up.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\images\WarningPopupTriangle.gif" />
+    <Content Include="crystalreportviewers13\js\crviewer\initDhtmlLib.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\IOAdapters.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\LeftPanel.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\OptionalParameterUI.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\OptionalParameterValueRow.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\PanelHeader.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\PanelNavigator.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\PanelNavigatorItem.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\Parameter.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ParameterController.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ParameterDialog.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ParameterInfoRow.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ParameterPanel.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ParameterPanelToolbar.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ParameterUI.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ParameterValueRow.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\PromptPage.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\RangeField.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ReportAlbum.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ReportPage.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ReportView.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\Separator.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\SharedWidgetHolder.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\SignalDisposer.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\StackedPanel.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\StackedTab.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\StateManager.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\Statusbar.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_cs.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_da.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_de.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_en.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_es.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_fi.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_fr.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_hu.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_it.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_ja.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_ko.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_nb.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_nl.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_pl.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_pt.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_ru.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_sk.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_sv.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_th.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_tr.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_zh_CN.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\strings_zh_TW.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\TextCombo.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\TextField.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\Toolbar.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ToolPanel.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\Viewer.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ViewerFlexParameterAdapter.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\ViewerListener.js" />
+    <Content Include="crystalreportviewers13\js\crviewer\WarningPopup.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\bolist.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\calendar.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\dialog.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\dom.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\empty.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\borders.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\help.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\loading.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\lov.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\min.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\plus.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\print.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\print_fe.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\prompt.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\resizepattern.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\bolist.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\button.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\buttonIcons.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\critical_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\dialogelements.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\dialogframe.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\dialogframeleftright.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\dialogframetopbottom.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\dialogtitle.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\down.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\iconsep.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\information_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\left.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\menus.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\node.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\progress.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\resize.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\right.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\scroll_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\sep.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\sep_solid.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\style.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\style.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\style_fe.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\tabs.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\up.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\wait01.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\wait02.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_coloredline\warning_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\bolist.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\button.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\buttonIcons.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\critical_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\dialogelements.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\dialogframe.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\dialogframeleftright.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\dialogframetopbottom.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\dialogtitle.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\down.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\iconsep.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\information_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\left.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\menus.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\node.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\progress.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\resize.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\right.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\scroll_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\sep.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\sep_solid.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\style.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\style.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\style_fe.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\tabs.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\up.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\wait01.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\wait02.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_corporate\warning_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\bolist.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\button.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\buttonIcons.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\critical_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\dialogelements.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\dialogframe.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\dialogframeleftright.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\dialogframetopbottom.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\dialogtitle.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\down.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\iconsep.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\information_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\left.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\menus.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\node.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\progress.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\resize.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\right.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\scroll_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\sep.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\sep_solid.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\style.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\style.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\style_fe.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\tabs.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\up.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\wait01.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\wait02.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_default\warning_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\background_field.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\background_menusel.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\bolist.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\button.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\buttonIcons.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\critical_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\critical_icon.png" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\dialogelements.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\dialogframe.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\dialogframeleftright.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\dialogframetopbottom.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\dialogtitle.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\down.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\hgrab.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\horiz_tabs.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\iconsep.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\information_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\left.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\menuitem_check.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\menus.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\node.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\panemenu.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\panetitle.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\progress.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\resize.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\right.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\scroll_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\sep.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\sep_solid.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\style.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\style.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\style_fe.css" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\tabs.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\toolbar_elements.png" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\up.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\vgrab.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\wait01.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\wait02.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\skin_standard\warning_icon.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\swap.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\transp.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\images\tree.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\cs\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\da\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\de\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\en\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\es\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\fi\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\fr\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\hu\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\it\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\ja\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\ko\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\nb\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\nl\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\pl\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\pt\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\ru\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\sk\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\sv\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\th\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\tr\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\zh_CN\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\language\zh_TW\labels.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\lov.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\menu.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\palette.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\prompttree.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\psheet.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\andorwidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\basicDialog.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\blockWhileWait.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\bolist.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\borderswidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\buttons.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\calendar.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\checktree.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\default.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\dim.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\dim_close.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\dim_o.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\dim_open.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\empty.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\eventsDialog.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\fieldswidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\format.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\framezone.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\grabber.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\iconlistpopupwidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\iconscrollmenuwidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\imgtabs.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\inconwidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\infowidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\lov.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\measure.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\measure_o.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\menu.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\navigation.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\palettes.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\pane.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\parent_dialog.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\progressBar.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\prompttree.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\qualif.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\scrolltabs.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\simplelist.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\skinIntl.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\tabs.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\textcombowidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\tooltipwidget.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\treeicons.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\treeview.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\unv_close.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\unv_o.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\unv_open.gif" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\samples\waitDialog.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\treeview.js" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\validator\default.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\validator\validator_res.html" />
+    <Content Include="crystalreportviewers13\js\dhtmllib\waitdialog.js" />
+    <Content Include="crystalreportviewers13\js\dt_param.js" />
+    <Content Include="crystalreportviewers13\js\external\date.js" />
+    <Content Include="crystalreportviewers13\js\FlexParameterBridge.js" />
+    <Content Include="crystalreportviewers13\js\KeyDownEvent.js" />
+    <Content Include="crystalreportviewers13\js\log4javascript\log4javascript.js" />
+    <Content Include="crystalreportviewers13\js\log4javascript\log4javascript_lite.js" />
+    <Content Include="crystalreportviewers13\js\log4javascript\log4javascript_lite_uncompressed.js" />
+    <Content Include="crystalreportviewers13\js\log4javascript\log4javascript_production.js" />
+    <Content Include="crystalreportviewers13\js\log4javascript\log4javascript_production_uncompressed.js" />
+    <Content Include="crystalreportviewers13\js\log4javascript\log4javascript_uncompressed.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\3rdParty.txt" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Async.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Base.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Color.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Controls.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\DateTime.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\DOM.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\DragAndDrop.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Format.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Iter.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\License.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Logging.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\LoggingPane.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\MochiKit.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\MockDOM.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\New.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Signal.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Sortable.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Style.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Test.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\Visual.js" />
+    <Content Include="crystalreportviewers13\js\MochiKit\__package__.js" />
+    <Content Include="crystalreportviewers13\js\previewerror.js" />
+    <Content Include="crystalreportviewers13\js\prompts.js" />
+    <Content Include="crystalreportviewers13\js\prompts_param.js" />
+    <Content Include="crystalreportviewers13\js\swfobject\swfobject.js" />
+    <Content Include="crystalreportviewers13\parameterUIController-compressed.js" />
+    <Content Include="crystalreportviewers13\preview.aspx" />
+    <Content Include="crystalreportviewers13\processindicator.js" />
+    <Content Include="crystalreportviewers13\promptengine-compressed.js" />
+    <Content Include="crystalreportviewers13\prompting\css\promptengine2.css" />
+    <Content Include="crystalreportviewers13\prompting\css\promptengine_default.css" />
+    <Content Include="crystalreportviewers13\prompting\html\calendar.html" />
+    <Content Include="crystalreportviewers13\prompting\html\calendarbottom.html" />
+    <Content Include="crystalreportviewers13\prompting\html\calendartop.html" />
+    <Content Include="crystalreportviewers13\prompting\images\addallfield.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\addallfield_over.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\addfield.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\addfield_over.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\back.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\background_field.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\back_over.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\button.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\button_left_normal.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\button_middle_normal.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\button_right_normal.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\calendar.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\cfilter.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\cfilter_over.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\dialogelements.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\dialogtitle.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\error.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\errormsg.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\filter.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\filter_over.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\forward.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\forward_over.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\info.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\infomsg.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\minus.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\next.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\next_over.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\plus.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\prev.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\prev_over.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\resize.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\transp.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\warning.gif" />
+    <Content Include="crystalreportviewers13\prompting\images\warningmsg.gif" />
+    <Content Include="crystalreportviewers13\prompting\js\initDhtmlLib.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_calendar.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_calendar2.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_prompts.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_prompts2.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_cs.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_da.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_de.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_en.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_es.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_fi.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_fr.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_hu.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_it.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_ja.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_ko.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_nb.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_nl.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_pl.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_pt.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_ru.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_sk.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_sv.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_th.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_tr.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_zh_CN.js" />
+    <Content Include="crystalreportviewers13\prompting\js\promptengine_strings_zh_TW.js" />
+    <Content Include="crystalreportviewers13\urlreporting\activexviewer.js" />
+    <Content Include="crystalreportviewers13\urlreporting\appletviewer.js" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Images\ajax-loader.gif" />
+    <Content Include="Images\check.png" />
+    <Content Include="Images\checked.png" />
+    <Content Include="Images\chosen-sprite.png" />
+    <Content Include="Images\close.png" />
+    <Content Include="Images\dna-loading.gif" />
+    <Content Include="Images\icon_search.png" />
+    <Content Include="Images\laboratory_30x30.png" />
+    <Content Include="Images\loading.gif" />
+    <Content Include="Images\logo_300x300.png" />
+    <Content Include="Images\logo_compact_white_200x200.png" />
+    <Content Include="Images\logo_ta.jpg" />
+    <Content Include="Images\next.png" />
+    <Content Include="Images\no-image.png" />
+    <Content Include="Images\noel-background-2.jpg" />
+    <Content Include="Images\preload-icon.gif" />
+    <Content Include="Images\prev.png" />
+    <Content Include="Images\reception_30x30.png" />
+    <Content Include="Images\report_30x30.png" />
+    <Content Include="Images\result_30x30.png" />
+    <Content Include="Images\snow.png" />
+    <Content Include="Images\thumb.png" />
+    <Content Include="Images\WPP.jpg" />
+    <Content Include="Models\DataSet_Reports.xsc">
+      <DependentUpon>DataSet_Reports.xsd</DependentUpon>
+    </Content>
+    <Content Include="Models\DataSet_Reports.xss">
+      <DependentUpon>DataSet_Reports.xsd</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap-toggle.js" />
+    <Content Include="Scripts\buttons.html5.min.js" />
+    <Content Include="Scripts\calendar\fullcalendar.min.css" />
+    <Content Include="Scripts\calendar\fullcalendar.min.js" />
+    <Content Include="Scripts\calendar\fullcalendar.print.min.css" />
+    <Content Include="Scripts\calendar\locale-all.js" />
+    <Content Include="Scripts\calendar\moment.min.js" />
+    <Content Include="Scripts\canvasjs.min.js" />
+    <Content Include="Scripts\datatable.jszip.min.js" />
+    <Content Include="Scripts\datatables.min.js" />
+    <Content Include="Scripts\datatables\datatables.bootstrap4.min.js" />
+    <Content Include="Scripts\datatables\dataTables.fixedHeader.min.js" />
+    <Content Include="Scripts\datatables\dataTables.group.min.js" />
+    <Content Include="Scripts\datatables\datatables.min.js" />
+    <Content Include="Scripts\datatables\datatables.plugin.min.js" />
+    <Content Include="Scripts\datatables\datetime-moment.js" />
+    <Content Include="Scripts\datatables\datetime.js" />
+    <Content Include="Scripts\datatables\moment.min.js" />
+    <Content Include="Scripts\dateFormat.js" />
+    <Content Include="Scripts\datepicker.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\web.config" />
+    <Content Include="Areas\HCNS\Views\web.config" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_Create.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_Employees.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_Update.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_Print.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\DanhSach.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_Signature.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_TableEmployee.cshtml" />
+    <Content Include="Areas\HCNS\Views\DoiChieuSuatAn\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\DoiChieuSuatAn\_BangDoiChieuSuatAn.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCSK\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\Import.cshtml" />
+    <Content Include="Areas\HCNS\Views\DangKySuatAn\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_Course_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_Employee_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\TrainingCourse\_TrainingCourseWithEmpID.cshtml" />
+    <Content Include="Areas\HCNS\Views\NLDD\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\NLDD\_NLDD_KhoaPhong_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\NLDD\_NLDD_KhoaPhongCT_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\PLSK.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\_PLSK_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\PLSK_Nam.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\_PLSK_Nam_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\TDSK.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\_TDSK_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\BieuDo_PLSK.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\_BieuDo_PLSK_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\NCBT.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\_NCBT_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\PLSK_Tron.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\_PLSK_Tron_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Table_Data.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_CapNhat.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\ImportExcel.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\TTNS.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_TTNS_Table_Data.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Update_TTNS.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_DDL_QuanHuyenThT.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_DDL_PhuongXaThT.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_UploadFiles.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_NghiViec_Table_Data.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\NghiViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_DDL_QuanHuyenTT.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_DDL_PhuongXaTT.cshtml" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Update_NghiViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\DanhBa.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_DanhBa_Table_Data.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\Khaibaovang.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Khaibaovang_Table_Data.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Add_KhaiBaoVang.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Update_KhaiBaoVang.cshtml" />
+    <Content Include="Areas\HCNS\Views\HDLD\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\HDLD\_Table_Data.cshtml" />
+    <Content Include="Areas\HCNS\Views\HDLD\_Create.cshtml" />
+    <Content Include="Areas\HCNS\Views\HDLD\_Update.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Export_KhaiBaoVang.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\BangCap.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\_TableData_BangCap.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\_Add_BangCap.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\_Edit_BangCap.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\ChungChi.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\_TableData_ChungChi.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\_Add_ChungChi.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\_Edit_ChungChi.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\ChungChiHanhNghe.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\_TableData_ChungChiHanhNghe.cshtml" />
+    <Content Include="Areas\HCNS\Views\BCCC\_Edit_ChungChiHanhNghe.cshtml" />
+    <Content Include="PrivateSettings.config" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Export_KhaiBaoVang_All.cshtml" />
+    <Content Include="Areas\HCNS\Views\ZK\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\ZK\_LayVanTay.cshtml" />
+    <Content Include="Areas\HCNS\Views\ZK\_DongBo.cshtml" />
+    <Content Include="Areas\HCNS\Views\DangKySuatAn\_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\HDLD\_UploadExcel.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\TheoDoiCong_User.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\SuaCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_SuaDuLieuCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_ThemDuLieuCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\CongChuan.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Table_CongChuan.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\KhaiBaoCa.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Table_KhaiBaoCa.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Add_KhaiBaoCa.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Add_KhaiBaoLichTrinh.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\ThoiGianLamViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Table_ThoiGianLamViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Add_ThoiGianLamViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_GioiHanCa.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\XemCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Table_XemCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_XemCong_DeXuat.cshtml" />
+    <Content Include="Areas\HCNS\Views\SKNV\Upload_SKNV.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Table_XemCong_Admin.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Add_KhaiBaoCa_Dropdownlist.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\QuanLyCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Table_QuanLyCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_QuanLyCong_ChiTiet.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_QuanLyCong_ChiTiet_Cell.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\QuanLyGiaiTrinh.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Table_QuanLyGiaiTrinh.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Cell_KhaiBaoLoi.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Cell_ThoiGianLamViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Cell_KhaiBaoCa.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Cell_KhaiBaoVang.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Table_TongHopCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\TongHopCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_DanhSachCaChuaDuyet.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_DanhSachTGLVChuaDuyet.cshtml" />
+    <Content Include="Areas\HCNS\Views\CongVan\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\CongVan\_Add_CongVan.cshtml" />
+    <Content Include="Areas\HCNS\Views\CongVan\_Update_CongVan.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_DanhSachKhaiBaoVangChuaDuyet.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_QuanLyGiaiTrinh_Duyet.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\DKQLKP.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Add_KhaiBaoNhieuCa.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\LamThemTT.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Add_LamThemTT.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\CaKhongXacDinh.cshtml" />
+    <Content Include="Areas\HCNS\Views\SuatAn\DangKy.cshtml" />
+    <Content Include="Areas\HCNS\Views\SuatAn\_DangKy_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\SuatAn\DoiChieu.cshtml" />
+    <Content Include="Areas\HCNS\Views\SuatAn\_DoiChieu_Table.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\DanhSachCa.cshtml" />
+    <Content Include="Areas\HCNS\Views\Room\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\Room\_Add.cshtml" />
+    <Content Include="Areas\HCNS\Views\Room\_Update.cshtml" />
+    <Content Include="crystalreportviewers13\ActiveXControls\crviewer.dep" />
+    <Content Include="crystalreportviewers13\crsmarttag.jsp" />
+    <Content Include="crystalreportviewers13\preview.jsp" />
+    <Content Include="Content\Uploads\20190701_upload.xlsx" />
+    <Content Include="Content\Uploads\20190820_upload.xlsx" />
+    <Content Include="Content\Uploads\20190821_upload.xlsx" />
+    <Content Include="Content\Uploads\datkham.xlsx" />
+    <Content Include="Content\Uploads\File upload thông tin nhân viên.xlsx" />
+    <Content Include="Content\Uploads\hdld_temp_mau.xlsx" />
+    <Content Include="Content\Uploads\Lich bac si up his.xlsx" />
+    <Content Include="Content\Uploads\Theo dõi đào tạo bên ngoài 2018.xlsx" />
+    <Content Include="Content\Uploads\THSK.xlsx" />
+    <Content Include="Content\Uploads\upload.xlsx" />
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\HCNS\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\HCNS\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Create_DanhBa.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Edit_DanhBa.cshtml" />
+    <Content Include="Areas\HCNS\Views\SuatAn\ThongKe.cshtml" />
+    <Content Include="Areas\HCNS\Views\SuatAn\_ThongKe_Table.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\LoaiVang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_LoaiVang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_LoaiVang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\NganHang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_NganHang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\HopDong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_HopDong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_HopDong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Cell_KhaiBaoAn.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\KhoaPhong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_KhoaPhong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\ThanhPho.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_ThanhPho.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_ThanhPho.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\QuanHuyen.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_QuanHuyen.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_QuanHuyen.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\BenhVien.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_BenhVien.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\QuocGia.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_QuocGia.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\NoiCapCMT.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_NoiCapCMT.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\DanToc.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_DanToc.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_DanToc.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\TonGiao.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_TonGiao.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\PhongHop.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_PhongHop.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_PhongHop.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\KhoaPhongCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_KhoaPhongCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_KhoaPhongCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\PhuongXa.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_PhuongXa.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_PhuongXa.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\Tang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_Tang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\CaLamViec.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_CaLamViec.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_CaLamViec.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\LichLamViec.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_LichLamViec.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_LichLamViec.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\LichTrinh.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_LichTrinh.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_LichTrinh.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\NoiAn.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_NoiAn.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\NgayNghi.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_NgayNghi.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\LoaiOT.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_LoaiOT.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\KyNang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_KyNang.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\LoaiYeuCauSuaCong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_LoaiYeuCauSuaCong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\DoiTuongCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_DoiTuongCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_DoiTuongCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\LoaiLamThem.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_LoaiLamThem.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_LoaiLamThem.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\LoaiNhanVien.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_LoaiNhanVien.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_LoaiNhanVien.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\LoaiLoiCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_LoaiLoiCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_LoaiLoiCC.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\BangCap.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_BangCap.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\ThietBiPhongHop.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_ThietBiPhongHop.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\TTHonNhan.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_TTHonNhan.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\ThietBi.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_ThietBi.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_ThietBi.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\DS_Nhom.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\DS_Quyen.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_Quyen.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_Quyen.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_Nhom.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_Nhom.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\DS_Quyen_NguoiDung.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_Quyen_NguoiDung.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_Quyen_NguoiDung.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_KhoaPhong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\DS_Quyen_KhoaPhong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_Quyen_KhoaPhong.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_Quyen_KhoaPhong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ZK\ThietBi.cshtml" />
+    <Content Include="Areas\HCNS\Views\ZK\_NghiViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\ZK\_ThongTin.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\TaiKhoan.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Update_TaiKhoan.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\PhanQuyenChamCong.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\VanTayThucTe.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Cell_TongHopCong_Admin.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Cell_TongHopCong_QL.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\ImportNgayPC.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\ImportSalaryChange.cshtml" />
+    <Content Include="Areas\HCNS\Views\DangKySuatAn\BaoCaoChamAn.cshtml" />
+    <Content Include="Areas\HCNS\Views\DangKySuatAn\_ThongKe_ChamAn.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Sua_NghiViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\ImportFile.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\TheoDoiThaiSan.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\DS_Config.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_Config.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_Config.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Create_TheoDoiThaiSan.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\_Update_TheoDoiThaiSan.cshtml" />
+    <Content Include="Areas\HCNS\Views\NhanVien\ExportFile.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\LamViecNgayLe.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\ViTriTuyenDung.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Create_ViTriTuyenDung.cshtml" />
+    <Content Include="Areas\Admin\Views\DanhMuc\_Update_ViTriTuyenDung.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Export_ThoiGianLamViec.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_GhepCa.cshtml" />
+    <Content Include="Areas\HCNS\Views\ChamCong\_Add_LamThemTT_XacNhan.cshtml" />
+    <Content Include="Areas\HCNS\Views\DaoTaoChungChi\Index.cshtml" />
+    <Content Include="Areas\HCNS\Views\DaoTaoChungChi\_AddDaoTao.cshtml" />
+    <None Include="Models\DataSet_Reports.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSet_Reports.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\btr-menu.min.js" />
+    <Content Include="Scripts\chosen.min.js" />
+    <Content Include="Scripts\detectbrowser.js" />
+    <Content Include="Scripts\easycal.js" />
+    <Content Include="Scripts\init.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jQuery-ui.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.easy-autocomplete.min.js" />
+    <Content Include="Scripts\jquery.form.js" />
+    <Content Include="Scripts\jquery.let_it_snow.min.js" />
+    <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\jquery.scrollbar.min.js" />
+    <Content Include="Scripts\jquery.toast.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jstree\jstree.min.js" />
+    <Content Include="Scripts\jstree\themes\default-dark\32px.png" />
+    <Content Include="Scripts\jstree\themes\default-dark\40px.png" />
+    <Content Include="Scripts\jstree\themes\default-dark\style.css" />
+    <Content Include="Scripts\jstree\themes\default-dark\style.min.css" />
+    <Content Include="Scripts\jstree\themes\default-dark\throbber.gif" />
+    <Content Include="Scripts\jstree\themes\default\32px.png" />
+    <Content Include="Scripts\jstree\themes\default\40px.png" />
+    <Content Include="Scripts\jstree\themes\default\style.css" />
+    <Content Include="Scripts\jstree\themes\default\style.min.css" />
+    <Content Include="Scripts\jstree\themes\default\throbber.gif" />
+    <Content Include="Scripts\lightbox.js" />
+    <Content Include="Scripts\mask.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\mousetrap.js" />
+    <Content Include="Scripts\prefixfree.min.js" />
+    <Content Include="Scripts\printPreview.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\signature_pad.min.js" />
+    <Content Include="Scripts\slimscroll.js" />
+    <Content Include="Scripts\textSlide.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Welcome.cshtml" />
+    <Content Include="Views\Base\_TopBar.cshtml" />
+    <Content Include="Views\User\Login.cshtml" />
+    <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\LCD\Index.cshtml" />
+    <Content Include="Views\LCD\_Display.cshtml" />
+    <Content Include="Views\LCD\_GetPrice.cshtml" />
+    <Content Include="Views\LCD\Price.cshtml" />
+    <Content Include="Views\LCD\_Config.cshtml" />
+    <Content Include="Uploads\hdld_temp.xlsx" />
+    <Content Include="Uploads\CongVan\tongdai_query.docx" />
+    <Content Include="Views\Home\Menu.cshtml" />
+    <Content Include="Views\Shared\_PrintLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Images\upload\" />
+    <Folder Include="Uploads\HCNS\" />
+    <Folder Include="Uploads\PGS\" />
+    <Folder Include="Uploads\Phoi\" />
+    <Folder Include="Views\QLCL\" />
+    <Folder Include="Views\Reports\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>50713</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:4953/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

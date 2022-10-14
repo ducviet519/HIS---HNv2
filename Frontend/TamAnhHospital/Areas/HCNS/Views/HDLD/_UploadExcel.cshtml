@@ -1,0 +1,92 @@
+﻿<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .panel-body { padding: 15px; max-height: 500px; overflow: auto; }
+        .panel-body input, .panel-body select { max-width: inherit; }
+        .panel-body .form-group { margin-bottom: 10px; }
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+        .panel-body textarea { max-width: 100%; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    #load-day > div { float: left; width: 49px; margin-bottom: 5px; }
+        #load-day > div > input[type='checkbox'] { float: left; margin: 1px 5px 0 0; }
+    #staticModal .info { background-color: #e7f3fe; border-left: 6px solid #2196F3; padding: 8px; margin-bottom: 10px; }
+        #staticModal .info p { margin-bottom: 0; font-size: 11px; color: #696969; }
+</style>
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Cập nhật hợp đồng theo file</h4>
+                </div><!-- ./panel-heading -->
+                @using (Html.BeginForm("Push_UploadExcel", "HDLD", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+                {
+                <div class="panel-body custom-form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="info">
+                                <p><strong>Chú ý:</strong></p>
+                                <p>- Chọn đúng mã loại Hợp đồng.</p>
+                                <p>- Cập nhật file excel theo: <a href="~/Uploads/hdld_temp.xlsx">File mẫu</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Chọn file upload</label>
+                            <input type="file" class="form-control" id="uploadExcelControl" />
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="form-inline">
+                        <div class="form-group"><input type="submit" value="Cập nhật" class="btn btn-primary" id="btnSubmit" /></div>
+                        <div class="form-group"><input type="button" class="btn btn-default" data-dismiss="modal" value="Đóng" /></div>
+                    </div>
+                </div><!-- ./panel-footer -->
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#btnSubmit").click(function (e) {
+            if (window.FormData !== undefined) {
+                var files = $("#uploadExcelControl").get(0).files;
+                var fileData = new FormData();
+
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append("uploadExcelControl", files[i]);
+                }
+
+                $.ajax({
+                    url: '/hcns/hdld/Push_UploadExcel',
+                    type: "POST",
+                    dataType: "json",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        alert(result);
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+            } else {
+                alert("FormData is not supported.");
+            }
+            e.preventDefault();
+        });
+    });
+</script>

@@ -1,0 +1,104 @@
+﻿@model System.Data.DataTable
+<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+</style>
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Chi tiết công từ ngày @ViewBag.FROM đến ngày @ViewBag.TO</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover">
+                        @foreach (System.Data.DataRow row in Model.Rows)
+                        {
+                        <tr>
+                            <td class="text-left"><b>Mã nhân viên: </b></td>
+                            <td>@row["UserEnrollNumber"].ToString()</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><b>Tổng công: </b></td>
+                            <td>@row["TongCong"].ToString()</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><b>Tổng số thời gian đi muộn, về sớm</b></td>
+                            <td>@row["LE"].ToString()</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><b>Tổng số lần Không vào/ Không ra</b></td>
+                            <td>@row["NIO"].ToString()</td>
+                        </tr>
+
+                        <tr>
+                            <td class="text-left"><b>Số ngày nghỉ phép đã dùng trong tháng</b></td>
+                            <td>@row["P"].ToString()</td>
+                        </tr>
+
+                        <tr>
+                            <td class="text-left"><b>Số ngày nghỉ bù đã dùng trong tháng</b></td>
+                            <td>@row["B"].ToString()</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><b>Số ngày đã trực 24h trong tháng</b></td>
+                            <td>@row["Tr"].ToString()</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><b>Số ngày đã trực đêm 12h trong tháng</b></td>
+                            <td>@row["N"].ToString()</td>
+                        </tr>
+
+                        <tr>
+                            <td class="text-left"><b>Số ngày đi học/Họp/Hội thảo trong tháng</b></td>
+                            <td>@row["H"].ToString()</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><b>Tổng công ngày lễ trong tháng</b></td>
+                            <td>@row["L"].ToString()</td>
+                        </tr>
+                            if (row["TiOT1"].ToString() != "0")
+                            {
+                        <tr>
+                            <td class="text-left"><b>Tổng thời gian làm thêm tính tiền</b></td>
+                            <td>@row["TiOT1"].ToString()</td>
+                        </tr>
+                            }
+
+                            if (row["TiLOT1"].ToString() != "0")
+                            {
+                        <tr>
+                            <td class="text-left"><b>Tổng thời gian làm thêm tính tiền</b></td>
+                            <td>@row["TiLOT1"].ToString()</td>
+                        </tr>
+                            }
+
+                            if (row["TiNOT1"].ToString() != "0")
+                            {
+                        <tr>
+                            <td class="text-left"><b>Tổng thời gian làm thêm tính tiền</b></td>
+                            <td>@row["TiNOT1"].ToString()</td>
+                        </tr>
+                            }
+                        }
+                    </table>
+                </div>
+                <div class="panel-footer text-center">
+                    <input type="button" value="Đóng" class="btn btn-default btn-sm" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

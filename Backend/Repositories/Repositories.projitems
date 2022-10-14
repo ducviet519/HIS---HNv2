@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="SharedProjectFile_SccProperties">
+    <SharedProjectFile_ProjectGuid>{e9fc0158-214c-407e-aed6-91ad53cd560a}</SharedProjectFile_ProjectGuid>
+    <SharedProjectFile_SccProjectName>SAK</SharedProjectFile_SccProjectName>
+    <SharedProjectFile_SccAuxPath>SAK</SharedProjectFile_SccAuxPath>
+    <SharedProjectFile_SccLocalPath>SAK</SharedProjectFile_SccLocalPath>
+    <SharedProjectFile_SccProvider>SAK</SharedProjectFile_SccProvider>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>eba28b18-98b2-4146-b3ac-0cedfe797971</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>System.App.Repositories</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Common\CookieHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\HtmlHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\IDAutomation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ImageUpload.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SendMail.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SqlHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\StaticHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Config_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Department_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DoiChieuSuatAn_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Employee_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\BCCC_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ChamCong_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\DaoTaoChungChi_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\DK_SuatAn_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\HCNS_CongVan_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\HDLD_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\KhaiBaoVang.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\KhaiBaoVang_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\NhanVien_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\Room_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\SKNV_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\TongHopCong_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ZK_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KhoaPhong_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logs_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DanhMuc_Repo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TrainingCourse_Repo.cs" />
+  </ItemGroup>
+</Project>

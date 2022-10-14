@@ -1,0 +1,55 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.DanhBaDienThoai>
+<style type="text/css">
+    #hcns-table_wrapper > .row:first-child { display: none; }
+    #hcns-table thead tr { background-color: #3882b6; }
+        #hcns-table thead tr th { color: #fff; border-color: #2476af; padding-right: 0; }
+            #hcns-table thead tr th:before, #hcns-table thead tr th:after { content: ""; }
+    #hcns-table tbody td { word-wrap: normal !important; }
+    .nowrap { white-space: nowrap !important; }
+</style>
+
+<table class="table table-bordered table-hover" id="hcns-table">
+    <thead>
+        <tr>
+            <th width="30">ID</th>
+            <th>Tòa nhà</th>
+            <th>Tầng</th>
+            <th>Khoa / Phòng / Bộ phận</th>
+            <th>Vị trí</th>
+            <th class="nowrap">Số điện thoại</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+        <tr>
+            <td class="nowrap">@item.ID</td>
+            <td class="nowrap">Tòa @item.Building</td>
+            <td class="nowrap">@item.Floor</td>
+            <td class="nowrap">@item.Dept</td>
+            <td class="nowrap">@item.Pos</td>
+            <td class="nowrap">@item.Num</td>
+        </tr>
+            }
+        }
+        else
+        {
+        <tr>
+            <td colspan="6" class="text-center">Chưa có dữ liệu</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        if ($('#hcns-table tbody tr').length > 1) {
+            $('#hcns-table').callDataTableCustomSearchPage('vi', '', '#fsearch', 30);
+        }
+        $(".btnEdit").click(function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+    });
+</script>

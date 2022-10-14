@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="SharedProjectFile_SccProperties">
+    <SharedProjectFile_ProjectGuid>{5500481c-1f5d-4bc3-a152-32fe361a01ff}</SharedProjectFile_ProjectGuid>
+    <SharedProjectFile_SccProjectName>SAK</SharedProjectFile_SccProjectName>
+    <SharedProjectFile_SccAuxPath>SAK</SharedProjectFile_SccAuxPath>
+    <SharedProjectFile_SccLocalPath>SAK</SharedProjectFile_SccLocalPath>
+    <SharedProjectFile_SccProvider>SAK</SharedProjectFile_SccProvider>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>30c9a5f9-6595-4dd7-b5f5-721403c0bc1d</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>System.App.Entities</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BD_ThoiGianChoKham.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChuyenKhoa.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CN_ThoiGianChoKham.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SafeTokenHandle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\Absent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\AbsentSymbol.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\DaoTaoChungChi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\LamViecNgayLe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\BangCap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ChamAn.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ChamCong.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ChungChi.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ChungChiHanhNghe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ChungChiHN.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\DanhBa.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\Excel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\HCNS_CongVan.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\HDLD.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\NhanVien.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\Room.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\SuatAnNoiTru.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\TongHopCong.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ZK_Machine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ZK_Person.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ImageResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DanhMuc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\DateTimeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\StaticParams.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Department.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DoiChieuSuatAn.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Employee.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EmployeeInTraining.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\BieuDo_PLSK.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\HCNS_NhanVien.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\NCBT.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\PLSK.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\PLSK_Tron.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\SKNV.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\TDSK.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\VDSK.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KhoaPhong.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapper\Department_Mapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapper\EmployeeInTraining_Mapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapper\Employee_Mapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapper\Logs_Mapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mapper\TrainingCourse_Mapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TrainingCourse.cs" />
+  </ItemGroup>
+</Project>

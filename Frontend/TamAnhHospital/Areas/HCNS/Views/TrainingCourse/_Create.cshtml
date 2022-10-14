@@ -1,0 +1,119 @@
+﻿@model System.App.Entities.TrainingCourse
+
+@{
+    List<SelectListItem> doituonghoc = new List<SelectListItem>();
+    doituonghoc.Add(new SelectListItem() { Value = "All", Text = "Tất cả nhân viên", Disabled = true, Selected = true });
+    doituonghoc.Add(new SelectListItem() { Value = "CBNV", Text = "Nhân viên" });
+    doituonghoc.Add(new SelectListItem() { Value = "Bác sỹ", Text = "Bác sỹ" });
+    doituonghoc.Add(new SelectListItem() { Value = "Điều dưỡng", Text = "Điều dưỡng" });
+    doituonghoc.Add(new SelectListItem() { Value = "KTV", Text = "Kỹ thuật viên" });
+    doituonghoc.Add(new SelectListItem() { Value = "NHS", Text = "NHS" });
+
+    List<SelectListItem> loaihinhdaotao = new List<SelectListItem>();
+    loaihinhdaotao.Add(new SelectListItem() { Value = "0", Text = "Đào tạo trong bệnh viện" });
+    loaihinhdaotao.Add(new SelectListItem() { Value = "1", Text = "Đào tạo ngoài bệnh viện" });
+}
+<div id="staticModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-content" style="width: 600px !important; ">
+        <form action="/hcns/trainingcourse/save" id="submitForm">
+            @Html.HiddenFor(x => x.ID)
+            <div class="form-group">
+                <label for="type" class="control-label">Loại hình đào tạo</label>
+                @Html.DropDownListFor(x => x.Type, loaihinhdaotao, new { @class = "form-control", @Style="max-width: 100%;" })
+            </div>
+            <div class="form-group">
+                <label for="name" class="control-label">Tên khóa học</label>
+                @Html.TextBoxFor(x => x.Name, new { @class = "form-control", placeholder = "Điền tên khóa học", required = true })
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="place" class="control-label">Nơi tổ chức</label>
+                        @Html.TextBoxFor(x => x.Place, new { @class = "form-control", placeholder = "Điền nơi tổ chức", required = true })
+                    </div>
+                    <div class="col-md-6">
+                        <label for="place" class="control-label">Đối tượng học</label>
+                        @Html.DropDownListFor(x => x.Objects, doituonghoc, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div><!-- / .form-group -->
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="place" class="control-label">Từ ngày</label>
+                        <div class="input-group date" data-provide="datepicker">
+                            <input type="text" class="form-control datepicker" id="DateFrom" name="DateFrom" autocomplete="off" required>
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="place" class="control-label">Đến ngày</label>
+                        <div class="input-group date" data-provide="datepicker">
+                            <input type="text" class="form-control datepicker" id="DateTo" name="DateTo" autocomplete="off" required>
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- / .form-group -->
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="place" class="control-label">Chi phí</label>
+                        @Html.TextBoxFor(x => x.Cost, new { @class = "form-control", @Value = 0 })
+                    </div>
+                    <div class="col-md-6">
+                        <label for="place" class="control-label">Tổng số tiết học</label>
+                        @Html.TextBoxFor(x => x.Lessions, new { @class = "form-control", @Value = 0 })
+                    </div>
+                </div>
+            </div><!-- / .form-group -->
+
+            <div class="form-group">
+                <label for="name" class="control-label">Văn bằng chứng chỉ</label>
+                @Html.TextBoxFor(x => x.Note, new { @class = "form-control", placeholder = "" })
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-ok"></span> Lưu thông tin</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove"></span> Đóng lại</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+
+        $("#submitForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        clearData($('#submitForm'));
+                    }
+                    else {
+                        $(this).callToast("error", '', 'Lỗi rồi, vui lòng kiểm tra lại.');
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+
+    });
+</script>

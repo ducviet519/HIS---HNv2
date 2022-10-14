@@ -1,0 +1,96 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.ChungChiHanhNghe>
+
+<style type="text/css">
+    #hcns-table_wrapper > .row:first-child { display: none; }
+    #hcns-table thead tr { background-color: #3882b6; }
+        #hcns-table thead tr th { color: #fff; border-color: #2476af; }
+            #hcns-table thead tr th:before, #hcns-table thead tr th:after { content: ""; }
+    #hcns-table tbody td { word-wrap: normal !important; }
+    .nowrap { white-space: nowrap !important; }
+</style>
+
+<table class="table table-bordered table-hover" id="hcns-table">
+    <thead>
+        <tr>
+            <th></th>
+            <th width="85px;" class="nowrap">Mã NV</th>
+            <th class="nowrap">Họ và tên</th>
+            <th class="nowrap">Khoa/Phòng</th>
+            <th class="nowrap">Chức danh</th>
+            <th class="nowrap">Chứng chỉ</th>
+            <th class="nowrap">Phạm vi chuyên môn</th>
+            <th class="nowrap">Ngày cấp</th>
+            <th class="nowrap">Nơi cấp</th>
+            <th class="nowrap">Tình trạng</th>
+            <th class="nowrap">Ngày gửi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model as IEnumerable<System.App.Entities.HCNS.ChungChiHanhNghe>)
+            {
+        <tr id="row_@item.UserEnrollNumber">
+            <td class="text-center nowrap">
+                <a href="javascript:;" data-href="/hcns/bccc/Edit_ChungChiHanhNghe?id=@item.UserEnrollNumber" class="btnEdit"><i class="fa fa-edit"></i> Sửa</a>
+            </td>
+            <td class="nowrap">@item.UserFullCode</td>
+            <td class="nowrap">@item.UserFullName</td>
+            <td class="nowrap">@item.Ten_KhoaPhong</td>
+            <td class="nowrap">@item.ChucDanh</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.ChungChiHN) ? "-" : item.ChungChiHN)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.PhamViCM) ? "-" : item.PhamViCM)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayCapCCHN) ? "-" : item.NgayCapCCHN)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NoiCapCCHN) ? "-" : item.NoiCapCCHN)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.DaGuiSo) ? "-" : item.DaGuiSo)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayGuiSo) ? "-" : item.NgayGuiSo)</td>
+        </tr>
+            }
+        }
+        else
+        {
+        <tr>
+            <td colspan="8" class="text-center">Chưa có dữ liệu</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        if ($('#hcns-table tbody tr').length > 1) {
+            $('#hcns-table').callDataTableCustomSearchPage('vi', '0', '#fsearch', 15);
+        }
+        $(".btnEdit").click(function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+        $(".btnRemove").click(function () {
+            var url = $(this).attr("data-href");
+            var _id = $(this).attr("data-id");
+            $.ajax({
+                url: url,
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                async: true,
+                processData: false,
+                cache: false,
+                beforeSend: function () {
+                    return confirm("Bạn muốn thực hiện chức năng xóa?");
+                },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        debugger;
+                        $("#row_" + _id).hide(300);
+                    } else {
+                        $(this).callToast("error", '', data.message);
+                    }
+                },
+                error: function (xhr) {
+                    $(this).callToast("error", '', "Thao tác xóa không thành công");
+                }
+            });
+        });
+    });
+</script>

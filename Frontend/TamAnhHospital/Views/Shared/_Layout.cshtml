@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Phần mềm quản lý bệnh viện">
+    <meta name="author" content="IT - HN">
+    <link rel="icon" href="~/favicon.ico">
+
+    <title>Tâm Anh Hospital</title>
+    <script src="~/Scripts/jquery.min.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/global/js")
+    @Styles.Render("~/global/css")
+
+    @Styles.Render("~/datatable/css")
+    @Scripts.Render("~/datatable/js")
+    <link rel="stylesheet" href="~/Content/bootstrap-toggle.css" />
+    <script type="text/javascript" src="~/Scripts/bootstrap-toggle.js"></script>
+    <script type="text/javascript" src="~/Scripts/mask.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.toast.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.scrollbar.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/jquery.toast.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/jquery.scrollbar.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/ajax-loading.css" />
+    <script type="text/javascript" src="~/Scripts/canvasjs.min.js"></script>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet">
+    @*<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+        <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.12/sorting/datetime-moment.js"></script>*@
+
+    <style>
+        table.dataTable { margin-top: 0 !important; }
+    </style>
+</head>
+<body>
+    <div id="cover-spin"></div>
+    <div class="process"></div>
+    @Html.Action("TopBar", "Base", new { Area = "" })
+
+    <div class="container-fluid body-content">
+        @RenderBody()
+    </div>
+
+    <div id="partialContainer"></div>
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <div class="clearfix"></div>
+
+    <script type="text/javascript">
+        $(window).load(function () {
+            // Animate loader off screen
+            //$("#cover-spin").fadeOut("slow");
+            var $loading = $("#cover-spin").fadeOut("slow");
+            //Attach the event handler to any element
+            $(document)
+                .ajaxStart(function () {
+                    //ajax request went so show the loading image
+                    $loading.show();
+                })
+                .ajaxStop(function () {
+                    //got response so hide the loading image
+                    $loading.hide();
+                });
+        });
+    </script>
+
+    @*disabled F12*@
+    @*<script>
+        document.onkeypress = function (event) {
+            event = (event || window.event);
+            if (event.keyCode == 123) {
+                return false;
+            }
+        }
+        document.onmousedown = function (event) {
+            event = (event || window.event);
+            if (event.keyCode == 123) {
+                return false;
+            }
+        }
+        document.onkeydown = function (event) {
+            event = (event || window.event);
+            if (event.keyCode == 123) {
+                return false;
+            }
+        }
+    </script>*@
+</body>
+</html>

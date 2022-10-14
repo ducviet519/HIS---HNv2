@@ -1,0 +1,220 @@
+﻿@model System.App.Entities.HCNS.UserWTRequests
+@{
+    List<SelectListItem> selectListItems = new List<SelectListItem>();
+    foreach (var item in ViewBag.DS_DeXuat as Dictionary<int, string>)
+    {
+        selectListItems.Add(new SelectListItem() { Value = item.Key.ToString(), Text = item.Value.ToString() });
+    }
+    var selectListDanhSach = new SelectList(selectListItems, "Value", "Text", 2);
+}
+@{
+    var userAuth = ViewBag.UserAuth as string;
+}
+<style type="text/css">
+    fieldset.fieldset-border { border: 1px groove #ddd !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important; -webkit-box-shadow: 0px 0px 0px 0px #000; box-shadow: 0px 0px 0px 0px #000; }
+</style>
+@using (Html.BeginForm("push_cell_khaibaoloi", "chamcong", FormMethod.Post, new { @class = "formFieldset", id = "form_khaibaoloi" }))
+{
+@Html.AntiForgeryToken()
+@Html.HiddenFor(x => x.UserEnrollNumber)
+@Html.HiddenFor(x => x.Date)
+
+<fieldset class="fieldset-border">
+    <legend class="fieldset-border">Đề xuất sửa lỗi</legend>
+    <!-- USER -->
+    @if (userAuth == "HCNS_User")
+        {
+    <div class="row">
+        <div class="col-md-12">
+            @if (!string.IsNullOrEmpty(Model.Fix1Des) && Model.Status == -1)
+                    {
+            <p style="border-left: 5px solid #ff3c3c; padding: 8px; background: #ffcbcb; margin: 0;">Bạn đã đề xuất <strong>[@Model.Fix1Des]</strong> nhưng không được Quản lý duyệt. Bạn có thể cập nhật lại đề xuất theo nội dung dưới.</p>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Fix1Des) && Model.Status == -2)
+                    {
+            <p style="border-left: 5px solid #ff3c3c; padding: 8px; background: #ffcbcb; margin: 0;">Bạn đã đề xuất <strong>[@Model.Fix1Des]</strong> nhưng không được HCNS duyệt. Bạn có thể cập nhật lại đề xuất theo nội dung dưới.</p>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Fix1Des) && Model.Status == 1)
+                    {
+            <p>Đề xuất sửa công của bạn đã được Quản lý duyệt, bạn không thể khai báo tiếp. Thông tin đã khai báo: [@Model.Fix1Des @(String.IsNullOrEmpty(Model.UserNote1) ? "" : " - Ghi chú: " + Model.UserNote1)]</p>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Fix1Des) && Model.Status == 2)
+                    {
+            <p>Đề xuất sửa công của bạn đã được HCNS duyệt, bạn không thể khai báo tiếp. Thông tin đã khai báo: [@Model.Fix1Des @(String.IsNullOrEmpty(Model.UserNote1) ? "" : " - Ghi chú: " + Model.UserNote1)]</p>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Fix1Des) && Model.Status == 0)
+                    {
+            <p>Đề xuất sửa công chưa được duyệt. Thông tin đã khai báo: [@Model.Fix1Des @(String.IsNullOrEmpty(Model.UserNote1) ? "" : " - Ghi chú: " + Model.UserNote1)]</p>
+                    }
+        </div>
+    </div>
+
+            if (Model.Status != 1 && Model.Status != 2)
+            {
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <label>Phương án đề xuất</label>
+            @Html.DropDownListFor(x => x.Fix1, selectListDanhSach, new { @class = "form-control input-sm" })
+        </div>
+        <div class="col-md-3 col-xs-6">
+            <label>Giờ vào</label>
+            @Html.TextBoxFor(x => x.In1F, new { @class = "form-control input-sm time", placeholder = "00:00", autocomplete = "off" })
+        </div>
+        <div class="col-md-3 col-xs-6">
+            <label>Giờ ra</label>
+            @Html.TextBoxFor(x => x.Out1F, new { @class = "form-control input-sm time", placeholder = "00:00", autocomplete = "off" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label>Giải trình lý do</label>
+            @Html.TextBoxFor(x => x.UserNote1, new { @class = "form-control input-sm", autocomplete = "off" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <input type="submit" id="btnKhaiBaoLoi" value="Xác nhận đề xuất sửa lỗi" class="btn btn-primary btn-sm" />
+        </div>
+    </div>
+            }
+        }
+        else if (userAuth == "HCNS_Manager")
+        {
+    <div class="row">
+        <div class="col-md-12">
+            @if (!string.IsNullOrEmpty(Model.Fix1Des) && Model.Status == -2)
+                    {
+            <p style="border-left: 5px solid #ff3c3c; padding: 8px; background: #ffcbcb; margin: 0;">Đề xuất <strong>[@Model.Fix1Des]</strong> không được HCNS duyệt. Bạn có thể cập nhật lại đề xuất theo nội dung dưới.</p>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Fix1Des) && Model.Status == 1)
+                    {
+            <p style="border-left: 5px solid #67ff28; padding: 8px; background: #d4ffba; margin: 0;">Thông tin đã khai báo: [@Model.Fix1Des @(String.IsNullOrEmpty(Model.UserNote1) ? "" : " - Ghi chú: " + Model.UserNote1)]</p>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Fix1Des) && Model.Status == 2)
+                    {
+            <p>Đề xuất sửa công của bạn đã được HCNS duyệt, bạn không thể khai báo tiếp. Thông tin đã khai báo: [@Model.Fix1Des @(String.IsNullOrEmpty(Model.UserNote1) ? "" : " - Ghi chú: " + Model.UserNote1)]</p>
+                    }
+        </div>
+    </div>
+
+            if (Model.Status != 2)
+            {
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <label>Phương án đề xuất</label>
+            @Html.DropDownListFor(x => x.Fix1, selectListDanhSach, new { @class = "form-control input-sm" })
+        </div>
+        <div class="col-md-3 col-xs-6">
+            <label>Giờ vào</label>
+            @Html.TextBoxFor(x => x.In1F, new { @class = "form-control input-sm time", placeholder = "00:00", autocomplete = "off" })
+        </div>
+        <div class="col-md-3 col-xs-6">
+            <label>Giờ ra</label>
+            @Html.TextBoxFor(x => x.Out1F, new { @class = "form-control input-sm time", placeholder = "00:00", autocomplete = "off" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label>Giải trình lý do</label>
+            @Html.TextBoxFor(x => x.UserNote1, new { @class = "form-control input-sm", autocomplete = "off" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <input type="submit" id="btnKhaiBaoLoi" value="Xác nhận đề xuất sửa lỗi" class="btn btn-primary btn-sm" />
+        </div>
+    </div>
+            }
+        }
+        else if (userAuth == "HCNS_Admin")
+        {
+            if (!string.IsNullOrEmpty(Model.Fix1Des))
+            {
+    <p style="border-left: 5px solid #67ff28; padding: 8px; background: #d4ffba; margin: 0;">Thông tin đã khai báo: [@Model.Fix1Des @(String.IsNullOrEmpty(Model.UserNote1) ? "" : " - Ghi chú: " + Model.UserNote1)]</p>
+            }
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <label>Phương án đề xuất</label>
+            @Html.DropDownListFor(x => x.Fix1, selectListDanhSach, new { @class = "form-control input-sm" })
+        </div>
+        <div class="col-md-3 col-xs-6">
+            <label>Giờ vào</label>
+            @Html.TextBoxFor(x => x.In1F, new { @class = "form-control input-sm time", placeholder = "00:00", autocomplete = "off" })
+        </div>
+        <div class="col-md-3 col-xs-6">
+            <label>Giờ ra</label>
+            @Html.TextBoxFor(x => x.Out1F, new { @class = "form-control input-sm time", placeholder = "00:00", autocomplete = "off" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label>Giải trình lý do</label>
+            @Html.TextBoxFor(x => x.UserNote1, new { @class = "form-control input-sm", autocomplete = "off" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <input type="submit" id="btnKhaiBaoLoi" value="Xác nhận đề xuất sửa lỗi" class="btn btn-primary btn-sm" />
+        </div>
+    </div>
+        }
+</fieldset>
+
+<script type="text/javascript">
+        $(function () {
+            $('.time').mask('00:00', { clearIfNotMatch: true });
+
+            $(".del-dx").on('click', function (e) {
+                var url = $(this).attr("data-url");
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Xóa thành công');
+                            $("#cell_khaibaoloi").load("/hcns/chamcong/cell_khaibaoloi?userid=@Model.UserEnrollNumber&date=@Model.Date")
+                        } else if (data.result == false && data.message != '') {
+                            $(this).callToast("error", '', "" + data.message + "");
+                        }
+                        else {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                        }
+                    }, complete: function () {
+                        $("#btnKhaiBaoLoi").show();
+                    }
+                });
+
+                e.preventDefault();
+
+            });
+
+            $("#form_khaibaoloi").submit(function (e) {
+                var form = $(this);
+                var url = form.attr('action');
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: form.serialize(),
+                    beforeSend: function () {
+                        $("#btnKhaiBaoLoi").hide();
+                    },
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+
+                            $("#cell_khaibaoloi").load("/hcns/chamcong/cell_khaibaoloi?userid=@Model.UserEnrollNumber&date=@Model.Date")
+                        }
+                        else {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                        }
+                    }, complete: function () {
+                        $("#btnKhaiBaoLoi").show();
+                    }
+                });
+
+                e.preventDefault();
+            });
+        });
+</script>
+}

@@ -1,0 +1,82 @@
+﻿<style>
+    .panel { border: 1px solid #ddd; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .panel-body { padding: 15px; max-height: 500px; overflow: auto; }
+        .panel-body input, .panel-body select { max-width: inherit; }
+        .panel-body .form-group { margin-bottom: 10px; }
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+
+    .custom-form input[type='text'], form select, form textarea { max-width: none; }
+    .custom-form .row { margin-left: -5px; margin-right: -5px; }
+        .custom-form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    #staticModal .info { background-color: #e7f3fe; border-left: 6px solid #2196F3; padding: 8px; margin-bottom: 10px; }
+        #staticModal .info p { margin-bottom: 0; font-size: 11px; color: #696969; }
+</style>
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i> TẢI DANH SÁCH ĐÃ KHAI BÁO</h4>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body custom-form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="info">
+                                <p><strong>Chú ý:</strong></p>
+                                <p>- Nếu không chọn khoa/phòng mặc định sẽ lấy tất cả các khoa.</p>
+                                <p>- Ngày bắt đầu phải luôn nhỏ hơn ngày kết thúc.</p>
+                                <p>- Trường hợp không chọn ngày, hệ thống sẽ lấy những ngày khai báo bắt đầu từ ngày hiện tại.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6">
+                            <label>Danh sách Khoa/Phòng</label>
+                            @Html.DropDownList("KhoaPhong", new SelectList(ViewBag.DSKPHC, "Key", "Value"), "--- Chọn khoa/phòng ---", new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-3 col-xs-3">
+                            <label>Từ ngày</label>
+                            <input type="text" name="FROM" id="FROM" class="datepicker form-control" autocomplete="off" />
+                        </div>
+                        <div class="col-md-3 col-xs-3">
+                            <label>Đến ngày</label>
+                            <input type="text" name="TO" id="TO" class="datepicker form-control" autocomplete="off" />
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="form-inline">
+                        <div class="form-group"><a href="javascript:;" class="btn btn-primary" id="btnExcel">Tải file</a></div>
+                        <div class="form-group"><input type="button" class="btn btn-default" data-dismiss="modal" value="Đóng" /></div>
+                    </div>
+                </div><!-- ./panel-footer -->
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#btnExcel").click(function (e) {
+            var url = "/hcns/nhanvien/Push_KhaiBaoVang_All?kp=" + $("#staticModal #KhoaPhong option:selected").val() + "&tu=" + $("#staticModal #FROM").val() + "&den=" + $("#staticModal #TO").val();
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data, status) {
+                    window.location = url;
+                }
+            });
+
+            e.preventDefault();
+        });
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+
+    });
+</script>

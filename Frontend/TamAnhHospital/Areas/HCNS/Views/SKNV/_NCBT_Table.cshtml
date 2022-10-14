@@ -1,0 +1,46 @@
+﻿<style type="text/css">
+    #sknv_table_wrapper .row:first-child { display: none; }
+    #sknv_table_wrapper .sorting,
+    #sknv_table_wrapper .sorting:after,
+    #sknv_table_wrapper .sorting:before { padding-right: 5px !important; content: ''; }
+    #sknv_table_wrapper tr.alert { background: #ffe1e1; }
+</style>
+<table class="table table-bordered table-condensed" id="sknv_table">
+    <thead>
+        <tr>
+            <th>Khoa/Phòng</th>
+            <th>Mô tả</th>
+            <th class="text-center">Năm trước</th>
+            <th class="text-center">Hiện tại</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model as IEnumerable<System.App.Entities.HCNS.NCBT>)
+        {
+            if (o.Alert)
+            {
+        <tr class="alert">
+            <td>@o.KhoaP</td>
+            <td>@o.MoTa</td>
+            <td>@o.LYear</td>
+            <td>@o.CYear</td>
+        </tr>
+            }
+            else
+            {
+        <tr>
+            <td>@o.KhoaP</td>
+            <td>@o.MoTa</td>
+            <td>@o.LYear</td>
+            <td>@o.CYear</td>
+        </tr>
+            }
+
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        $('#sknv_table').callDataTableCustomSearchPage('vi', '', '#sknv_filter', 15);
+    });
+</script>

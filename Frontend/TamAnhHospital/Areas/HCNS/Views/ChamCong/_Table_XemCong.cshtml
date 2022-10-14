@@ -1,0 +1,170 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.XemCong>
+
+<style>
+    table { width: 100% !important; }
+
+        table tr th { white-space: nowrap; font-size: 10px; padding: 5px !important; }
+
+            table tr th::before, table tr th::after { content: "" !important; }
+
+    .dataTables_wrapper > .row:first-child { display: none; }
+
+    table tbody td { padding: 5px 0 !important; text-align: center; line-height: 16px !important; }
+
+        table tbody td.text-left { padding-left: 5px !important; }
+
+    .bg-yellow { background-color: #fff8cf; }
+
+    .row { margin-bottom: 10px; }
+
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    .form input, .form select { max-width: 100%; }
+
+    tr.color-0 { }
+
+    tr.color-1 { background-color: #ffd800; }
+
+    tr.color-2 { background-color: #ffdede; }
+</style>
+<div class="row">
+    @{
+        var firstRow = Model.FirstOrDefault();
+        var timeQD = ViewBag.TimeQuyDinh;
+        var phep = ViewBag.Phep as System.App.Entities.HCNS.TinhPhep;
+        var ngaychotcong = DateTime.UtcNow.AddHours(7).AddMonths(-1).ToString("25/MM/yyyy");
+        var ngaykhaibaocuoi = DateTime.UtcNow.AddHours(7).ToString("24/MM/yyyy");
+        var ngayhientai = DateTime.UtcNow.AddHours(7);
+        var ngaychotcongFormat = DateTime.ParseExact(ngaychotcong, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        var ngaykhaibaocuoiFormat = DateTime.ParseExact(ngaykhaibaocuoi, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        var NoiAn = ViewBag.NoiAn;
+    }
+    <div class="col-md-12" style="color: #ff0000;">
+        <b>Mã nhân viên: </b> @firstRow.UserEnrollNumber - <b>Nơi ăn: </b> @NoiAn - <b>Tổng công: </b> @firstRow.NgayCong / @firstRow.CongChuan <br />
+        <b>Đi muộn - về sớm: </b> @firstRow.DiMuonVeSom (phút) | <b>Không vào - không ra: </b> @firstRow.SoLanVaoRa (lần) <br />
+        <b>Phép tồn năm ngoái: </b> @phep.PhepTon | <b>Phép đã dùng: </b> @phep.PhepDaDung | <b>Phép còn lại: </b> @phep.PhepCon<br />
+        <b>Tổng Phép + ứng được khai báo: </b> @phep.KhaiBaoP<br />
+        <b>Tổng bù: </b>@phep.NgayThuaKyLuongTruoc  | <b>Bù đã dùng: </b>@phep.BuDaDung  | <b>Bù còn lại: @phep.BuConLai</b>
+    </div>
+</div>
+<table class="table table-bordered table-hover" id="table-data">
+    <thead>
+        <tr>
+            <th class="text-center">Ngày</th>
+            <th class="text-center">Thứ</th>
+            <th class="text-center">Ca</th>
+            <th class="text-center">Công</th>
+            <th class="text-center">Giờ vào</th>
+            <th class="text-center">Giờ ra</th>
+            <th class="text-center"></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @{ var count = 0; }
+
+        @foreach (var item in Model as IEnumerable<System.App.Entities.HCNS.XemCong>)
+        {
+            if (count > 0)
+            {
+                var _color = "";
+                switch (item.Mau)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        _color = "color-1";
+                        break;
+                    case 2:
+                        _color = "color-2";
+                        break;
+                }
+                <tr class="@_color">
+                    <td width="50" class="text-center">@item.Date</td>
+                    <td>
+                        @{
+                            var _dayName = "";
+                            switch (item.WD)
+                            {
+                                case "Sunday":
+                                    _dayName = "CN";
+                                    break;
+                                case "Monday":
+                                    _dayName = "T2";
+                                    break;
+                                case "Tuesday":
+                                    _dayName = "T3";
+                                    break;
+                                case "Wednesday":
+                                    _dayName = "T4";
+                                    break;
+                                case "Thursday":
+                                    _dayName = "T5";
+                                    break;
+                                case "Friday":
+                                    _dayName = "T6";
+                                    break;
+                                case "Saturday":
+                                    _dayName = "T7";
+                                    break;
+                            }
+                        }
+                        @Html.Raw(_dayName)
+                    </td>
+                    <td>@item.Ca</td>
+                    <td>@item.NgayCong</td>
+                    <td>@item.GioVao</td>
+                    <td>@item.GioRa</td>
+                    <td>
+                        @{
+                            var locked = false;
+
+                            var ngaykhaibaoFormat = DateTime.ParseExact(item.DateFull, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                            if ((ngaykhaibaoFormat < ngaychotcongFormat) || (ngayhientai - ngaykhaibaoFormat).TotalDays > timeQD)
+                            {
+                                locked = true;
+                            }
+                        }
+
+                        @if (!locked)
+                        {
+                            if (item.Status == -1)
+                            {
+                                <a class="btn-dexuat" href="javascript:;" data-href="/hcns/chamcong/quanlycong_chitiet_cell?user=@(item.UserEnrollNumber)&d=@(item.DateFull)">Đề xuất</a>
+                            }
+                            else
+                            {
+                                <a class="btn-dexuat" href="javascript:;" data-href="/hcns/chamcong/quanlycong_chitiet_cell?user=@(item.UserEnrollNumber)&d=@(item.DateFull)">Đã đề xuất</a>
+                            }
+
+                        }
+                        else
+                        {
+                            <a class="btn-dexuat" href="javascript:;" data-href="/hcns/chamcong/quanlycong_chitiet_cell?user=@(item.UserEnrollNumber)&d=@(item.DateFull)">Xem chi tiết</a>
+                        }
+                    </td>
+                </tr>
+            }
+            count++;
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('change', '.all', function () {
+            var cVal = $(this).val();
+            var parent_row = $(this).parent().parent();
+            $(parent_row).find("select").val(cVal);
+        });
+
+        $('.btn-dexuat').on('click', function (e) {
+            var __url = $(this).attr("data-href");
+            $(this).callModal(__url);
+            e.preventDefault();
+        });
+    });
+</script>

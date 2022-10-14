@@ -1,0 +1,82 @@
+﻿@model System.App.Entities.DanhMuc_DanToc
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục dân tộc</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Dân tộc</label>
+                            @Html.TextBox("upd_dt_ten", Model.PeopleName, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Nhóm địa phương</label>
+                            @Html.TextBox("upd_dt_diaphuong", Model.PeopleOName, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Vị trí địa lý</label>
+                            @Html.TextBox("upd_dt_vitri", Model.PeoplePlace, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_dt_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_dt_btnUpdate").click(function (e) {
+            var _PeopleName = $("#upd_dt_ten").val();
+            var _PeopleOName = $("#upd_dt_diaphuong").val();
+            var _PeoplePlace = $("#upd_dt_vitri").val();
+            if (_PeopleName == '') {
+                $(this).callToast("error", 'Chưa nhập tên dân tộc', '');
+                return;
+            }
+            if (_PeopleOName == '') {
+                $(this).callToast("error", 'Chưa nhập địa phương', '');
+                return;
+            }
+            if (_PeoplePlace == '') {
+                $(this).callToast("error", 'Chưa nhập vị trí địa lý', '');
+                return;
+            }
+
+            var obj = {
+                "ID": '@ViewBag.ID',
+                "PeopleName": _PeopleName,
+                "PeopleOName": _PeopleOName,
+                "PeoplePlace": _PeoplePlace,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_DanToc", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Có lỗi khi cập nhật.', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

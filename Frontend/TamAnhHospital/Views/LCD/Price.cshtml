@@ -1,0 +1,57 @@
+﻿@model IEnumerable<System.App.Entities.LCD_Price>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bảng giá Tâm Anh</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="refresh" content="86000; url=http://localhost:50713/lcd/price">
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+
+    <style>
+        body, html { padding: 0; margin: 0; }
+        body { background-color: #fff; }
+            body .logo { padding: 10px 10px; }
+        .container-slide ul, .container-slide ul li, .title, .title li { padding: 0; margin: 0; list-style: none; text-align: center; }
+        .container-slide, .title { width: 100%; height: 100%; line-height: 30px; overflow: Hidden; background-color: #34495E; color: #fff; }
+            .container-slide ul li, .title li { width: 100%; }
+                .container-slide ul li span { display: inline-block; border: 1px solid #ddd; }
+        .table { margin-bottom: 0; }
+            .table td { font-size: 24px; border-color: #000 !important; }
+            .table tr:nth-child(even) { background-color: #dddddd; }
+        .table-title th { background: rgb(189, 215, 238); font-size: 18pt; font-weight: 700; border: 1px solid #000 !important; }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="~/Images/logo_ta.jpg" style="max-width: 250px;" />
+    </div>
+    <div class="table-slide">
+        <table class="table table-bordered table-title">
+            <thead>
+                <tr>
+                    <th class="text-center">TÊN DỊCH VỤ</th>
+                    <th width="140" style="max-width:140px" class="text-center">ĐƠN VỊ</th>
+                    <th width="140" style="max-width:140px" class="text-center">GIÁ</th>
+                </tr>
+            </thead>
+        </table>
+        <marquee direction="up" scrollamount="2" height="705">
+            <table class="table table-bordered">
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <td>@item.TEN</td>
+                        <td width="140" style="max-width:140px">@item.DVT</td>
+                        <td width="140" style="max-width:140px" class="text-right">@Decimal.Parse(item.GIA_TH).ToString("N0")</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </marquee>
+    </div>
+</body>
+</html>

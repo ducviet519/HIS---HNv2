@@ -1,0 +1,121 @@
+﻿@model System.App.Entities.HCNS.UserTempShift
+
+@{
+    var userAuth = ViewBag.UserAuth as string;
+    List<SelectListItem> selectListItems = new List<SelectListItem>();
+    foreach (var item in ViewBag.DanhSachCa as IEnumerable<System.App.Entities.HCNS.Shifts>)
+    {
+        selectListItems.Add(new SelectListItem() { Value = item.ShiftID.ToString(), Text = item.ShiftCode });
+    }
+    var selectListDanhSachCa = new SelectList(selectListItems, "Value", "Text", 2);
+}
+<style type="text/css">
+    fieldset.fieldset-border { border: 1px groove #ddd !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important; -webkit-box-shadow: 0px 0px 0px 0px #000; box-shadow: 0px 0px 0px 0px #000; }
+</style>
+
+@using (Html.BeginForm("Push_Cell_KhaiBaoCa", "chamcong", FormMethod.Post, new { @class = "formFieldset", id = "form_khaibaoca" }))
+{
+@Html.AntiForgeryToken()
+@Html.HiddenFor(x => x.UserEnrollNumber)
+@Html.HiddenFor(x => x.Date)
+
+<fieldset class="fieldset-border">
+    <legend class="fieldset-border">Đề xuất ca làm việc</legend>
+    @if (!string.IsNullOrEmpty(Model.ShiftCode1) && (userAuth == "HCNS_Admin" || userAuth == "HCNS_Manager"))
+        {
+    <div class="row">
+        <div class="col-md-12">
+            <p>Đề xuất của bạn đã được xác nhận <b style="color:#ff0000;">[Ca: @Model.ShiftCode1]</b> bạn có thể thay đổi dữ liệu <a href="/hcns/chamcong/khaibaoca" target="_blank">tại đây</a></p>
+        </div>
+    </div>
+        }
+        else if (Model.Status == 0)
+        {
+            if (Model.Shift1 > 0)
+            {
+    <div class="row">
+        <div class="col-md-12">
+            <p style="border-left: 5px solid #ff3c3c; padding: 8px; background: #ffcbcb; margin: 0;">Bạn đã đề xuất [Ca: @Model.ShiftCode1] nhưng chưa được duyệt. Bạn có thể cập nhật lại đề xuất theo nội dung dưới hoặc ấn <strong>[<a href="javascript:;" data-url="/hcns/chamcong/push_xoadexuatca?userid=@(Model.UserEnrollNumber)&date=@Model.Date" class="del-ca">Xóa</a>]</strong> để hủy đề xuất.</p>
+        </div>
+    </div>
+            }
+
+    <div class="row">
+        <div class="col-md-12">
+            <label>Lựa chọn ca đề xuất</label>
+            <!-- danh sách ca -->
+            @Html.DropDownList("Shift1", selectListDanhSachCa, new { @class = "form-control input-sm" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <input type="submit" id="btnCaLamViec" value="Xác nhận đề xuất ca làm việc" class="btn btn-primary btn-sm" />
+        </div>
+    </div>
+        }
+        else
+        {
+    <div class="row">
+        <div class="col-md-12">
+            <p>Đề xuất của bạn đã được duyệt, bạn không thể cập nhật. Nội dung đã duyệt <b style="color:#ff0000;">[Ca mới: @Model.ShiftCode1]</b></p>
+        </div>
+    </div>
+        }
+</fieldset>
+<script type="text/javascript">
+        $(".del-ca").on('click', function (e) {
+            var url = $(this).attr("data-url");
+            $.ajax({
+                type: "POST",
+                url: url,
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Xóa thành công');
+                        $("#cell_khaibaoca").load("/hcns/chamcong/cell_khaibaoca?userid=" + $("#UserEnrollNumber").val() + "&date=" + $("#Date").val());
+                    } else if (data.result == false && data.message != '') {
+                        $(this).callToast("error", '', "" + data.message + "");
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }, complete: function () {
+                    $("#btnKhaiBaoLoi").show();
+                }
+            });
+
+            e.preventDefault();
+
+        });
+
+        $(function () {
+            $("#form_khaibaoca").submit(function (e) {
+                var form = $(this);
+                var url = form.attr('action');
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: form.serialize(),
+                    beforeSend: function () {
+                        $("#btnCaLamViec").hide();
+                    },
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+
+                            $("#cell_khaibaoca").load("/hcns/chamcong/cell_khaibaoca?userid=" + $("#UserEnrollNumber").val() + "&date=" + $("#Date").val());
+                        }
+                        else {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                        }
+                    }, complete: function () {
+                        $("#btnCaLamViec").show();
+                    }
+                });
+
+                e.preventDefault();
+            });
+        });
+</script>
+}

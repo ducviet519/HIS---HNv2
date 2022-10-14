@@ -1,0 +1,226 @@
+﻿@model System.Data.DataTable
+@using System.Linq
+<style type="text/css">
+    .modal-lg { width: 800px; }
+
+    .panel-heading { background: #3882B6; }
+
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+
+            .panel-heading h4 i { margin-right: 5px; }
+
+    form.formFieldset input[type='text'], form select, form textarea { max-width: none; }
+    form.formFieldset .row { margin-left: -5px; margin-right: -5px; }
+        form.formFieldset .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    form.formFieldset .infor-box { margin-bottom: 10px; }
+        form.formFieldset .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+</style>
+@{
+    var timeQD = ViewBag.TimeQuyDinh;
+    var ngaychotcong = DateTime.UtcNow.AddHours(7).AddMonths(-1).ToString("25/MM/yyyy");
+    var ngaykhaibaocuoi = DateTime.UtcNow.AddHours(7).ToString("24/MM/yyyy");
+    var ngayhientai = DateTime.UtcNow.AddHours(7);
+    var ngaychotcongFormat = DateTime.ParseExact(ngaychotcong, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+    var ngaykhaibaocuoiFormat = DateTime.ParseExact(ngaykhaibaocuoi, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+    var makp = Model.Rows[0]["KhoaPhong"];
+}
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Chi tiết công ngày @ViewBag.DATE</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover">
+                        @foreach (System.Data.DataRow row in Model.Rows)
+                        {
+                            <tr>
+                                <td class="text-left"><b>Mã nhân viên: </b></td>
+                                <td>@row["UserFullCode"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Tên nhân viên</b></td>
+                                <td>@row["UserFullName"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Loại ca đang thiết lập</b></td>
+                                <td>@row["DS"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Giờ vào</b></td>
+                                <td>@(string.IsNullOrEmpty(row["RIn1"].ToString()) ? "" : DateTime.Parse(row["RIn1"].ToString()).ToString("HH:mm"))</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Giờ ra</b></td>
+                                <td>@(string.IsNullOrEmpty(row["ROut1"].ToString()) ? "" : DateTime.Parse(row["ROut1"].ToString()).ToString("HH:mm"))</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Ngày công</b></td>
+                                <td>@row["ManDay"].ToString() công</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Tổng thời gian đi muộn, về sớm</b></td>
+                                <td>@row["LE1"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Thiếu giờ vào / ra</b></td>
+                                <td>@row["NIO1"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Khai báo vắng</b></td>
+                                <td>@row["AbsentSymbol"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Ca phụ</b></td>
+                                <td>@row["TShift1"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Đề xuất xử lý lỗi chấm công</b></td>
+                                <td>@row["XLL"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Duyệt xử lý lỗi</b></td>
+                                <td>
+                                    @if (row["Status"].ToString() == "0")
+                                    {
+                                        <span>Đã đề xuất</span>
+                                    }
+                                    @if (row["Status"].ToString() == "1")
+                                    {
+                                        <span>Khoa/Phòng đã duyệt</span>
+                                    }
+                                    @if (row["Status"].ToString() == "2")
+                                    {
+                                        <span>HCNS đã duyệt</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Khai báo Đi sớm trước ca / về muộn sau ca</b></td>
+                                <td>@row["SMReq"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Khai báo Làm thêm giờ</b></td>
+                                <td>@row["OTReq"].ToString()</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Duyệt làm thêm giờ</b></td>
+                                <td>
+                                    @if (row["OTStats"].ToString() == "0")
+                                    {
+                                        <span>Đã đề xuất</span>
+                                    }
+                                    @if (row["OTStats"].ToString() == "1")
+                                    {
+                                        <span>Khoa/Phòng đã duyệt</span>
+                                    }
+                                    @if (row["OTStats"].ToString() == "2")
+                                    {
+                                        <span>HCNS đã duyệt</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left"><b>Khai báo Trực trưa</b></td>
+                                <td>@row["TTReq"].ToString()</td>
+                            </tr>
+                            if (!string.IsNullOrEmpty(row["L"].ToString()) && row["L"].ToString() != "0")
+                            {
+                                <tr>
+                                    <td class="text-left"><b>Công đi làm ngày lễ</b></td>
+                                    <td>@row["L"].ToString()</td>
+                                </tr>
+                            }
+                            if (!string.IsNullOrEmpty(row["TiOT1"].ToString()) && row["TiOT1"].ToString() != "0")
+                            {
+                                <tr>
+                                    <td class="text-left"><b>Thời gian làm thêm tính tiền ngày thường</b></td>
+                                    <td>@row["TiOT1"].ToString()</td>
+                                </tr>
+                            }
+                            if (!string.IsNullOrEmpty(row["TiNOT1"].ToString()) && row["TiNOT1"].ToString() != "0")
+                            {
+                                <tr>
+                                    <td class="text-left"><b>Thời gian làm thêm tính tiền ngày nghỉ</b></td>
+                                    <td>@row["TiNOT1"].ToString()</td>
+                                </tr>
+                            }
+                            if (!string.IsNullOrEmpty(row["TiLOT1"].ToString()) && row["TiLOT1"].ToString() != "0")
+                            {
+                                <tr>
+                                    <td class="text-left"><b>Thời gian làm thêm tính tiền ngày lễ</b></td>
+                                    <td>@row["TiLOT1"].ToString()</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td class="text-left"><b>Các lần vào ra thực tế</b></td>
+                                <td style="min-width: 150px;">
+                                    @{
+                                        var arr = row["CheckInOut"].ToString().Split('|');
+                                    }
+
+                                    @for (int i = 0; i < arr.Count(); i++)
+                                    {
+                                        if (!string.IsNullOrEmpty(arr[i].ToString()))
+                                        {
+                                            <p>@arr[i].ToString().Trim()</p>
+                                            @*<p>@DateTime.ParseExact(arr[i].ToString().Trim(), "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture).ToString("dd/MM/yyyy HH:mm")</p>*@
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                    <div class="clearfix"></div>
+                    @{
+                        bool locked = false;
+
+                        var ngaykhaibaoFormat = DateTime.ParseExact(ViewBag.DATE, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                        if ((ngaykhaibaoFormat < ngaychotcongFormat) || (ngayhientai - ngaykhaibaoFormat).TotalDays > timeQD)
+                        {
+                            locked = true;
+                        }
+                    }
+
+                    @if (ViewBag.Locked == 0)
+                    {
+                        <!-- Khai báo ca -->
+                        <div id="cell_khaibaoca">
+                            @Html.Action("cell_khaibaoca", "chamcong", new { userid = ViewBag.USER, date = ViewBag.DATE })
+                        </div>
+
+                        if (ViewBag.UserAuth != "HCNS_User")
+                        {
+                            <!-- Khai báo thời gian làm việc -->
+                            <div id="cell_thoigianlamviec">
+                                @Html.Action("cell_thoigianlamviec", "chamcong", new { userid = ViewBag.USER, date = ViewBag.DATE, kp = makp })
+                            </div>
+                        }
+
+                        <!-- Khai báo lỗi -->
+                        <div id="cell_khaibaoloi">
+                            @Html.Action("cell_khaibaoloi", "chamcong", new { userid = ViewBag.USER, date = ViewBag.DATE })
+                        </div>
+                        <!-- Khai báo vắng -->
+                        <div id="cell_khaibaovang">
+                            @Html.Action("cell_khaibaovang", "chamcong", new { userid = ViewBag.USER, date = ViewBag.DATE })
+                        </div>
+                        <div id="cell_khaibaoan">
+                            @Html.Action("cell_khaibaoan", "chamcong", new { userid = ViewBag.USER, date = ViewBag.DATE })
+                        </div>
+                    }
+                </div>
+                <div class="panel-footer text-center">
+                    <input type="button" value="Đóng cửa sổ" class="btn btn-danger btn-sm" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

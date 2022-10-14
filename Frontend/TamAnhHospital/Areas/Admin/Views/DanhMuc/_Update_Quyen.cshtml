@@ -1,0 +1,71 @@
+﻿@model System.App.Entities.DanhMuc_Quyen
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục Quyền</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Tên quyền</label>
+                                @Html.TextBox("upd_quyen_ten", Model.RightTA, new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Loại nhóm</label>
+                                @Html.TextBox("upd_quyen_nhom", Model.PartTA, new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Mã quyền</label>
+                                @Html.TextBox("upd_quyen_maquyen", Model.ValTA, new { @class = "form-control input-sm", @readonly = true })
+                            </div>
+                        </div>                        
+                    </div>                    
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_quyen_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_quyen_btnUpdate").click(function (e) {
+            var _RightTA = $("#upd_quyen_ten").val();
+            var _PartTA = $("#upd_quyen_nhom").val();
+            var _ValTA = $("#upd_quyen_maquyen").val();
+
+            var obj = {
+                "RightTA": _RightTA,
+                "PartTA": _PartTA,
+                "ValTA": _ValTA,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_Quyen", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Mã quyền đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

@@ -1,0 +1,316 @@
+﻿@{
+    ViewBag.Title = "Khaibaovang";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var userAuth = ViewBag.Auth as string;
+}
+<style type="text/css">
+    .head-section, .middle-section { margin-bottom: 10px; }
+
+        .head-section .input-group { display: flex; }
+
+    .form-group { margin-bottom: 0; }
+
+    .middle-action { border: 1px solid #ddd; padding: 5px; }
+
+    .form .row { margin-left: -5px; margin-right: -5px; }
+
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    #fo-table_wrapper .row:first-child { display: none; }
+
+    #absent-table_wrapper > .row:first-child { display: none; }
+
+    #absent-table { width: 100% !important; }
+
+        #absent-table thead tr { background-color: #3882b6; }
+
+            #absent-table thead tr th { color: #fff; border-color: #2476af; }
+
+    .nowrap { white-space: nowrap !important; }
+
+    th, td { white-space: nowrap; }
+
+    tr.date-early td { color: #ff0000; }
+</style>
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Khai báo vắng</h4>
+        </div>
+        <div class="form1">
+            <input type="hidden" value="s" name="action" id="action" />
+            <div class="form-row action">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Nhập thông tin (Mã | Tên)</label>
+                        <input type="text" name="info" id="info" class="form-control input-sm" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="AbsentCode">Lý do nghỉ</label>
+                        @Html.DropDownList("AbsentCode", new SelectList(ViewBag.DS_AbsentSymbol, "Key", "Value"), "--- Tất cả ---", new { @class = "form-control input-sm chosen-dll" })
+                    </div>
+                </div>
+                <div class="col-md-2 col-xs-2">
+                    <label>Khoa/Phòng</label>
+                    @if (userAuth == "HCNS_Admin")
+                    {
+                        @: @Html.DropDownList("Department", new SelectList(ViewBag.KhoaPhong, "Key", "Value"), "--- Tất cả ---", new { @class = "form-control input-sm chosen-dll" })
+                    }
+                    else
+                    {
+                        @: @Html.DropDownList("Department", new SelectList(ViewBag.KhoaPhong, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                    }
+
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Từ ngày</label>
+                        <input type="text" name="FROM" id="FROM" class="form-control datepicker input-sm" autocomplete="off" style="margin-top: 0;" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>đến ngày</label>
+                        <input type="text" name="TO" id="TO" class="form-control datepicker input-sm" autocomplete="off" style="margin-top: 0;" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="Tìm kiếm" class="btn btn-info input-sm" id="btnSearch" style="margin-top: 22px;" />
+                </div>
+            </div>
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                @if (ViewBag.Locked == 0)
+                {
+                    <a href="javascript:;" id="btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>
+                    <a href="javascript:;" class="btn btn-success btn-sm" id="btnAccept" data-href="/hcns/chamcong/danhsachkhaibaovangchuaduyet">Duyệt đề xuất</a>
+                }
+                <a href="javascript:;" onclick="window.location.reload(false);" class="btn btn-default btn-sm">Tải lại trang</a>
+                <a href="javascript:;" class="btn btn-info btn-sm" id="export-list">Xuất excel</a>
+                <a href="javascript:;" class="btn btn-info btn-sm" id="export-all">Tổng hợp</a>
+
+                <input type="text" class="form-control input-sm" placeholder="Điền từ khóa cần tìm kiếm" id="fsearch" style="float: right; max-width: 300px;" />
+            </div>
+        </div>
+
+        <div id="table-data">
+            <table class="table table-bordered table-hover" id="absent-table">
+                <thead class="bg-primary">
+                    <tr>
+                        @*<th width="50"></th>*@
+                        <th class="nowrap">Mã nhân viên</th>
+                        <th class="nowrap">Họ và tên</th>
+                        <th class="nowrap">Khoa / Phòng</th>
+                        <th class="nowrap">Lý do vắng</th>
+                        <th width="80" class="nowrap">Ngày khai báo</th>
+                        <th width="80">Ngày nghỉ</th>
+                        @*<th width="80">Khai báo</th>*@
+                        <th class="nowrap">Ghi chú</th>
+                        <th class="nowrap">Người khai báo</th>
+                        <th width="40"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.head-section .form1').keypress(keypressHandler);
+    });
+    $(function () {
+        //$('#form1').keypress(keypressHandler);
+        var columnName = [
+            //{
+            //    data: { user: "UserEnrollNumber" },
+            //    "render": function (data) {
+            //        return "<a href=\"javascript:;\" data-href=\"/hcns/nhanvien/update_khaibaovang?user=" + data.UserEnrollNumber + "&time=" + encodeURIComponent(data.TimeDate) + "\" class=\"btnEdit\"><i class=\"fa fa-edit\"></i> Sửa</a>";
+            //    },
+            //    "width": "20px"
+            //},
+            { "data": "UserFullCode" },
+            { "data": "UserFullName" },
+            { "data": "Ten_KhoaPhong_ChamCong" },
+            { "data": "AbsentDescription", "autoWidth": true },
+            { "data": "AddedTime", "autoWidth": true },
+            { "data": "TimeDate", "autoWidth": true },
+            //{ "data": "LateDateDiff", "autoWidth": true },
+            { "data": "Lydo" },
+            { "data": "UserAccount" },
+            {
+                className: "text-center",
+                data: { user: "UserEnrollNumber" },
+                "render": function (data) {
+                    return "<a href=\"javascript:;\" data-date='row_" + data.TimeDate.replace("/", "").replace("/", "") + "' data-href=\"/hcns/nhanvien/XoaKhaiBao?user=" + data.UserEnrollNumber + "&code=" + data.AbsentCode + "&date=" + encodeURIComponent(data.TimeDate) + "\"class=\"btnDelete text-center\" style=\"color: #ff0000;\"><i class=\"fa fa-remove\"></i></a>";
+                },
+                "width": "10px"
+            },
+        ];
+        $.fn.dataTable.moment('DD/MM/YYYY');
+
+        var _tabledata = $("#absent-table").DataTable({
+            "createdRow": function (row, data, dataIndex) {
+                $(row).addClass("row_" + data.TimeDate.replace("/", "").replace("/", ""));
+                //if (data.DiffDate < 0) {
+                //    $(row).addClass('date-early');
+                //}
+            },
+            "ajax": {
+                "url": "/hcns/nhanvien/Absent_AjaxList",
+                "type": "GET",
+                "datatype": "json",
+            },
+            "pageLength": 15,
+            "columns": columnName,
+            "select": true,
+            "deferRender": true,
+            "ordering": true,
+            "order": [[5, "desc"]],
+            "language": { "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Vietnamese.json" }
+        });
+
+        $("#fsearch").on('keyup', function () {
+            _tabledata.search(this.value).draw();
+        });
+        $(document).on('click', '.btnEdit', function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+        $("#btnAccept").on('click', function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+        $(document).on('click', '.btnDelete', function () {
+            var _url = $(this).attr("data-href");
+            var _rw = $(this).attr("data-date");
+            //$(this).callModal(url);
+
+            $.ajax({
+                url: _url,
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                async: true,
+                processData: false,
+                cache: false,
+                beforeSend: function () {
+                    return confirm("Bạn muốn thực hiện chức năng xóa?");
+                },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+
+                        $("." + _rw).hide(300);
+                        $('#absent-table').DataTable().ajax.reload(null, false);
+
+                    } else {
+                        $(this).callToast("error", '', data.message);
+                    }
+
+                },
+                error: function (xhr) {
+                    $(this).callToast("error", '', "Thao tác xóa không thành công");
+                }
+            });
+        });
+        $("#export-list").click(function () {
+            $(this).callModal("/hcns/nhanvien/Export_KhaiBaoVang");
+        });
+        $("#export-all").click(function () {
+            $(this).callModal("/hcns/nhanvien/Export_KhaiBaoVang_All");
+        });
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $("#btnCreate").click(function () {
+            $(this).callModal("/hcns/nhanvien/add_khaibaovang?user=" + $("#info").val());
+        });
+        $(".chosen-dll").chosen();
+
+        //function keypressHandler(e) {
+        //    if (e.which == 13) {
+        //        e.preventDefault(); //stops default action: submitting form
+        //        $(this).blur();
+        //        $('#btnSearch').focus().click();//give your submit an ID
+        //    }
+        //}
+        //$('.head-section .form').keypress(keypressHandler);
+
+        $("#btnSearch").click(function () {
+            var _absentCode = $("#AbsentCode option:selected").val();
+            var _from = $("#FROM").val();
+            var _to = $("#TO").val();
+            var _info = $("#info").val();
+            var _kp = $("#Department").val();
+
+            var urlParams = "";
+            urlParams += "a=search";
+
+            if ($.trim(_absentCode) != "")
+                urlParams += "&code=" + encodeURIComponent(_absentCode);
+
+            if ($.trim(_from) != "")
+                urlParams += "&from=" + $.trim(_from);
+
+            if ($.trim(_to) != "")
+                urlParams += "&to=" + $.trim(_to);
+
+            if ($.trim(_info) != "")
+                urlParams += "&info=" + encodeURIComponent(_info);
+
+            urlParams += "&kp=" + $("#Department option:selected").val();
+
+            //$("#table-data").load("/hcns/nhanvien/Khaibaovang_Table_Data?" + urlParams);
+            Reload_DataTable("absent-table", columnName, "/hcns/nhanvien/Absent_AjaxList?" + urlParams);
+        });
+
+        function Reload_DataTable(id, column, source) {
+            id = "#" + id;
+
+            if ($.fn.dataTable.isDataTable(id)) {
+                _tabledata.destroy();
+                $(id).find('tbody').empty();
+            }
+            _tabledata = $(id).DataTable({
+                "createdRow": function (row, data, dataIndex) {
+                    //$(row).addClass("row_" + data.TimeDate.replace("/", "").replace("/", ""));
+                    //if (data.DiffDate < 0) {
+                    //    $(row).addClass('date-early');
+                    //}
+                },
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 15,
+                "columns": columnName,
+                "select": true,
+                "deferRender": true,
+                "order": [[5, "desc"]],
+
+                "language": { "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Vietnamese.json" }
+            });
+            $("#fsearch").on('keyup', function () {
+                _tabledata.search(this.value).draw();
+            });
+        }
+    });
+</script>

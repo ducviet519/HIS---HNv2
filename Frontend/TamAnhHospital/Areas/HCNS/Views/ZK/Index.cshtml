@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Quản lý vân tay nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tab-content { border: 1px solid #ccc; border-top: 0; }
+    .table { width: 100% !important; }
+    tr.expiring-soon td { background-color: #fff9d8 !important; }
+    tr.expried td { background-color: #f1f1f1 !important; }
+    .dataTables_wrapper > .row:first-child { display: none; }
+    .dataTable thead th { background: #3882b6; color: #fff; padding: 10px 8px !important; }
+    .dataTable tbody tr.pending { background: #fff3d2; }
+    .row { margin-bottom: 10px; }
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input { max-width: 100%; }
+</style>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#sync" class="nav_link" data-info="sync">Đồng bộ</a></li>
+    @*<li><a data-toggle="tab" href="#finger" class="nav_link" data-info="finger">Vân tay</a></li>
+    <li><a data-toggle="tab" href="#removefinger" class="nav_link" data-info="removefinger">Xóa vân tay nghỉ việc</a></li>*@
+</ul>
+
+<div class="tab-content">
+    <div id="sync" class="tab-pane fade in active" data-info="sync"></div>
+    <div id="finger" class="tab-pane fade" data-info="finger"></div>
+    <div id="removefinger" class="tab-pane fade" data-info="removefinger"></div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#sync').load('/hcns/zk/dongbo');
+
+        $('.nav_link').on('click', function () {
+            var info = $(this).data("info");
+            $(".tab-content > div").html("");
+
+            switch (info) {
+                case 'finger': $('#finger').load('/hcns/zk/layvantay'); //Controller method which returns partial view
+                    break;
+                case 'sync': $('#sync').load('/hcns/zk/dongbo');//Controller method which returns partial view
+                    break;
+                case 'removefinger': $('#removefinger').load('/hcns/zk/nghiviec'); //Controller method which returns partial view
+                    break;
+                default: break;
+            }
+        });
+    });
+</script>

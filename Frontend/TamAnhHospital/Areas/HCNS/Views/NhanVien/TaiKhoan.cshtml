@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewBag.Title = "Danh sách tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Danh sách nhân viên</h4>
+        </div>
+    </div>
+    <div class="middle-section">
+        <div id="table-data">
+            <table class="table table-bordered table-hover" id="hcns-table" data-page-length='15' style="width: 100% !important;">
+                <thead>
+                    <tr>
+                        <th width="85" class="nowrap">Mã NV</th>
+                        <th class="nowrap">Họ và tên</th>
+                        <th class="nowrap">Khoa / Phòng</th>
+                        <th class="nowrap">Chức danh</th>
+                        <th class="nowrap">Email cá nhân</th>
+                        <th class="nowrap" width="250">Email</th>
+                        <th class="nowrap">Tài khoản sử dụng</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var __columns = [
+        { "data": "UserFullCode" },
+        { "data": "UserFullName" },
+        { "data": "Ten_PhongKhoaHC" },
+        { "data": "ChucDanh" },
+        { "data": "Email" },
+        {
+            "data": {},
+            "render": function (data) {
+                return "<span style=\"display: none\">" + data.TAEmail+"</span> <input type=\"text\" class=\"form-control\" value=\"" + data.TAEmail + "\" onchange=\"update_email(this, '" + data.UserEnrollNumber + "')\"/>";
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return "<span style=\"display: none\">" + data.UPN +"</span> <input type=\"text\" class=\"form-control\" value=\"" + data.UPN + "\" onchange=\"update_taikhoan(this, '" + data.UserEnrollNumber + "')\"/>";
+            },
+            "width": "20px"
+        }
+    ];
+
+    var _tabledata = $("#hcns-table").DataTable({
+        "ajax": {
+            "url": "/hcns/nhanvien/danhsachtaikhoan",
+            "type": "GET",
+            "datatype": "json",
+        },
+        "columns": __columns,
+        "select": true,
+        "deferRender": true,
+        "order": [[0, "desc"]]
+    });
+
+    function update_taikhoan(control, userid) {
+        var taikhoan = $(control).val();
+        $.ajax({
+            type: "POST",
+            url: "/hcns/nhanvien/push_update_taikhoan",
+            data: { userid: userid, taikhoan: taikhoan },
+            success: function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", '', 'Cập nhật thành công');
+                }
+                else {
+                    $(this).callToast("error", '', data.mess);
+                }
+            }
+        });
+    }
+    function update_email(control, userid) {
+        var email = $(control).val();
+        $.ajax({
+            type: "POST",
+            url: "/hcns/nhanvien/push_update_email",
+            data: { userid: userid, email: email },
+            success: function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", '', 'Cập nhật thành công');
+                }
+                else {
+                    $(this).callToast("error", '', data.mess);
+                }
+            }
+        });
+    }
+
+    $(document).on('keypress', 'input', function (e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            $(this).parent().parent().next('tr').find('input').focus();
+        }
+    });
+</script>

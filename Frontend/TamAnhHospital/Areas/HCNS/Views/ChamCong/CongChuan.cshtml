@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "CongChuan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h3>Danh sách công chuẩn</h3>
+
+<div class="form">
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-md-1 col-xs-2">
+            <label for="date_cc">Xem từ ngày</label>
+            <input type="text" id="sdate" class="form-control timepicker input-sm" value="@DateTime.UtcNow.AddHours(7).AddMonths(-1).ToString("25/MM/yyyy")" autocomplete="off" />
+        </div>
+        <div class="col-md-1 col-xs-2">
+            <label for="date_cc">đến ngày</label>
+            <input type="text" id="edate" class="form-control timepicker input-sm" value="@DateTime.UtcNow.AddHours(7).ToString("24/MM/yyyy")" autocomplete="off" />
+        </div>
+
+        <div class="col-md-2 col-xs-3">
+            <label>Khoa/Phòng</label>
+            @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value"), "--- Chọn khoa phòng ---", new { @class = "form-control input-sm" })
+        </div>
+        <div class="col-md-2 col-xs-3">
+            <label>Mã/Tên nhân viên</label>
+            <input type="text" class="form-control input-sm" placeholder="Nhập thông tin..." id="nhanvien" autocomplete="off" />
+        </div>
+        <div class="col-md-2 col-xs-3">
+            <button type="button" id="btnSearch" class="btn btn-default btn-sm" style="margin-top: 22px;">Xem công</button>
+        </div>
+    </div>
+</div>
+
+<div id="loadPartial"></div>
+
+<script type="text/javascript">
+    $(function () {
+        $('.timepicker').datepicker({ format: 'dd/mm/yyyy' });
+        $("#loadPartial").load("/hcns/chamcong/table_congchuan?s=" + $("#sdate").val() + "&e=" + $("#edate").val());
+    });
+</script>

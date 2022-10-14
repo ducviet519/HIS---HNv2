@@ -1,0 +1,71 @@
+﻿@model System.Data.DataTable
+<style>
+    table td, table th {
+        white-space: nowrap !important;
+    }
+
+    #dataFilter_wrapper > .row:first-child {
+        display: none;
+    }
+</style>
+@{
+    var tungay = ViewBag.TUNGAY == null ? DateTime.UtcNow.AddHours(7) : (DateTime)ViewBag.TUNGAY;
+    var denngay = ViewBag.DENNGAY == null ? DateTime.UtcNow.AddHours(7) : (DateTime)ViewBag.DENNGAY;
+    var tongngay = Convert.ToInt32(ViewBag.SONGAY);
+}
+<div class="content-block table-responsive">
+    <table id="dataFilter" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>Mã nhân viên</th>
+                <th>Họ và tên</th>
+                <th>Khoa / Phòng</th>
+                <th>Tổng</th>
+                @if (tongngay >= 0)
+                {
+                    for (int i = 0; i <= tongngay; i++)
+                    {
+                        <th>@tungay.AddDays(i).ToString("dd")</th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Rows.Count > 0)
+            {
+                foreach (System.Data.DataRow item in Model.Rows)
+                {
+                    <tr>
+                    @for (int i = 1; i <= tongngay + 5; i++)
+                    {
+                        if (i > 4)
+                        {
+                            var songay = (DateTime.UtcNow.AddHours(7) - DateTime.ParseExact(Model.Columns[i].ColumnName, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)).Days;
+                            if (songay > 0)
+                            {
+                                <td style="color:red">@item[i].ToString()</td>
+                            }
+                            else
+                            {
+                                <td>@item[i].ToString()</td>
+                            }
+                         }
+                         else
+                         {
+                             <td>@item[i].ToString()</td>
+                         }
+                    }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        //var i = '@ViewBag.SONGAY';
+        //$('#dataFilter').callDataTableCustomSearch('vi', '', '#hoten');
+        //console.log(item);
+    });
+</script>

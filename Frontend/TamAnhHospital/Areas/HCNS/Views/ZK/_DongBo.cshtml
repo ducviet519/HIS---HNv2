@@ -1,0 +1,351 @@
+﻿@{
+    var oDevice = ViewData["Device"] as IEnumerable<System.App.Entities.HCNS.ZK_Machine>;
+}
+<style type="text/css">
+    tfoot {
+        display: table-row-group;
+    }
+</style>
+<div class="panel-body">
+    <div class="title">
+        <h4>Danh sách nhân viên</h4>
+    </div>
+    <div class="form">
+        <div class="row">
+            <div class="col-md-5">
+                <select class="form-control chosen-dll" style="min-width: 100%;" id="lbDevice" multiple>
+                    <option value="">--- Chọn thiết bị ---</option>
+                    @foreach (var item in oDevice)
+                    {
+                        <option value="@item.IPAddress">@item.DeviceName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-7">
+                <button class="btn btn-primary" id="connect">Đồng bộ dữ liệu</button>
+                <button class="btn btn-primary" id="getface">Lấy dữ liệu face</button>
+                <button class="btn btn-primary" id="insertface">Đồng bộ face</button>
+                <button class="btn btn-danger pull-right" id="del">Xóa dữ liệu</button>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover" id="zk_table_sync">
+        <thead>
+            <tr>
+                <th class="no-sort"><input type="checkbox" id="checkAll" /> Tất cả</th>
+                <th>#</th>
+                <th>Mã nhân viên</th>
+                <th>Họ và tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Chức danh</th>
+                <th>Mật khẩu</th>
+                <th>Vân tay</th>
+                <th>Face</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>#</th>
+                <th>Mã nhân viên</th>
+                <th>Họ và tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Chức danh</th>
+                <th>Mật khẩu</th>
+                <th>Vân tay</th>
+                <th>Face</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script type="text/javascript">
+
+    function update_pw(control, userid) {
+        var pw = $(control).val();
+        $.ajax({
+            type: "POST",
+            url: "/hcns/nhanvien/Push_Update_PW",
+            data: { userid: userid, pw: pw },
+            success: function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", '', 'Cập nhật thành công');
+                }
+                else {
+                    $(this).callToast("error", '', data.mess);
+                }
+            }
+        });
+    }
+    $(function () {
+        $(".chosen-dll").chosen();
+
+        $('#zk_table_sync tfoot').each(function () {
+            $(this).insertAfter($(this).siblings('thead'));
+        });
+
+
+        $(document).on('click', '#zk_table_sync #checkAll', function () {
+            $("#zk_table_sync input[name='personFinger']").not(this).prop('checked', this.checked);
+        });
+
+        $("button#connect").on("click", function () {
+            var lbVal = $(".chosen-dll").chosen().val();
+            var btnSubmit = $("button#connect");
+            if (lbVal == "") {
+                alert("Bạn cần chọn thiết bị.");
+                return;
+            } else {
+                var person = [];
+
+                $(_tabledata.$('input[type="checkbox"]').map(function () {
+                    return $(this).prop("checked") ? person.push($(this).val()) : null;
+                }));
+
+                if (person.length == 0) {
+                    alert("Chưa chọn nhân viên cần đồng bộ.");
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/hcns/zk/Push_VanTay",
+                        data: { users: person.toString(), devices: lbVal.toString() },
+                        beforeSend: function () {
+                            btnSubmit.html("Đang đồng bộ...");
+                            btnSubmit.attr("disabled", "disabled");
+                        },
+                        success: function (data, status) {
+                            if (data.result == true)
+                                $(this).callToast("success", 'Đồng bộ hoàn thành', '');
+                            else
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                        },
+                        complete: function () {
+                            btnSubmit.html("Đồng bộ dữ liệu");
+                            btnSubmit.removeAttr("disabled");
+                        }
+                    });
+                }
+            }
+        });
+        $("button#getface").on("click", function () {
+            var lbVal = $(".chosen-dll").chosen().val();
+            var btnSubmit = $("button#getface");
+            if (lbVal == "") {
+                alert("Bạn cần chọn thiết bị.");
+                return;
+            } else {
+                var person = [];
+
+                $(_tabledata.$('input[type="checkbox"]').map(function () {
+                    return $(this).prop("checked") ? person.push($(this).val()) : null;
+                }));
+
+                if (person.length == 0) {
+                    alert("Chưa chọn nhân viên cần đồng bộ.");
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/hcns/zk/Get_Face",
+                        data: { users: person.toString(), devices: lbVal.toString() },
+                        beforeSend: function () {
+                            btnSubmit.html("Đang đồng bộ...");
+                            btnSubmit.attr("disabled", "disabled");
+                        },
+                        success: function (data, status) {
+                            if (data.result == true)
+                                $(this).callToast("success", 'Đồng bộ hoàn thành', '');
+                            else
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                        },
+                        complete: function () {
+                            btnSubmit.html("Lấy dữ liệu face");
+                            btnSubmit.removeAttr("disabled");
+                        }
+                    });
+                }
+            }
+        });
+        $("button#insertface").on("click", function () {
+            var lbVal = $(".chosen-dll").chosen().val();
+            var btnSubmit = $("button#insertface");
+            if (lbVal == "") {
+                alert("Bạn cần chọn thiết bị.");
+                return;
+            } else {
+                var person = [];
+
+                $(_tabledata.$('input[type="checkbox"]').map(function () {
+                    return $(this).prop("checked") ? person.push($(this).val()) : null;
+                }));
+
+                if (person.length == 0) {
+                    alert("Chưa chọn nhân viên cần đồng bộ.");
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/hcns/zk/Insert_Face",
+                        data: { users: person.toString(), devices: lbVal.toString() },
+                        beforeSend: function () {
+                            btnSubmit.html("Đang đồng bộ...");
+                            btnSubmit.attr("disabled", "disabled");
+                        },
+                        success: function (data, status) {
+                            if (data.result == true)
+                                $(this).callToast("success", 'Đồng bộ hoàn thành', '');
+                            else
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                        },
+                        complete: function () {
+                            btnSubmit.html("Đồng bộ face");
+                            btnSubmit.removeAttr("disabled");
+                        }
+                    });
+                }
+            }
+        });
+        $("button#del").on("click", function () {
+            var lbVal = $(".chosen-dll").chosen().val();
+            var btnConnect = $("button#connect");
+            var btnDel = $("button#del");
+            if (lbVal == "") {
+                alert("Bạn cần chọn thiết bị.");
+                return;
+            } else {
+                var person = [];
+                $.each($("input[name='personFinger']:checked"), function () {
+                    person.push($(this).val());
+                });
+
+                if (person.length == 0) {
+                    alert("Chưa chọn nhân viên cần xóa.");
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/hcns/zk/Xoa_VanTay",
+                        data: { users: person.toString(), devices: lbVal.toString() },
+                        beforeSend: function () {
+                            btnDel.html("Đang tiến hành xóa...");
+                            btnDel.attr("disabled", "disabled");
+
+
+                            btnConnect.attr("disabled", "disabled");
+                        },
+                        success: function (data, status) {
+                            if (data.result == true)
+                                $(this).callToast("success", 'Đồng bộ hoàn thành', '');
+                            else
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                        },
+                        complete: function () {
+                            btnDel.html("Xóa dữ liệu");
+                            btnDel.removeAttr("disabled");
+
+                            btnConnect.removeAttr("disabled", "disabled");
+                        }
+                    });
+                }
+            }
+        });
+
+        var columns = [
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.VanTay == true || data.UserPW != '' || data.Face == true) {
+                        return "<input type=\"checkbox\" value='" + data.UserEnrollNumber + "' name=\"personFinger\" />";
+                    } else {
+                        return "";
+                    }
+                }
+            },
+            { "data": "UserEnrollNumber", "width": "40px" },
+            { "data": "UserFullCode" },
+            { "data": "DisplayName" },
+            { "data": "NgaySinh" },
+            { "data": "GioiTinh" },
+            { "data": "ChucDanh" },
+            {
+                "data": {},
+                "render": function (data) {
+                    return "<input type=\"text\" class=\"form-control\" value=\"" + data.UserPW + "\" onchange=\"update_pw(this, '" + data.UserEnrollNumber + "')\"/>";
+                }
+            },
+            {
+                "data": "VanTay",
+                "render": function (data) {
+                    if (data == true) {
+                        return "<i class=\"fa fa-check\" style=\"color: #82C91E; font-size: 16px;\"></i>";
+                    } else {
+                        return "<i class=\"fa fa-ban\" style=\"color: #f20000; font-size: 16px;\"></i>";
+                    }
+
+                }, "width": "50px"
+            },
+            {
+                "data": "Face",
+                "render": function (data) {
+                    if (data == true) {
+                        return "<i class=\"fa fa-check\" style=\"color: #82C91E; font-size: 16px;\"></i>";
+                    } else {
+                        return "<i class=\"fa fa-ban\" style=\"color: #f20000; font-size: 16px;\"></i>";
+                    }
+
+                }, "width": "50px"
+            }
+        ];
+
+        var languages = {
+            "sProcessing": "Đang xử lý...",
+            "sLengthMenu": "Xem _MENU_ mục",
+            "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+            "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+            "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+            "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+            "sInfoPostFix": "",
+            "sSearch": "Tìm:",
+            "sUrl": "",
+            "oPaginate": {
+                "sFirst": "Đầu",
+                "sPrevious": "Trước",
+                "sNext": "Tiếp",
+                "sLast": "Cuối"
+            }
+        };
+        $('#zk_table_sync tfoot th').each(function () {
+            var title = $(this).text();
+            $(this).html('<input type="text" class="form-control" placeholder="' + title + '" />');
+        });
+
+        var _tabledata = $("#zk_table_sync").DataTable({
+            "ajax": {
+                "url": "/hcns/zk/DS_NhanVien",
+                "type": "GET",
+                "datatype": "json",
+            },
+            "pageLength": 50,
+            "autoWidth": true,
+            "processing": true,
+            "columns": columns,
+            "deferRender": true,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            "order": [[1, "desc"]],
+            "language": languages
+        });
+
+        _tabledata.columns().every(function () {
+            var that = this;
+
+            $('input', this.footer()).on('keyup change clear', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+    });
+</script>

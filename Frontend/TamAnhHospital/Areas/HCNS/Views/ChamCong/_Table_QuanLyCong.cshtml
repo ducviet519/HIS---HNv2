@@ -1,0 +1,177 @@
+﻿<style>
+    table { width: 100% !important; }
+        table tr th { white-space: nowrap; font-size: 10px; padding: 5px !important; }
+            table tr th::before, table tr th::after { content: "" !important; }
+    .dataTables_wrapper > .row:first-child { display: none; }
+    table tbody td { padding: 5px !important; text-align: center; line-height: 16px !important; }
+        table tbody td.text-left { padding-left: 5px !important; }
+    .bg-yellow { background-color: #fff8cf; }
+    .box-table table tbody tr td:nth-child(1) { background-color: #fff8cf; }
+    .box-table table tbody tr td:nth-child(2) { background-color: #fff8cf; }
+    .box-table table tbody tr td:nth-child(3) { background-color: #fff8cf; }
+    .box-table table tbody tr td:nth-child(4) { background-color: #fff8cf; }
+    .box-table table tbody tr td:nth-child(5) { background-color: #fff8cf; }
+    .row { margin-bottom: 10px; }
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input, .form select { max-width: 100%; }
+
+    .box-table { overflow: auto; width: 100%; max-height: 500px; border: 1px solid #ccc; height: 100%; }
+        .box-table td, th { }
+        .box-table th { background: #e2e2e2; }
+        .box-table table { table-layout: fixed; width: 100%; margin-bottom: 0; }
+        .box-table td:first-child, .box-table th:first-child { position: sticky; left: 0; z-index: 3; }
+        .box-table td:nth-child(2), .box-table th:nth-child(2) { position: sticky; left: 30px; z-index: 3; }
+        .box-table td:nth-child(3), .box-table th:nth-child(3) { position: sticky; left: 85px; z-index: 3; }
+        .box-table td:nth-child(4), .box-table th:nth-child(4) { position: sticky; left: 265px; z-index: 3; }
+        .box-table td:nth-child(5), .box-table th:nth-child(5) { position: sticky; left: 335px; z-index: 3; }
+        /*.box-table td:nth-child(4), .box-table th:nth-child(4) { position: sticky; left: 265px; z-index: 1; }*/
+        .box-table thead tr th { position: sticky; top: 0; z-index: 2; }
+        .box-table th:nth-child(1), .box-table th:nth-child(2), .box-table th:nth-child(3) { z-index: 2; }
+</style>
+
+@{
+    var totalDay = ViewBag.TotalDay ?? 0;
+    var startdate = (DateTime)ViewBag.StartDate;
+    var enddate = (DateTime)ViewBag.EndDate;
+}
+
+<div class="box-table">
+    <table class="table table-bordered table-hover " id="table-data">
+        <thead>
+            <tr>
+                <th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 30px; width: 30px; z-index: 5;"><input type="checkbox" id="checkAll" /></th>
+                <th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 65px; width: 65px; z-index: 5;">Mã NV</th>
+                <th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 180px; width: 180px; z-index: 5;">Họ và tên</th>
+                <th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 70px; width: 70px; z-index: 5;">Công chuẩn</th>
+                <th class="text-center" rowspan="1" style="background-color: #fff8cf; min-width: 70px; width: 70px; z-index: 5;">Công thực</th>
+
+                @for (int i = 0; i <= totalDay; i++)
+                {
+                    <th class="text-center" style="min-width: 50px; width: 50px;">
+                        @{
+                            var _nextDate = startdate.AddDays(i);
+                            var _dayOfWeek = _nextDate.DayOfWeek.ToString();
+
+                            var _dayName = "";
+                            switch (_dayOfWeek)
+                            {
+                                case "Sunday":
+                                    _dayName = "CN";
+                                    break;
+                                case "Monday":
+                                    _dayName = "T2";
+                                    break;
+                                case "Tuesday":
+                                    _dayName = "T3";
+                                    break;
+                                case "Wednesday":
+                                    _dayName = "T4";
+                                    break;
+                                case "Thursday":
+                                    _dayName = "T5";
+                                    break;
+                                case "Friday":
+                                    _dayName = "T6";
+                                    break;
+                                case "Saturday":
+                                    _dayName = "T7";
+                                    break;
+                            }
+                        }
+                        @(_dayName == "CN" ? Html.Raw("<span style='color:#ff0000;'>" + _dayName + "</span>") : Html.Raw(_dayName))
+                        @(_dayName == "CN" ? Html.Raw("<span style='color:#ff0000; display: block;'>" + startdate.AddDays(i).Day.ToString("00") + "/" + startdate.AddDays(i).ToString("MM") + "</span>") : Html.Raw("<span style='display: block;'>" + startdate.AddDays(i).Day.ToString("00") + "/" + @startdate.AddDays(i).ToString("MM") + "</span>"))
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var data = ViewBag.Data as System.Data.DataTable;
+            }
+
+            @if (data.Rows.Count > 0)
+            {
+                foreach (System.Data.DataRow row in data.Rows)
+                {
+                    <tr>
+                        <td style="white-space: nowrap; min-width: 30px;" class="text-center"><input type="checkbox" name="checkUser" class="checkUser" value="@row["UserEnrollNumber"].ToString()" /></td>
+                        <td style="white-space: nowrap; min-width: 55px;">@row["UserFullCode"].ToString()</td>
+                        <td style="white-space: nowrap; min-width: 180px;" class="text-left">
+                            <a class="link-chitiet" href="javascript:;" data-id="@row["UserEnrollNumber"].ToString()">@row["UserFullName"].ToString()</a>
+                        </td>
+                        <td style="white-space: nowrap;" class="text-center">@row["CC"].ToString()</td>
+                        <td style="white-space: nowrap;" class="text-center">@row["000X"].ToString()</td>
+
+                        @for (int i = 0; i <= totalDay; i++)
+                        {
+                            var _nextDate = startdate.AddDays(i).ToString("dd/MM");
+                            var val = row["" + _nextDate + ""].ToString();
+
+                            if (!string.IsNullOrEmpty(val))
+                            {
+                                var ca = val.Split('/')[0];
+                                var cong = val.Split('/')[1];
+                                var mau = val.Split('/')[2];
+                                var color = "";
+                                var fcolor = "#000";
+                                <td class="detail-cell" style="font-size: 10px; min-width: 50px; max-width: 50px; position: relative; z-index:1;">
+                                    @if (mau == "0")
+                                    {
+                                        color = "#fff";
+                                    }
+                                    else if (mau == "1")
+                                    {
+                                        color = "#ffd700";
+                                        fcolor = "#000";
+                                    }
+                                    else if (mau == "2")
+                                    {
+                                        color = "#f55a5a";
+                                        fcolor = "#000";
+                                    }
+                                    <div style="background-color: @color; color: @fcolor;">
+                                        <input type="hidden" class="user" value="@row["UserEnrollNumber"].ToString()" />
+                                        <input type="hidden" class="date" value="@startdate.AddDays(i).ToString("dd/MM/yyyy")" />
+                                        @*@Html.Raw("<a href='javascript:;' class='xoa-ca-phu' style='position: absolute; right: 0px; top: 0px; z-index:2; color:#fff;padding: 0px 4px;background: #ff4040;font-size: 9px; line-height: 12px;' data-toggle=\"tooltip\" data-placement=\"top\" title=\"Tooltip on top\"><i class=\"fa fa-info\"></i></a>")*@
+                                        <span>@ca.ToString()</span>
+                                        @(string.IsNullOrEmpty(cong) ? Html.Raw("") : Html.Raw("</br><span style='padding: 3px 5px;'>" + cong + "</span>"))
+                                    </div>
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#checkAll', function () {
+            $('.checkUser').not(this).prop('checked', this.checked);
+        });
+        $(".link-chitiet").click(function (e) {
+            e.preventDefault();
+            var userid = $(this).attr("data-id");
+            var s = encodeURIComponent($("#sdate").val());
+            var e = encodeURIComponent($("#edate").val());
+
+            $(this).callModal("/hcns/chamcong/QuanLyCong_ChiTiet?user=" + userid + "&s=" + s + "&e=" + e);
+        });
+
+        $("#table-data td.detail-cell").click(function (e) {
+            var u = $(this).find(".user").val();
+            var d = $(this).find(".date").val();
+            $(this).callModal("/hcns/chamcong/QuanLyCong_ChiTiet_Cell?user=" + u + "&d=" + d);
+            //$(this).css("font-weight", "bold");
+            e.stopPropagation();
+        });
+    });
+</script>

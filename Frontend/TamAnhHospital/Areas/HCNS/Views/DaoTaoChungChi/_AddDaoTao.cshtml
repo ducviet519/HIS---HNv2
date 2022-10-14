@@ -1,0 +1,70 @@
+﻿@model System.App.Entities.HCNS.DaoTaoChungChiVM
+@{
+    var userAuth = ViewBag.userAuth as string[];
+}
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới Chứng chỉ đào tạo</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <label class="col-md-2">Mã nhân viên:</label>
+                        <div class="col-md-2"><input type="text" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm" /></div>
+                        <label class="col-md-3">Tên nhân viên: Nguyễn Văn A</label>
+                        <label class="col-md-2">Chức danh: Bác sĩ</label>
+                        <label class="col-md-3">Khoa phòng: Khoa Nhi</label>
+                    </div>
+                    <div class="form-row">
+                        <label class="col-md-2">Tên khóa đào tạo:</label>
+                        <div class="col-md-10"><input type="text" class="form-control input-sm" id="" name="" /></div>
+                    </div>
+                    <div class="form-row">
+                        <label class="col-md-2">Đơn vị tổ chức:</label>
+                        <div class="col-md-10"><input type="text" class="form-control input-sm" id="" name="" /></div>
+                    </div>
+                    <div class="form-row">
+                        <label for="TuNgay" class="col-md-2">Từ ngày:</label>
+                        <div class="col-md-2">
+                            <input type="text" id="TuNgay" name="TuNgay" class="form-control input-sm" />
+                        </div>
+                        <label class="text-right" style="padding-right:0; padding-left:10px">Đến ngày:</label>
+                        <div class="col-md-2">
+                            <input type="text" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm" />
+                        </div>
+                        <label class="text-right" style="padding-right:0; padding-left:10px">Số tiết:</label>
+                        <div class="col-md-1">
+                            <input type="text" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm" />
+                        </div>
+                        <label class="text-right" style="padding-right:0; padding-left:10px">Chi phí:</label>
+                        <div class="col-md-2">
+                            <input type="text" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="col-md-2">Ghi chú:</label>
+                        <div class="col-md-10"><input type="text" class="form-control input-sm" id="" name="" /></div>
+                    </div>
+                    <div class="form-row">
+                        <label class="col-md-2">Loại đào tạo:</label>
+                        <div class="col-md-10"><input type="text" class="form-control input-sm" id="" name="" /></div>
+                    </div>
+                    <div class="form-row">
+                        <label class="col-md-2">Lý do:</label>
+                        <div class="col-md-10"><input type="text" class="form-control input-sm" id="" name="" /></div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-primary btn-sm btn-submit">Lưu dữ liệu</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" id="dismissModal">Đóng cửa sổ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+</script>

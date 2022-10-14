@@ -1,0 +1,89 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục Config</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-9">
+                            <label>Tên loại cấu hình</label>
+                            @Html.TextBox("cre_config_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Mã cấu hình</label>
+                            @Html.TextBox("cre_config_ma", "", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Giá trị ký tự</label>
+                            @Html.TextBox("cre_config_stringval", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Giá trị số</label>
+                            @Html.TextBox("cre_config_numberval", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Giá trị ngày</label>
+                            @Html.TextBox("cre_config_datetimeval", @DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy"), new { @class = "form-control input-sm datepicker" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_config_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+
+        $("#cre_config_btnCreate").click(function (e) {
+            var _Parameter = $("#cre_config_ten").val();
+            var _ParameterID = $("#cre_config_ma").val();
+            var _StringVal = $("#cre_config_stringval").val();
+            var _NumberVal = $("#cre_config_numberval").val();
+            var _DatetimeVal = $("#cre_config_datetimeval").val();
+
+            if (_Parameter == '') {
+                $(this).callToast("error", 'Chưa nhập tên cấu hình', '');
+                return;
+            }            
+
+            var obj = {
+                "Parameter": _Parameter,
+                "ParameterID": _ParameterID,
+                "StringVal": _StringVal,
+                "NumberVal": _NumberVal,
+                "DatetimeVal": _DatetimeVal,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_Config", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Mã quyền đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

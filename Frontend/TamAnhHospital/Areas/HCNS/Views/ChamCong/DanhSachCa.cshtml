@@ -1,0 +1,204 @@
+﻿
+@{
+    ViewBag.Title = "Danh sách ca";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+    var userAuth = ViewBag.Auth as string;
+}
+<style>
+    tr.expiring-soon td { background-color: #fff9d8 !important; }
+    tr.expried td { background-color: #f1f1f1 !important; }
+    .dataTables_wrapper > .row:first-child { display: none; }
+    .dataTable thead th { background: #3882b6; color: #fff; padding: 5px 8px !important; }
+    .dataTable tbody tr.pending { background: #fff3d2; }
+    .dataTable tbody tr.selected td { background: #eee; }
+    .dataTable tbody td p { margin-bottom: 5px; }
+        .dataTable tbody td p:last-child { margin-bottom: 0; }
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input { max-width: 100%; }
+    .flex-row { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: flex-start; width: 100%; }
+    .flex-col { display: flex; flex-direction: column; flex-flow: column; flex-wrap: nowrap; justify-content: flex-start; }
+        .flex-col.flex-fill { width: 100%; }
+    .flex-right { margin-left: auto; width: 30%; padding-top: 68px; }
+    .flex-left { flex-grow: 1; max-width: 100%; padding-right: 10px; }
+    .chosen-container-single .chosen-single { height: 30px !important; line-height: 30px !important; }
+    .form-search { margin: 10px 0; }
+        .form-search .row { margin-left: -5px; margin-right: -5px; }
+        .form-search .col-md-1, .form-search .col-md-2, .form-search .col-md-3, .form-search .col-xs-1, .form-search .col-xs-2, .form-search .col-xs-3 { padding-left: 5px; padding-right: 5px; }
+    .title-bar { border-bottom: 1px solid #ccc; }
+        .title-bar h4 { margin: 0; }
+</style>
+<div class="row title-bar">
+    <div class="col-md-12">
+        <h4>Danh sách ca</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-search">
+            <div class="row">
+                <div class="col-md-1 col-xs-2">
+                    <label for="sshiftcode">Tìm mã</label>
+                    <input type="text" id="sshiftcode" class="form-control timepicker input-sm" value="" autocomplete="off" />
+                </div>
+
+                <div class="col-md-1 col-xs-1">
+                    <label for="sbdvao">Giờ vào từ</label>
+                    <input type="text" id="sbdvao" class="form-control input-time input-sm" value="" autocomplete="off" />
+                </div>
+                <div class="col-md-1 col-xs-1">
+                    <label for="sktvao">đến</label>
+                    <input type="text" id="sktvao" class="form-control input-time input-sm" value="" autocomplete="off" />
+                </div>
+                <div class="col-md-1 col-xs-1">
+                    <label for="sbdra">Giờ vào từ</label>
+                    <input type="text" id="sbdra" class="form-control input-time input-sm" value="" autocomplete="off" />
+                </div>
+                <div class="col-md-1 col-xs-1">
+                    <label for="sktra">đến</label>
+                    <input type="text" id="sktra" class="form-control input-time input-sm" value="" autocomplete="off" />
+                </div>
+
+                <div class="col-md-1 col-xs-1">
+                    <label for="sdaycount">Ngày công</label>
+                    @Html.DropDownList("sdaycount", new List<SelectListItem>() { 
+                        new SelectListItem { Value = "0", Text = "-- Tất cả --", Selected = true },
+                        new SelectListItem { Value = "0.5", Text = "0.5" },
+                        new SelectListItem { Value = "1", Text = "1" },
+                        new SelectListItem { Value = "1.5", Text = "1.5" },
+                        new SelectListItem { Value = "2", Text = "2" }
+                    }, new { @class = "form-control" })
+                </div>
+
+
+                <div class="col-md-2 col-xs-3">
+                    <button type="button" id="btnSearch" class="btn btn-success btn-sm" style="margin-top: 22px;">Tìm kiếm</button>
+                    <button class="btn btn-info btn-sm" id="export-ds" style="margin-top: 22px; margin-left: 5px;">Xuất file</button>
+                </div>
+                @*<div class="col-md-3">
+                        @if (ViewBag.Locked == 0)
+                        {
+                            <button class="btn btn-primary btn-sm pull-right" id="btnDuyetAll" style="margin-top: 22px; margin-left: 5px;">Duyệt nhanh các lựa chọn</button>
+                        }
+                    </div>*@
+            </div>
+        </div>
+
+        <div class="box-table">
+            <table class="table table-bordered table-hover " id="table-data">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">Mã</th>
+                        <th class="text-center no-sort">Vào ca</th>
+                        <th class="text-center no-sort">Ra ca</th>
+                        <th class="text-center no-sort">Ngày công</th>
+                        <th class="text-center no-sort">Bắt đầu vào ca</th>
+                        <th class="text-center no-sort">Kết thúc vào ca</th>
+                        <th class="text-center no-sort">Bắt đầu ra ca</th>
+                        <th class="text-center no-sort">Kết thúc ra ca</th>
+                        <th class="text-center no-sort">Qua đêm</th>
+                        <th class="text-center no-sort">Không giới hạn</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('.input-time').mask('00:00', { clearIfNotMatch: true });
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.form-search').keypress(keypressHandler);
+
+        var columns = [
+            { "data": {}, "width": "30px" },
+            { "data": "ShiftCode", "width": "40px" },
+            { "data": "VaoCa" },
+            { "data": "RaCa" },
+            { "data": "NgayCong" },
+            { "data": "BD_VaoCa" },
+            { "data": "KT_VaoCa" },
+            { "data": "BD_RaCa" },
+            { "data": "KT_RaCa" },
+            { "data": "QuaDem" },
+            { "data": "KGH" }
+        ];
+        Reload_DataTable("table-data", columns, "/hcns/chamcong/data_DanhSachCa");
+
+        $("#btnSearch").click(function () {
+            var objsearch = {
+                ShiftCode: $("#sshiftcode").val().trim(),
+                BD_VaoCa: $("#sbdvao").val().trim(),
+                KT_VaoCa: $("#sktvao").val().trim(),
+                BD_RaCa: $("#sbdra").val().trim(),
+                KT_RaCa: $("#sktra").val().trim(),
+                DayCount: $("#sdaycount option:selected").val()
+            };
+            Reload_DataTable("table-data", columns, "/hcns/chamcong/data_DanhSachCa?" + $.param(objsearch));
+        });
+
+        function Reload_DataTable(id, columns, source) {
+            id = "#" + id;
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 100,
+                "autoWidth": true,
+                "processing": true,
+                "columns": columns,
+                "deferRender": true,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "language": {
+                    "sProcessing": "Đang tải dữ liệu...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+        }
+    });
+</script>

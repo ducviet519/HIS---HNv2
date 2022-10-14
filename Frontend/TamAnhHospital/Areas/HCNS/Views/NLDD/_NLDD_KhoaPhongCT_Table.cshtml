@@ -1,0 +1,56 @@
+﻿@model IEnumerable<System.App.Entities.Report.NLDD_KhoaPhongCT>
+
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h4>Báo cáo tổng hợp theo chi tiết khoa phòng</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered table-hover" id="tbl_kpct">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th width="50">Mã NV</th>
+                    <th>Họ và tên</th>
+                    <th>Khoa phòng</th>
+                    <th width="80">Chức danh</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var o in Model)
+                {
+                <tr>
+                    <td>@o.Number</td>
+                    <td>@o.UserID</td>
+                    <td>@o.Fullname</td>
+                    <td>@o.KhoaPhong</td>
+                    <td>@o.TypeDes</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        var array = [];
+        //$.each(disableColumn.split(','), function (idx, val) {
+        //    array.push(parseInt(val));
+        //});
+
+        var setVal = 'Vietnamese';
+        //if (disableColumn == '') { disableColumn = 0; }
+
+        $("#tbl_kpct").DataTable({
+            "bPaginate": true,
+            "pageLength": 13,
+            "responsive": false,
+            "searching": true,
+            "info": false,
+            "bLengthChange": false,
+            "language": { "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/" + setVal + ".json" },
+            "order": [],
+            "columnDefs": [{ orderable: false, targets: array }]
+        });
+    });
+</script>

@@ -1,0 +1,85 @@
+﻿@{
+    ViewBag.Title = "DanhSach";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Danh sách cán bộ trong khóa học</h3>
+
+@if (ViewBag.IsExisted == false)
+{
+<p>Bạn không có tên trong danh sách tham gia đào tạo nên không thể xem được danh sách này, vui lòng liên hệ phòng IT (8555).</p>
+}
+else
+{
+<div class="table-responsive">
+    <table class="table table-bordered table-condensed" id="lstEmp">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Mã nhân viên</th>
+                <th>Họ và tên</th>
+                <th>Khoa/Phòng</th>
+                <th>Ngày sinh</th>
+                <th>Chức danh</th>
+                <th>Hòm thư</th>
+                <td width="100px">Chữ ký</td>
+                <td width="100">Ngày ký</td>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                    var stt = 1;
+                    var username = System.Web.HttpContext.Current.User.Identity.Name;
+            }
+            @foreach (var o in Model as IEnumerable<System.App.Entities.Employee>)
+                {
+            <tr>
+                <td>@stt</td>
+                <td>@o.UserFullCode</td>
+                <td>@o.UserFullName</td>
+                <td>@o.PhongKhoaHC</td>
+                <td>@o.NgaySinh.ToString("dd/MM/yyyy")</td>
+                <td>@o.ChucDanh</td>
+                <td>@o.TAEmail</td>
+                <td>
+                    @if (o.CHUKY == "")
+                            {
+
+                            }
+                            else
+                            {
+                    <img src="@o.CHUKY" class="img-responsive" />
+                            }
+                </td>
+                @if (o.NgayKy != null)
+                        {
+                <td>@o.NgayKy.Value.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                        }
+                        else
+                        {
+                <td></td>
+                        }
+                <td class="text-center">
+                    @if (o.UPN == username)
+                                {
+                    <a href="javascript:;" data-id="@o.UserEnrollNumber" class="btnSignature"><i class="fa fa-file-signature"></i> Ký tên</a>
+                                }
+                </td>
+            </tr>
+                    stt++;
+                }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $('#lstEmp').callDataTable('vi', '7,8');
+
+    $(".btnSignature").click(function () {
+        var id = $(this).attr("data-id");
+        var url = "/hcns/TrainingCourse/Signature?id=" + id + "&courseId=" + @ViewBag.CourseID;
+        $(this).callModal(url);
+    });
+</script>
+}

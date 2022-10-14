@@ -1,0 +1,53 @@
+﻿@model IEnumerable<System.App.Entities.EmployeeHealth>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Biểu đồ sức khỏe nhân viên</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="~/Areas/QLCL/Content/canvasjs.min.js"></script>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/init.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.toast.min.js"></script>
+    <link rel="stylesheet" href="~/Areas/QLCL/Content/printer.css" />
+    <link rel="stylesheet" href="~/Content/jquery.toast.min.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        window.onload = function () {
+            var chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                theme: "light2",
+	            title: {
+                    text: "Biểu đồ sức khỏe nhân viên"
+	            },
+	            data: [{
+		            type: "pie",
+		            startAngle: 240,
+		            yValueFormatString: "##0.00'%'",
+		            indexLabel: "{label} {y}",
+                    dataPoints: [
+                        { label: 'Loại I', y: 45.2 },
+                        { label: 'Loại II', y: 45.76 },
+                        { label: 'Loại III', y: 2.26 },
+                        { label: 'Loại IV', y: 0.28 },
+                        { label: 'Không phân loại', y: 6.50 },
+
+                        @*@foreach(var item in Model)
+                        {
+                            @Html.Raw("{label: '" + item.Type + "', y: " + item.Percentage + " },")
+                        }*@
+		            ]
+	            }]
+            });
+            chart.render();
+
+            //$("#chartContainer").CanvasJSChart(options);
+
+        }
+    </script>
+    <div id="chartContainer" style="height: 370px; max-width: 920px; margin: 10px auto;"></div>
+</body>
+</html>

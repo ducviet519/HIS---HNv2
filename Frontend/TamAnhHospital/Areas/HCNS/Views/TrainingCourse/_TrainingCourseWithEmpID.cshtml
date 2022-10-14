@@ -1,0 +1,56 @@
+﻿@model IEnumerable<System.App.Entities.TrainingCourse>
+
+<div id="staticModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-content" style="width: 800px !important;">
+        <input type="hidden" value="@ViewBag.EmployeeID" id="empID" />
+
+        <button type="button" class="btn btn-warning btn-sm" id="btnExport">Xuất file excel</button>
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove"></span> Đóng lại</button>
+
+        <table id="dataFilter" class="table table-bordered table-condensed" style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th width="70">Loại hình</th>
+                    <th>Tên khóa học</th>
+                    <th width="100">Số tiết học</th>
+                    <th width="45">Bắt đầu</th>
+                    <th width="48">Kết thúc</th>
+                    <th>Chi phí</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count() > 0)
+                {
+                    foreach (var item in Model as IEnumerable<System.App.Entities.TrainingCourse>)
+                    {
+                <tr>
+                    <td style="white-space: nowrap;">@(item.Type == "0" ? "Nội bộ" : "Ngoài viện")</td>
+                    <td>@item.Name</td>
+                    <td>@item.Lessions tiết</td>
+                    <td>@item.DateFrom.ToString("dd/MM/yyyy")</td>
+                    <td>@item.DateTo.ToString("dd/MM/yyyy")</td>
+                    <td>@String.Format("{0:N0}", item.Cost) đ</td>
+                </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#btnExport").click(function () {
+            var url = "/hcns/trainingCourse/ExportExcelTCWithEmpID?empId=" + $("#empID").val();
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data, status) {
+                    window.location = url;
+                }
+            });
+
+            event.preventDefault();
+        });
+    });
+</script>

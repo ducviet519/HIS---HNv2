@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "Thông tin nhân sự";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .head-section, .middle-section { margin-bottom: 10px; }
+        .head-section .input-group { display: flex; }
+    .form-group { margin-bottom: 0; }
+    .middle-action { border: 1px solid #ddd; padding: 5px; margin-bottom: 5px; }
+    #fo-table_wrapper .row:first-child { display: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+</style>
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Bổ sung thông tin nhân sự</h4>
+        </div>
+
+        <div class="form">
+            <input type="hidden" value="s" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Nhân viên (Mã | Tên)</label>
+                        <input type="text" class="form-control input-sm" placeholder="Mã nhân viên" id="UserEnrollNumber" name="UserEnrollNumber" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Chọn khoa phòng</label>
+                        @Html.DropDownList("PhongKhoaHC", new SelectList(ViewBag.DSKPHC, "Key", "Value"), "-- Chọn giá trị --", new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-1 col-xs-1">
+                    <div class="form-group">
+                        <label for="SoGioLamViec">Giờ làm việc</label>
+                        @Html.DropDownList("SoGioLamViec", new List<SelectListItem>() {
+                                        new SelectListItem { Value = "Full", Text = "Tất cả" },
+                                        new SelectListItem { Value = "44h", Text = "44h" },
+                                        new SelectListItem { Value = "48h", Text = "48h" },
+                                        new SelectListItem { Value = "Khác", Text = "Khác" }
+                                    }, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-1 col-xs-1">
+                    <div class="form-group">
+                        <label for="SoGioLamViec">Trạng thái</label>
+                        @Html.DropDownList("TrangThai", new List<SelectListItem>() {
+                                        new SelectListItem { Value = "0", Text = "Đang công tác" },
+                                        new SelectListItem { Value = "1", Text = "Đã nghỉ" },
+                                        new SelectListItem { Value = "2", Text = "Tất cả", Selected = true }
+                                    }, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="Tìm kiếm" class="btn btn-info btn-sm" id="btnSearch" style="margin-top: 22px;" />
+                </div>
+            </div>
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                @*<a href="javascript:;" id="btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>*@
+                <a href="javascript:;" onclick="window.location.reload(false);" class="btn btn-default btn-sm">Tải lại trang</a>
+                @*<a href="javascript:;" class="btn btn-default btn-sm" id="uploadAllFile">Upload test</a>*@
+                <input type="text" class="form-control input-sm" placeholder="Điền từ khóa cần tìm kiếm" id="fsearch" style="float: right; max-width: 300px;" />
+            </div>
+        </div>
+
+        <div id="table-data">
+            @*@Html.Action("TTNS_Table_Data", "NhanVien", new { areas = "HCNS.Controllers" })*@
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#table-data").load("/hcns/nhanvien/TTNS_Table_Data");
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.head-section .form').keypress(keypressHandler);
+        $("#btnCreate").click(function () {
+            $(this).callModal("/hcns/nhanvien/capnhat");
+        });
+        $("#uploadAllFile").click(function () {
+            $(this).callModal("/hcns/nhanvien/UploadFiles");
+        });
+        $("#btnSearch").click(function () {
+            var _id = $("#UserEnrollNumber").val();
+            var _pkhc = $("#PhongKhoaHC option:selected").val();
+            var _gio = $("#SoGioLamViec option:selected").val();
+            var _trangthai = $("#TrangThai option:selected").val();
+
+            var action = $("#action").val();
+
+            var urlParams = "a=" + action;
+            if ($.trim(_id) != "")
+                urlParams += "&id=" + encodeURIComponent($.trim(_id));
+            if (_pkhc != "")
+                urlParams += "&pkhc=" + _pkhc;
+            if (_trangthai != "")
+                urlParams += "&trangthai=" + _trangthai;
+            if (_gio != "")
+                urlParams += "&gio=" + _gio;
+
+            $("#table-data").load("/hcns/nhanvien/TTNS_Table_Data?" + urlParams);
+        });
+    });
+</script>

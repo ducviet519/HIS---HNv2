@@ -1,0 +1,105 @@
+﻿@model System.App.Entities.DanhMuc_Quyen_NguoiDung
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 850px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục Quyền người dùng</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Tên người dùng</label>
+                            @Html.TextBox("upd_ru_ten", Model.Username, new { @class = "form-control input-sm", @readonly = true })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label><input type="checkbox" name="upd_ru_chkAll" onclick="CheckAll(this);" /> Check all</label>
+                        </div>
+                        @foreach (var item in ViewBag.NHOM as IEnumerable<System.App.Entities.DS_DropDownList>)
+                        {
+                            if (Model.Object != null)
+                            {
+                                if (Model.Object.Split(',').Contains(item.ID.Trim()))
+                                {
+                                    <div class="form-group col-md-3">
+                                        <label><input type="checkbox" name="upd_ru_chk" value="@item.ID" checked /> @item.MoTa</label>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-group col-md-3">
+                                        <label><input type="checkbox" name="upd_ru_chk" value="@item.ID" /> @item.MoTa</label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="form-group col-md-3">
+                                    <label><input type="checkbox" name="upd_ru_chk" value="@item.ID" /> @item.MoTa</label>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_ru_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function CheckAll(control) {
+        var val = $(control).prop("checked");
+
+        if (val) {
+            $("input[name='upd_ru_chk']").prop("checked", true);
+        } else {
+            $("input[name='upd_ru_chk']").prop("checked", false);
+        }
+    }
+
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_ru_btnUpdate").click(function (e) {
+            var _Username = $("#upd_ru_ten").val();
+            var id_Objects = [];
+            $("input[name=\"upd_ru_chk\"]:checked").each(function () {
+                id_Objects.push($(this).val());
+            });
+
+            var obj = {
+                "Username": _Username,
+                "Object": id_Objects.toString(),
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_Quyen_NguoiDung", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Có lỗi trong quá trình cập nhật', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

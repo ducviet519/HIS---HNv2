@@ -1,0 +1,168 @@
+﻿@{
+    var oDevice = ViewData["Device"] as IEnumerable<System.App.Entities.HCNS.ZK_Machine>;
+}
+
+<div class="panel-body">
+    <div class="title">
+        <h4>Danh sách nhân viên</h4>
+    </div>
+    <div class="form">
+        <div class="row">
+            <div class="col-md-3">
+                <select class="form-control" style="min-width: 100%;" id="lbDevice">
+                    <option value="">--- Chọn thiết bị ---</option>
+                    @foreach (var item in oDevice)
+                    {
+                    <option value="@item.IPAddress">@item.DeviceName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary" id="connect">Tải dữ liệu</button>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover" id="zk_table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>#</th>
+                <th>Mã nhân viên</th>
+                <th>Họ và tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Chức danh</th>
+                <th>Vân tay</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>#</th>
+                <th>Mã nhân viên</th>
+                <th>Họ và tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Chức danh</th>
+                <th>Vân tay</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("button#connect").on("click", function () {
+            var lbVal = $("#finger #lbDevice option:selected").val();
+            var btnSubmit = $("button#connect");
+            if (lbVal == "") {
+                alert("Bạn cần chọn thiết bị.");
+                return;
+            } else {
+                var person = [];
+                $.each($("input[name='personFinger']:checked"), function () {
+                    person.push($(this).val());
+                });
+                if (person.length == 0) {
+                    alert("Chưa chọn nhân viên cần đồng bộ.");
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/hcns/zk/XL_VanTay",
+                        data: { url: "http://@(Html.Encode(ViewBag.IP_Host))/action=get/connect=" + lbVal + "/user=" + person.toString() },
+                        beforeSend: function () {
+                        btnSubmit.html("Đang tải dữ liệu...");
+                        btnSubmit.attr("disabled", "disabled");
+                    },
+                    success: function (data, status) {
+                        if (data.result == true)
+                            $(this).callToast("success", 'Vân tay đã được cập nhật', '');
+                        else
+                            $(this).callToast("error", 'Lỗi khi tải dữ liệu.', '');
+                        },
+                                        complete: function () {
+                            btnSubmit.html("Tải dữ liệu");
+                            btnSubmit.removeAttr("disabled");
+                        }
+                    });
+                }
+            }
+        });
+
+        var columns = [
+            {
+                "data": "UserEnrollNumber",
+                "render": function (data) {
+                    return "<input type=\"checkbox\" value='" + data + "' name=\"personFinger\" />";
+                }
+            },
+            { "data": "UserEnrollNumber", "width": "40px" },
+            { "data": "UserFullCode" },
+            { "data": "DisplayName" },
+            { "data": "NgaySinh" },
+            { "data": "GioiTinh" },
+            { "data": "ChucDanh" },
+            {
+                "data": "VanTay",
+                "render": function (data) {
+                    if (data == true) {
+                        return "<i class=\"fa fa-check\" style=\"color: #82C91E; font-size: 16px;\"></i>";
+                    } else {
+                        return "<i class=\"fa fa-ban\" style=\"color: #f20000; font-size: 16px;\"></i>";
+                    }
+
+                }, "width": "50px"
+            }
+        ];
+
+        var languages = {
+            "sProcessing": "Đang xử lý...",
+            "sLengthMenu": "Xem _MENU_ mục",
+            "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+            "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+            "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+            "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+            "sInfoPostFix": "",
+            "sSearch": "Tìm:",
+            "sUrl": "",
+            "oPaginate": {
+                "sFirst": "Đầu",
+                "sPrevious": "Trước",
+                "sNext": "Tiếp",
+                "sLast": "Cuối"
+            }
+        };
+
+        var _tabledata = $("#zk_table").DataTable({
+            "ajax": {
+                "url": "/hcns/zk/DS_NhanVien",
+                "type": "GET",
+                "datatype": "json",
+            },
+            "pageLength": 20,
+            "autoWidth": true,
+            "processing": true,
+            "columns": columns,
+            "deferRender": true,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            "language": languages
+        });
+        $('#zk_table tfoot th').each(function () {
+            var title = $(this).text();
+            $(this).html('<input type="text" class="form-control" placeholder="' + title + '" />');
+        });
+        _tabledata.columns().every(function () {
+            var that = this;
+
+            $('input', this.footer()).on('keyup change clear', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+    });
+</script>

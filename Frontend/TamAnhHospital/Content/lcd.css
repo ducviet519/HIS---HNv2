@@ -1,0 +1,8 @@
+﻿html { height: 100%; }
+* { margin: 0; padding: 0; }
+body { color: #fff !important; background-color: #000 !important; height: 100% !important; font-size: 45pt !important; overflow: hidden; }
+.title-box { background: #102EA6; min-height: 85px; }
+.col-container { display: table; width: 100%; max-height: 100%; overflow: hidden; }
+.col { display: table-cell; }
+.table td { padding: 7px 8px !important; }
+    .table td:nth-child(1) { background-color: #7CCDF2; }

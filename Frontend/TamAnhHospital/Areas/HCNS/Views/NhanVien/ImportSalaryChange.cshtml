@@ -1,0 +1,69 @@
+﻿@{
+    ViewBag.Title = "ImportSalaryChange";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .panel-body { padding: 15px; max-height: 480px; overflow: auto; }
+        .panel-body input, .panel-body select { max-width: inherit; }
+        .panel-body .form-group { margin-bottom: 10px; }
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+</style>
+<div class="section-body">
+    <div class="middle-section">
+        <div class="model-panel panel">
+            <div class="panel-heading">
+                <h4><i class="fa fa-list"></i> UPLOAD FILE EXCEL</h4>
+            </div><!-- ./panel-heading -->
+            @using (Html.BeginForm("Push_ImportSalaryChange", "NhanVien", FormMethod.Post, new { enctype = "multipart/form-data", id = "importSubmit" }))
+            {
+            <div class="panel-body">
+                <div class="form-group">
+                    <input type="file" class="form-control" id="fileUpload" name="fileUpload" />
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="form-inline">
+                    <div class="form-group"><input type="submit" value="Cập nhật" class="btn btn-primary" id="btnSubmit" /></div>
+                </div>
+            </div><!-- ./panel-footer -->
+            }
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#importSubmit").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+
+            var formData = new FormData();
+            var totalFiles = document.getElementById("imageUploadForm").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("imageUploadForm").files[i];
+                formData.append("imageUploadForm", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                //data: form.serialize(),
+                data: formData,
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        setTimeout(location.reload.bind(location), 2000);
+                    }
+                    else {
+                        $(this).callToast("error", '', data.mess);
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+    });
+</script>

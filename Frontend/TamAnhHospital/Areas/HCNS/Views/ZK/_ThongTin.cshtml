@@ -1,0 +1,16 @@
+﻿@model System.App.Entities.HCNS.ZK_Device_Info
+<div class="card-body">
+    <p class="card-text">
+        <b>Tài khoản Admin: </b> @Model.AdminCount
+    </p>
+    <p class="card-text">
+        <b>Tài khoản User: </b> @Model.UserCount/@Model.TotalUser
+    </p>
+    <p class="card-text">
+        <b>Tổng số vân tay: </b> @Model.FingerCount/@Model.TotalFinger
+    </p>
+    <p class="card-text">
+        <b>Tổng số bản ghi: </b> @Model.RecordCount/@Model.TotalAtt
+    </p>
+</div>
+

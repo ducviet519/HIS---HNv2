@@ -1,0 +1,60 @@
+﻿@if (ViewBag.Tyle != 0)
+{
+<script type="text/javascript">
+        $(function () {
+            $("#tyle").html("Tỷ lệ: " + @(ViewBag.Tyle) + '%');
+        });
+</script>
+}
+else
+{
+<script type="text/javascript">
+        $(function () {
+            $("#tyle").html("");
+        });
+</script>
+}
+<style type="text/css">
+    #sknv_table_wrapper .row:first-child { display: none; }
+    #sknv_table_wrapper .sorting,
+    #sknv_table_wrapper .sorting:after,
+    #sknv_table_wrapper .sorting:before { padding-right: 5px !important; content: ''; }
+</style>
+<table class="table table-bordered table-condensed" id="sknv_table">
+    <thead>
+        <tr>
+            <th class="text-center" width="30">STT</th>
+            <th>Mã NV</th>
+            <th>Họ tên</th>
+            <th>Khoa/Phòng</th>
+            <th class="text-center" width="50">Năm</th>
+            <th class="text-center">Lần</th>
+            <th>Kết luận</th>
+            <th class="50">Phân loại</th>
+            <th>ICD10</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model as IEnumerable<System.App.Entities.HCNS.SKNV>)
+        {
+        <tr>
+            <td>@o.STT</td>
+            <td>@o.MaNV</td>
+            <td>@o.HoTen</td>
+            <td>@o.KhoaPhong</td>
+            <td>@o.Nam</td>
+            <td>@o.LanK</td>
+            <td>@o.KetLuan</td>
+            <td>
+                @(o.PhanLoai == 0 ? "" : String.Format("Loại {0}", o.PhanLoai))
+            </td>
+            <td>@o.ICD10</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        $('#sknv_table').callDataTableCustomSearchPage('vi', '', '#sknv_filter', 30);
+    });
+</script>

@@ -1,0 +1,136 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.HDLD>
+<style type="text/css">
+    #hcns-table_wrapper > .row:first-child { display: none; }
+    #hcns-table thead tr { background-color: #3882b6; }
+        #hcns-table thead tr th { color: #fff; border-color: #2476af; padding-right: 0; }
+            #hcns-table thead tr th:before, #hcns-table thead tr th:after { content: ""; }
+    #hcns-table tbody td { word-wrap: normal !important; }
+    .nowrap { white-space: nowrap !important; }
+</style>
+
+<table class="table table-bordered table-hover" id="hcns-table">
+    <thead>
+        <tr>
+            <th width="50"></th>
+            <th class="nowrap">Số hợp đồng</th>
+            <th width="85px;" class="nowrap">Mã NV</th>
+            <th class="nowrap">Họ và tên</th>
+            <th class="nowrap">Khoa/Phòng</th>
+            <th class="nowrap">Chức danh</th>
+            <th class="nowrap">Loại hợp đồng</th>
+            <th class="nowrap">Ngày vào</th>
+            <th class="nowrap">Ngày đánh giá</th>
+            <th class="nowrap">Ngày ký</th>
+            <th class="nowrap">Ngày hết hạn</th>
+            <th class="nowrap"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model as IEnumerable<System.App.Entities.HCNS.HDLD>)
+            {
+        <tr>
+            <td class="nowrap">
+                <div class="dropdown">
+                    <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="ddl_options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Thao tác</button>
+                    <div class="dropdown-menu" aria-labelledby="ddl_options">
+                        <button class="dropdown-item btn-sua" type="button" data-href="/hcns/hdld/update?id=@item.ID"><i class="fa fa-edit"></i> Sửa</button>
+                        <button class="dropdown-item btn-updatengay" type="button" data-href="/hcns/hdld/update_ngay?id=@item.ID&date=@item.NgayKy&type=tdl"><i class="fa fa-calendar"></i> Cập nhật ngày thay đổi lương</button>
+                        <button class="dropdown-item btn-updatengay" type="button" data-href="/hcns/hdld/update_ngay?id=@item.ID&date=@item.NgayKy&type=ngayvao"><i class="fa fa-calendar"></i> Cập nhật ngày vào</button>
+                        <button class="dropdown-item btn-updatengay" type="button" data-href="/hcns/hdld/update_ngay?id=@item.ID&date=@item.NgayHH&type=nghiviec"><i class="fa fa-calendar"></i> Cập nhật ngày nghỉ việc</button>
+                    </div>
+                </div>
+                @*<a href="javascript:;" data-href="/hcns/hdld/update?id=@item.ID" class="btnEdit"><i class="fa fa-edit"></i> Sửa</a>*@
+            </td>
+            <td>@item.ConNo</td>
+            <td class="nowrap">@item.UserFullCode</td>
+            <td class="nowrap">@item.UserFullName</td>
+            <td class="nowrap">@item.KhoaPhong</td>
+            <td class="nowrap">@item.ChucDanh</td>
+            <td class="nowrap">@item.Ten_LoaiHD</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayVao) ? "-" : item.NgayVao)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayDG) ? "-" : item.NgayDG)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayKy) ? "-" : item.NgayKy)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayHH) ? "-" : item.NgayHH)</td>
+            <td><a href="javascript:;" data-id="@item.ID" class="btnHuy" style="color:#ff0000;">Hủy hợp đồng</a></td>
+            @*<td class="nowrap">@(String.IsNullOrEmpty(item.NgayDG) ? "-" : item.NgayDG)</td>*@
+        </tr>
+            }
+        }
+        else
+        {
+        <tr>
+            <td colspan="12" class="text-center">Chưa có dữ liệu</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        if ($('#hcns-table tbody tr').length > 1) {
+            $('#hcns-table').callDataTableCustomSearchPage('vi', '8', '#fsearch', 15);
+        }
+        $(".btnEdit").click(function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+        $(".btnHuy").click(function (e) {
+            var _id = $(this).attr("data-id");
+            var _tenhd = $(this).closest("tr").find("td:nth-child(2)").html();
+            var r = confirm("Bạn đang thao tác hủy hợp đồng số: " + _tenhd + ", bạn muốn tiếp tục?");
+
+            if (r == true) {
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/hdld/HuyHopDong",
+                    data: { id: _id },
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+                            $("#btnSearch").focus().click();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                            } else {
+                                $(this).callToast("error", '', data.message);
+                            }
+                        }
+                    }
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        $(".btn-updatengay").click(function (e) {
+            var _tenhd = $(this).closest("tr").find("td:nth-child(2)").html();
+            var url = $(this).attr("data-href");
+            var r = confirm("Bạn đang thao tác thay đổi ngày của hợp đồng số: " + _tenhd + ", bạn muốn tiếp tục?");
+
+            if (r == true) {
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    //data: { id: _id },
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+                            $("#btnSearch").focus().click();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu .");
+                            } else {
+                                $(this).callToast("error", '', data.message);
+                            }
+                        }
+                    }
+                });
+            }
+
+            e.preventDefault();
+        });
+    });
+</script>

@@ -1,0 +1,82 @@
+﻿@model System.App.Entities.HCNS.UserInfo
+@{
+    List<SelectListItem> selectListItems = new List<SelectListItem>();
+
+    foreach (var item in ViewBag.DanhSachLichTrinh as IEnumerable<System.App.Entities.HCNS.Schedule>)
+    {
+        selectListItems.Add(new SelectListItem() { Value = item.SchID.ToString(), Text = item.SchName });
+    }
+
+    var selectListDanhSachCa = new SelectList(selectListItems, "Value", "Text", 2);
+}
+<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+</style>
+@using (Html.BeginForm("Push_Add_KhaiBaoLichTrinh", "ChamCong", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+{
+@Html.AntiForgeryToken()
+@Html.HiddenFor(x => x.Users, new { @Value = ViewBag.Users })
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Khai báo lịch trình làm việc</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Danh sách Lịch trình</label>
+                            @Html.DropDownListFor(x => x.SchID, selectListDanhSachCa, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-footer text-center">
+                    <input type="submit" value="Xác nhận" class="btn btn-primary btn-sm" id="btnSubmit" />
+                    <input type="button" value="Đóng" class="btn btn-default btn-sm" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+<script type="text/javascript">
+    $(function () {
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        $("#btnSearch").focus().click();
+                        $("#Confirmed").val(false);
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+    });
+</script>

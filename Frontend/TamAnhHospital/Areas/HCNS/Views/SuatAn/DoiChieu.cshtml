@@ -1,0 +1,105 @@
+﻿@{
+    ViewBag.Title = "Đối chiếu suất ăn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM01");
+    var sdate = ViewBag.StartDate; var edate = ViewBag.EndDate;
+    //if (DateTime.UtcNow.AddHours(7).Month == 4 || DateTime.UtcNow.AddHours(7).Month == 6 || DateTime.UtcNow.AddHours(7).Month == 9 || DateTime.UtcNow.AddHours(7).Month == 11)
+    //{
+    //    sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+    //    edate = DateTime.UtcNow.AddHours(7).ToString("30/MM/yyyy");
+    //}
+    //else if (DateTime.UtcNow.AddHours(7).Month == 1 || DateTime.UtcNow.AddHours(7).Month == 3 || DateTime.UtcNow.AddHours(7).Month == 5 || DateTime.UtcNow.AddHours(7).Month == 7 || DateTime.UtcNow.AddHours(7).Month == 8 || DateTime.UtcNow.AddHours(7).Month == 10 || DateTime.UtcNow.AddHours(7).Month == 12)
+    //{
+    //    sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+    //    edate = DateTime.UtcNow.AddHours(7).ToString("31/MM/yyyy");
+    //}
+    //else
+    //{
+    //    if (DateTime.UtcNow.AddHours(7).Year / 4 == 0)
+    //    {
+    //        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+    //        edate = DateTime.UtcNow.AddHours(7).ToString("29/MM/yyyy");
+    //    }
+    //    else
+    //    {
+    //        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+    //        edate = DateTime.UtcNow.AddHours(7).ToString("28/MM/yyyy");
+    //    }
+    //}
+}
+
+<style type="text/css">
+    .head-section, .middle-section { margin-bottom: 10px; }
+        .head-section .input-group { display: flex; }
+    .form-group { margin-bottom: 0; }
+    .middle-action { border: 1px solid #ddd; padding: 5px; }
+    #fo-table_wrapper .row:first-child { display: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+</style>
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Đối chiếu suất ăn</h4>
+        </div>
+        <div class="form">
+            <input type="hidden" value="s" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-2 col-xs-3">
+                    <label>Tìm theo Họ tên / Mã</label>
+                    <input type="text" class="form-control input-sm" name="hoten" id="hoten" />
+                </div>
+                <div class="col-md-2 col-xs-3">
+                    <label>Khoa/Phòng</label>
+                    @Html.DropDownList("Department", ViewBag.Departments as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                    @*@Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value", userInfo.KhoaPhong), new { @class = "form-control input-sm" })*@
+                </div>
+                <div class="col-md-1 col-xs-3">
+                    <label>Từ ngày</label>
+                    <input type="text" class="form-control input-sm datepicker" name="tungay" autocomplete="off" value="@ViewBag.StartDate" />
+                </div>
+                <div class="col-md-1 col-xs-3">
+                    <label>Đến ngày</label>
+                    <input type="text" class="form-control input-sm datepicker" name="toingay" autocomplete="off" value="@ViewBag.EndDate" />
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="btnSubmit" class="btn btn-default btn-sm" style="margin-top: 22px;"><i class="fa fa-search"></i> Tìm kiếm</button>
+                    <button type="button" id="btnExport" class="btn btn-info btn-sm" style="margin-top: 22px;"><i class="fa fa-file-export"></i> Xuất File</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="middle-section">
+        <div id="loadPartial">
+            @Html.Action("doichieu_table", "suatan", new { dept = userInfo.KhoaPhong, tungay = sdate, denngay = edate })
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $(".chosen-ddl").chosen();
+        $("#btnExport").click(function () {
+            var tungay = $("[name='tungay']").val();
+            var toingay = $("[name='toingay']").val();
+            var khoaphong = encodeURI($("#Department option:selected").val() == "" ? "" : $("#Department option:selected").val());
+            var url = "/hcns/suatan/DoiChieu_Excel/?tungay=" + tungay + "&toingay=" + toingay + "&dept=" + khoaphong;
+            window.location = url;
+        });
+        $("#btnSubmit").click(function () {
+            var tungay = $("[name='tungay']").val();
+            var toingay = $("[name='toingay']").val();
+            var khoaphong = encodeURI($("#Department option:selected").val() == "" ? "" : $("#Department option:selected").val());
+            var url = "/hcns/suatan/doichieu_table/?tungay=" + tungay + "&toingay=" + toingay + "&dept=" + khoaphong;
+            $("#loadPartial").load(url);
+        });
+    });
+</script>

@@ -1,0 +1,389 @@
+﻿@{
+    ViewBag.Title = "Danh sách ca không xác định";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+    var userAuth = ViewBag.Auth as string;
+}
+<style>
+    tr.expiring-soon td { background-color: #fff9d8 !important; }
+    tr.expried td { background-color: #f1f1f1 !important; }
+    .dataTables_wrapper > .row:first-child { display: none; }
+    .dataTable thead th { background: #3882b6; color: #fff; padding: 5px 8px !important; }
+    .dataTable tbody tr.pending { background: #fff3d2; }
+    .dataTable tbody tr.selected td { background: #eee; }
+    .dataTable tbody td p { margin-bottom: 5px; }
+        .dataTable tbody td p:last-child { margin-bottom: 0; }
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input { max-width: 100%; }
+    .flex-row { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: flex-start; width: 100%; }
+    .flex-col { display: flex; flex-direction: column; flex-flow: column; flex-wrap: nowrap; justify-content: flex-start; }
+        .flex-col.flex-fill { width: 100%; }
+    .flex-right { margin-left: auto; width: 30%; padding-top: 68px; }
+    .flex-left { flex-grow: 1; max-width: 100%; padding-right: 10px; }
+    .chosen-container-single .chosen-single { height: 30px !important; line-height: 30px !important; }
+    .form-search { margin: 10px 0; }
+        .form-search .row { margin-left: -5px; margin-right: -5px; }
+        .form-search .col-md-1, .form-search .col-md-2, .form-search .col-md-3, .form-search .col-xs-1, .form-search .col-xs-2, .form-search .col-xs-3 { padding-left: 5px; padding-right: 5px; }
+    .title-bar { border-bottom: 1px solid #ccc; }
+        .title-bar h4 { margin: 0; }
+</style>
+@{
+    var auth = ViewBag.Auth as string;
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM01");
+    var sdate = ""; var edate = "";
+    if (DateTime.UtcNow.AddHours(7).Month == 4 || DateTime.UtcNow.AddHours(7).Month == 6 || DateTime.UtcNow.AddHours(7).Month == 9 || DateTime.UtcNow.AddHours(7).Month == 11)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("30/MM/yyyy");
+    }
+    else if (DateTime.UtcNow.AddHours(7).Month == 1 || DateTime.UtcNow.AddHours(7).Month == 3 || DateTime.UtcNow.AddHours(7).Month == 5 || DateTime.UtcNow.AddHours(7).Month == 7 || DateTime.UtcNow.AddHours(7).Month == 8 || DateTime.UtcNow.AddHours(7).Month == 10 || DateTime.UtcNow.AddHours(7).Month == 12)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("31/MM/yyyy");
+    }
+    else
+    {
+        if (DateTime.UtcNow.AddHours(7).Year / 4 == 0)
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("29/MM/yyyy");
+        }
+        else
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("28/MM/yyyy");
+        }
+    }
+}
+<input type="hidden" value="@ViewBag.Auth" id="auth" />
+<div class="row title-bar">
+    <div class="col-md-12">
+        <h4>Danh sách ca không xác định</h4>
+        <div style="margin: 10px 0;">
+            @*<button type="button" id="btnAdd" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Cập nhật thời gian làm việc</button>*@
+            @*<button type="button" id="btnDuyetTGLV" class="btn btn-warning btn-sm" style="margin-right: 5px;">Danh sách thời gian làm việc chưa duyệt</button>*@
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-search">
+            <div class="row">
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">Xem từ ngày</label>
+                    <input type="text" id="sdate" class="form-control timepicker input-sm" value="@ViewBag.StartDate" autocomplete="off" readonly required />
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">đến ngày</label>
+                    <input type="text" id="edate" class="form-control timepicker input-sm" value="@ViewBag.EndDate" autocomplete="off" readonly required />
+                </div>
+                <div class="col-md-2 col-xs-2">
+                    <label>Khoa/Phòng</label>
+                    @if (auth == "HCNS_Admin")
+                    {
+                    @Html.DropDownList("Department", new SelectList(ViewBag.KhoaPhong, "Key", "Value", userInfo.KhoaPhong), "-- Xem tất cả --", new { @class = "form-control input-sm" })
+                    }
+                    else
+                    {
+                    @Html.DropDownList("Department", new SelectList(ViewBag.KhoaPhong, "Key", "Value", userInfo.KhoaPhong), new { @class = "form-control input-sm" })
+                    }
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <label>Mã nhân viên</label>
+                    <input type="text" class="form-control input-sm" placeholder="Nhập thông tin..." id="nhanvien" autocomplete="off" />
+                </div>
+                <div class="col-md-2 col-xs-2">
+                    <div class="form-group">
+                        <label>Tình trạng</label>
+                        <select class="form-control input-sm chosen-dll" id="duyet">
+                            <option value="-1">Xem tất cả</option>
+                            <option value="0">Chưa đề xuất</option>
+                            <option value="2">Đã đề xuất</option>
+                            <option value="2">Đã duyệt</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-xs-3">
+                    <button type="button" id="btnSearch" class="btn btn-success btn-sm" style="margin-top: 22px;">Tìm kiếm</button>
+                    <button class="btn btn-info btn-sm" id="export-ds" style="margin-top: 22px; margin-left: 5px;">Xuất file</button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary btn-sm pull-right" id="btnDuyetAll" style="margin-top: 22px; margin-left: 5px;">Duyệt nhanh các lựa chọn</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="box-table">
+            <table class="table table-bordered table-hover " id="table-data">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="text-center no-sort">Mã NV</th>
+                        <th class="text-center no-sort">Họ và tên</th>
+                        <th class="text-center no-sort">Khoa phòng</th>
+                        <th class="text-center no-sort">Bắt đầu</th>
+                        <th class="text-center no-sort">Kết thúc</th>
+                        <th class="text-center no-sort">Tổng giờ</th>
+                        <th class="text-center no-sort">Lý do</th>
+                        <th width="100" class="no-sort text-center" style="padding:0;">
+                            <input type="checkbox" name="checkAll" id="checkAll" />
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#export-ds").click(function (e) {
+            var kp = $("#Department option:selected").val();
+            var ngaybd = $("#sdate").val();
+            var ngaykt = $("#edate").val();
+            var manv = $("#nhanvien").val();
+            var duyet = $("#duyet option:selected").val();
+
+            var url = "/hcns/chamcong/ExportExcel_CaKhongXacDinh?from=" + ngaybd + "&to=" + ngaykt + "&kp=" + kp + "&user=" + manv + "&duyet=" + duyet;
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data, status) {
+                    window.location = url;
+                }
+            });
+            e.preventDefault();
+        });
+
+        var _columns = [
+            { "data": {}, "width": "30px" },
+            { "data": "UserFullCode", "width": "60px" },
+            { "data": "UserFullName" },
+            { "data": "TenKhoaPhong" },
+            { "data": "StartTime", "width": "120px" },
+            { "data": "EndTime", "width": "120px" },
+            { "data": "WH", "width": "100px" },
+            { "data": "LyDo" },
+            {
+                "data": {},
+                "render": function (data) {
+                    if ("@ViewBag.Auth" == "HCNS_Admin") {
+                        if (data.Display == 0) {
+                            return "<input type=\"checkbox\" name=\"chk_date\" class=\"chk_date\" data-val='" + data.UserEnrollNumber + "." + data.StartTime + "." + data.EndTime + "' /> Duyệt";
+                        } else {
+                            return "<input type=\"checkbox\" name=\"chk_date\" class=\"chk_date\" data-val='" + data.UserEnrollNumber + "." + data.StartTime + "." + data.EndTime + "' /> Hủy Duyệt";
+                        }
+                    }
+                    else {
+                        return "";
+                    }
+                }
+            }
+        ];
+
+        Reload_DataTable("table-data", _columns, "/hcns/chamcong/Data_CaKhongXacDinh?from=" + encodeURIComponent($("#sdate").val()) + "&to=" + encodeURIComponent($("#edate").val()) + "&kp=" + $("#Department option:selected").val() + "&user=" + $("#nhanvien").val() + "&hienthi=" + $("#duyet option:selected").val());
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+
+        $("#btnDuyetAll").click(function () {
+            var allChooses = [];
+
+            var _tabledata = $("#table-data").DataTable();
+
+            $(_tabledata.$("input[name='chk_date']").map(function () {
+                return $(this).prop("checked") ? allChooses.push($(this).attr("data-val")) : null;
+            }));
+
+            if (allChooses.length == 0) {
+                $(this).callToast("error", '', "Bạn chưa chọn dữ liệu để cập nhật.");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/hcns/chamcong/Update_DuyetCaKhongXacDinh",
+                data: { chooses: allChooses.toString() },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        $("#btnSearch").focus().click();
+                    } else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+        });
+
+        $('.form-search').keypress(keypressHandler);
+
+        $('.timepicker').datepicker({ format: 'dd/mm/yyyy' });
+
+        $("#Department").chosen();
+
+        $(document).on('click', '.btn-huy', function (e) {
+            var __url = $(this).attr("data-href");
+            console.log(__url);
+            if (confirm(decodeURIComponent("Xác nhận hủy duyệt đã chọn?"))) {
+                $.ajax({
+                    type: "POST",
+                    url: __url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+                            $("#btnSearch").focus().click();
+                        } else {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc không được phân quyền.");
+                        }
+                    }
+                });
+            }
+            e.preventDefault();
+        });
+        $(document).on('click', '.btn-xoa', function (e) {
+            var __url = $(this).attr("data-href");
+            if (confirm(decodeURIComponent("Xác nhận xóa đề xuất?"))) {
+                $.ajax({
+                    type: "POST",
+                    url: __url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+                            $("#btnSearch").focus().click();
+                        } else {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc không được phân quyền.");
+                        }
+                    }
+                });
+            }
+            e.preventDefault();
+        });
+
+        $("#loadAdd").load("/hcns/chamcong/add_tglv");
+
+        $("#btnAdd").click(function () {
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+            var startDate = new Date(formatDate(_from));
+            var endDate = new Date(formatDate(_to));
+            var songay = (endDate - startDate) / 1000 / 60 / 60 / 24;
+
+            if (songay >= 32) {
+                $(this).callToast("error", 'Cảnh báo', "Không được chọn khoảng tìm kiếm quá 32 ngày.");
+                return;
+            }
+            $(this).callModal("/hcns/chamcong/Add_ThoiGianLamViec?s=" + encodeURIComponent($("#sdate").val()) + "&e=" + encodeURIComponent($("#edate").val()) + "&kp=" + $("#Department option:selected").val() + "&manv=" + $("#nhanvien").val());
+        });
+
+        $("#btnSearch").click(function () {
+            $("#checkAll").removeAttr("checked");
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+
+            var startDate = new Date(formatDate(_from));
+            var endDate = new Date(formatDate(_to));
+            var songay = (endDate - startDate) / 1000 / 60 / 60 / 24;
+
+            if (songay >= 32) {
+                $(this).callToast("error", 'Cảnh báo', "Không được chọn khoảng tìm kiếm quá 32 ngày.");
+                return;
+            }
+            Reload_DataTable("table-data", _columns, "/hcns/chamcong/Data_CaKhongXacDinh?from=" + encodeURIComponent($("#sdate").val()) + "&to=" + encodeURIComponent($("#edate").val()) + "&kp=" + $("#Department option:selected").val() + "&user=" + $("#nhanvien").val() + "&hienthi=" + $("#duyet option:selected").val());
+        });
+
+        function Reload_DataTable(id, columns, source) {
+            id = "#" + id;
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 15,
+                "autoWidth": true,
+                "processing": true,
+                "columns": columns,
+                "deferRender": true,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "language": {
+                    "sProcessing": "Đang tải dữ liệu...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+
+            $(id).on('page.dt', function () {
+                $("input[name='checkAll']").removeAttr("checked");
+            });
+        }
+
+        function formatDate(str) {
+            var d = str.split("/")[0];
+            var m = str.split("/")[1];
+            var y = str.split("/")[2];
+            var date = m + "/" + d + "/" + y
+
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('/');
+        }
+    });
+    function CheckRowSelected() {
+        var allChooses = [];
+        var _tabledata = $("#table-data").DataTable();
+
+        $(_tabledata.$("input[name='chk_date']").map(function () {
+            return $(this).prop("checked") ? allChooses.push($(this).val()) : null;
+        }));
+
+        $("#dsd-tongsochon").html(allChooses.length)
+    }
+    $(document).on('click', '#checkAll', function () {
+        $("input[name='chk_date']").not(this).prop('checked', this.checked);
+        CheckRowSelected();
+    });
+</script>

@@ -1,0 +1,69 @@
+﻿@model TamAnhHospital.Models.UserModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" />
+    <title>Đăng nhập hệ thống</title>
+    <link rel="stylesheet" href="@Url.Content("~/content/login.css")" />
+    <script type="text/javascript" src='@Url.Content("~/scripts/jquery.min.js")'></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/prefixfree.min.js")"></script>
+
+</head>
+<body>
+    <div class="body"></div>
+    <div class="grad"></div>
+    <div class="header">
+        <img src="~/Images/logo_300x300.png" width="250" />
+    </div>
+    <br>
+    <div class="login">
+        @using (Html.BeginForm("Login", "User", FormMethod.Post, new { enctype = "multipart/form-data", @id = "loginForm" }))
+        {
+            <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            @Html.HiddenFor(x => x.Domain)
+            @Html.TextBoxFor(x => x.UserName, new { @placeholder = "Tài khoản", required = true })
+            @Html.PasswordFor(x => x.Password, new { required = true })
+            <label id="mess" class="clearfix" style="display: block; line-height: 20px; margin-top: 5px;"></label>
+            <input type="submit" value="Đăng nhập" />
+        }
+    </div>
+    
+    <script type="text/javascript">
+        $('#loginForm').submit(function (e) {
+            e.preventDefault();
+
+            var $form = $(this);
+
+            $.ajax({
+                type: $form.attr('method'),
+                url: $form.attr('action'),
+                data: $form.serialize(),
+                success: function (data, status) {
+                    if (data.result === true) {
+                        window.location.assign(data.url);
+                    }
+                    else {
+                        if (data.err === '')
+                            $("#mess").html("Tên đăng nhập hoặc Mật khẩu không đúng.");
+                        else
+                            $("#mess").html(data.err);
+                    }
+                        
+                },
+                error: function (er) {
+                    alert(er);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

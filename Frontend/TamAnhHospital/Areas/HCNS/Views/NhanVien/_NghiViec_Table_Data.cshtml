@@ -1,0 +1,91 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.HCNS_NhanVien>
+
+<style type="text/css">
+    #hcns-table_wrapper > .row:first-child { display: none; }
+    #hcns-table thead tr { background-color: #3882b6; }
+        #hcns-table thead tr th { color: #fff; border-color: #2476af; padding-right: 8px; }
+            #hcns-table thead tr th:before, #hcns-table thead tr th:after { content: ""; }
+    #hcns-table tbody td { word-wrap: normal !important; }
+    .nowrap { white-space: nowrap !important; }
+    th, td { white-space: nowrap; }
+    /*custom fix column_table*/
+    table.dataTable thead > tr > th.sorting_asc, table.dataTable thead > tr > th.sorting_desc, table.dataTable thead > tr > th.sorting, table.dataTable thead > tr > td.sorting_asc, table.dataTable thead > tr > td.sorting_desc, table.dataTable thead > tr > td.sorting { padding-right: 0 !important; border-bottom: 3px solid #ddd; }
+    .DTFC_LeftHeadWrapper .DTFC_Cloned { border-top: 0; }
+        .DTFC_LeftHeadWrapper .DTFC_Cloned thead th { border-bottom: 2px solid #ddd !important; border-top: 1px solid #ddd !important; }
+    .DTFC_LeftBodyWrapper .DTFC_Cloned { border-top: 0 !important; }
+        .DTFC_LeftBodyWrapper .DTFC_Cloned tbody tr { border-bottom: 0 !important; background: #fff; }
+            .DTFC_LeftBodyWrapper .DTFC_Cloned tbody tr td { padding-top: 9px; }
+</style>
+
+<table class="table table-bordered table-hover" id="hcns-table">
+    <thead>
+        <tr>
+            <th width="20"></th>
+            <th class="nowrap">Mã NV</th>
+            <th class="nowrap">Họ và tên</th>
+            <th class="nowrap">Giới tính</th>
+            <th class="nowrap">Chức danh</th>
+            <th class="nowrap">Khoa / Phòng</th>
+            <th class="nowrap">Ngày sinh</th>
+            <th class="nowrap">Ngày vào</th>
+            <th class="nowrap">Ngày nghỉ</th>
+            <th class="nowrap">Ngày làm việc cuối cùng</th>
+            <th class="nowrap">Lý do nghỉ</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model as IEnumerable<System.App.Entities.HCNS.HCNS_NhanVien>)
+            {
+        <tr>
+            <td class="text-center nowrap">
+                <a href="javascript:;" data-href="/hcns/nhanvien/Update_NghiViec?id=@item.UserEnrollNumber" class="btnEdit"><i class="fa fa-edit"></i> Sửa</a>
+            </td>
+            <td class="nowrap">@item.UserFullCode</td>
+            <td class="nowrap">@item.UserFullName</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.GioiTinh) ? "-" : item.GioiTinh)</td>
+            <td class="nowrap" style="max-width: 200px;">@item.ChucDanh</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.Ten_PhongKhoaHC) ? "-" : item.Ten_PhongKhoaHC)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgaySinh) ? "-" : item.NgaySinh)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayVao) ? "-" : item.NgayVao)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayNghi) ? "-" : item.NgayNghi)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.NgayLVCC) ? "-" : item.NgayLVCC)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.LyDoNghi) ? "-" : item.LyDoNghi)</td>
+        </tr>
+            }
+        }
+        else
+        {
+        <tr>
+            <td colspan="12" class="text-center">Chưa có dữ liệu</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        //if ($('#hcns-table tbody tr').length > 1) {
+        //    //$('#hcns-table').callDataTableCustomSearchPage('vi', '8', '#fsearch', 30);
+
+        //    $(document).ready(function () {
+        //        var table = $("#hcns-table").DataTable({
+        //            pageLength: 10,
+        //            scrollY: "360px",
+        //            scrollX: true,
+        //            scrollCollapse: true,
+        //            language: { "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Vietnamese.json" }
+        //        });
+
+        //        $("#fsearch").on('keyup', function () {
+        //            table.search(this.value).draw();
+        //        });
+        //    });
+        //}
+        $(".btnEdit").click(function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+
+    });
+</script>

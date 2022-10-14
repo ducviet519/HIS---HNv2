@@ -1,0 +1,18 @@
+﻿@{
+    List<SelectListItem> selectListItems = new List<SelectListItem>();
+
+    foreach (var item in ViewBag.DanhSachCa as IEnumerable<System.App.Entities.HCNS.Shifts>)
+    {
+        selectListItems.Add(new SelectListItem() { Value = item.ShiftID.ToString(), Text = item.ShiftCode });
+    }
+
+    var selectListDanhSachCa = new SelectList(selectListItems, "Value", "Text", 2);
+}
+
+@Html.DropDownList("Shift1", selectListDanhSachCa, new { @class = "form-control input-sm" })
+
+<script type="text/javascript">
+    $(function () {
+        $("#Shift1").chosen();
+    });
+</script>

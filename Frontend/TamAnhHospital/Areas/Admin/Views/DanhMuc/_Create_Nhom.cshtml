@@ -1,0 +1,74 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 850px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục nhóm quyền</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Tên nhóm quyền</label>
+                            @Html.TextBox("cre_nhom_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        @foreach (var item in ViewBag.QUYEN as IEnumerable<System.App.Entities.DS_DropDownList>)
+                        {
+                            <div class="form-group col-md-3">
+                                <label><input type="checkbox" name="nhom_chk" value="@item.ID" /> @item.MoTa</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_nhom_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_nhom_btnCreate").click(function (e) {
+            var _Object = $("#cre_nhom_ten").val();
+            var id_Roles = [];
+            $("input[name=\"nhom_chk\"]:checked").each(function () {
+                id_Roles.push($(this).val());
+            });
+            if (_Object == '') {
+                $(this).callToast("error", 'Chưa nhập tên nhóm quyền', '');
+                return;
+            }
+
+            var obj = {
+                "Object": _Object,
+                "Roles": id_Roles.toString(),
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_Nhom", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Tên nhóm quyền đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

@@ -1,0 +1,138 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    .head-section, .middle-section { margin-bottom: 10px; }
+        .head-section .input-group { display: flex; }
+    .form-group { margin-bottom: 0; }
+    .middle-action { border: 1px solid #ddd; padding: 5px; }
+    #fo-table_wrapper .row:first-child { display: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form select, .form input { max-width: 100% !important; }
+</style>
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Danh sách hợp đồng</h4>
+        </div>
+
+        <div class="form">
+            <input type="hidden" value="s" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Nhân viên (Mã | Tên)</label>
+                        <input type="text" class="form-control input-sm" placeholder="Điền thông tin" id="UserFullName" name="UserFullName" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Loại hợp đồng</label>
+                        @Html.DropDownList("LoaiHD", new SelectList(ViewBag.LoaiHD, "Key", "Value"), "-- Chọn giá trị --", new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Chọn khoa phòng</label>
+                        @Html.DropDownList("PhongKhoaHC", new SelectList(ViewBag.DSKPHC, "Key", "Value"), "-- Chọn giá trị --", new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+
+                <div class="col-md-1 col-xs-1">
+                    <div class="form-group">
+                        <label for="SoGioLamViec">Trạng thái</label>
+                        @Html.DropDownList("TrangThai", new List<SelectListItem>() {
+                                        new SelectListItem { Value = "0", Text = "Đang công tác" },
+                                        new SelectListItem { Value = "1", Text = "Đã nghỉ" },
+                                        new SelectListItem { Value = "2", Text = "Tất cả", Selected = true }
+                                    }, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Hết hạn từ</label>
+                        <input type="text" class="form-control datepicker input-sm" placeholder="Từ ngày" id="TK_NgayHetHanTu" name="TK_NgayHetHanTu" autocomplete="off" style="margin-top: 0;" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>đến</label>
+                        <input type="text" class="form-control datepicker input-sm" placeholder="Đến ngày" id="TK_NgayHetHanDen" name="TK_NgayHetHanDen" autocomplete="off" style="margin-top: 0;" />
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <input type="submit" value="Tìm kiếm" class="btn btn-info btn-sm" id="btnSearch" style="margin-top: 22px;" />
+                </div>
+            </div>
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                <a href="javascript:;" id="btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>
+                <a href="javascript:;" id="btnUpload" class="btnUpload btn btn-info btn-sm">Tải file excel</a>
+                <a href="javascript:;" onclick="window.location.reload(false);" class="btn btn-default btn-sm">Tải lại trang</a>
+                <input type="text" class="form-control input-sm" placeholder="Điền từ khóa cần tìm kiếm" id="fsearch" style="float: right;" />
+            </div>
+        </div>
+
+        <div id="table-data">
+            @Html.Action("Table_Data", "HDLD", new { areas = "HCNS.Controllers" })
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.head-section .form').keypress(keypressHandler);
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $("#btnCreate").click(function () {
+            $(this).callModal("/hcns/hdld/create");
+        });
+        $("#btnUpload").on("click", function () {
+            $(this).callModal("/hcns/hdld/uploadExcel");
+        });
+        $("#btnSearch").click(function () {
+            var _id = $("#UserFullName").val();
+            var _pkhc = $("#PhongKhoaHC option:selected").val();
+            var _loaihd = $("#LoaiHD option:selected").val();
+            var _trangthai = $("#TrangThai option:selected").val();
+            var _fromHH = $("#TK_NgayHetHanTu").val();
+            var _toHH = $("#TK_NgayHetHanDen").val();
+
+            var action = "TimKiem";
+
+            var urlParams = "a=" + action;
+
+            if ($.trim(_id) != "")
+                urlParams += "&id=" + encodeURIComponent($.trim(_id));
+            if (_pkhc != "")
+                urlParams += "&pkhc=" + _pkhc;
+            if (_loaihd != "")
+                urlParams += "&loaihd=" + _loaihd;
+            if (_trangthai != "")
+                urlParams += "&trangthai=" + _trangthai;
+            if ($.trim(_fromHH) != "")
+                urlParams += "&fromHH=" + _fromHH;
+            if ($.trim(_toHH) != "")
+                urlParams += "&toHH=" + _toHH;
+
+            $("#table-data").load("/hcns/hdld/table_data?" + urlParams);
+        });
+    });
+</script>

@@ -1,0 +1,79 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục Thành phố</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Tên thành phố</label>
+                            @Html.TextBox("cre_tp_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label>Đơn vị hành chính</label>
+                            @Html.TextBox("cre_tp_donvi", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Dân số</label>
+                            @Html.TextBox("cre_tp_danso", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Diện tích</label>
+                            @Html.TextBox("cre_tp_dientich", "", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>                    
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_tp_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_tp_btnCreate").click(function (e) {
+            var _TownName = $("#cre_tp_ten").val();
+            var _TownShip = $("#cre_tp_donvi").val();
+            var _Pupulation = $("#cre_tp_danso").val();
+            var _Area = $("#cre_tp_dientich").val();
+            if (_TownName == '') {
+                $(this).callToast("error", 'Chưa nhập tên thành phố', '');
+                return;
+            }
+            if (_TownShip == '') {
+                $(this).callToast("error", 'Chưa nhập đơn vị hành chính', '');
+                return;
+            }
+
+            var obj = {
+                "TownName": _TownName,
+                "TownShip": _TownShip,
+                "Pupulation": _Pupulation,
+                "Area": _Area,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_ThanhPho", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Tên thành phố đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

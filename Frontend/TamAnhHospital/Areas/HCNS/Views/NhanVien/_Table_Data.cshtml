@@ -1,0 +1,69 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.HCNS_NhanVien>
+<style type="text/css">
+    #hcns-table_wrapper > .row:first-child { display: none; }
+    #hcns-table thead tr { background-color: #3882b6; }
+        #hcns-table thead tr th { color: #fff; border-color: #2476af; padding-right: 0; }
+            #hcns-table thead tr th:before, #hcns-table thead tr th:after { content: ""; }
+    #hcns-table tbody td { word-wrap: normal !important; }
+    .nowrap { white-space: nowrap !important; }
+</style>
+
+<table class="table table-bordered table-hover" id="hcns-table">
+    <thead>
+        <tr>
+            <th width="45px;" class="nowrap">Mã CC</th>
+            <th width="85px;" class="nowrap">Mã NV</th>
+            <th class="nowrap">Họ và tên</th>
+            <th class="nowrap">Khoa / Phòng</th>
+            <th class="nowrap">Nơi chấm công</th>
+            <th class="nowrap">Chức danh</th>
+            <th class="nowrap">Email nội bộ</th>
+            <th class="nowrap">Email liên hệ</th>
+            <th class="nowrap">Số nội bộ</th>
+            <th class="nowrap">Di động</th>
+            <th class="nowrap">Ngày vào</th>
+            <th width="100"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model as IEnumerable<System.App.Entities.HCNS.HCNS_NhanVien>)
+            {
+        <tr>
+            <td class="text-center">@item.UserEnrollNumber.ToString("0000")</td>
+            <td class="nowrap">@item.UserFullCode</td>
+            <td class="nowrap">@item.UserFullName</td>
+            <td class="nowrap">@item.Ten_PhongKhoaHC</td>
+            <td class="nowrap">@item.Ten_KhoaPhong</td>
+            <td class="nowrap">@item.ChucDanh</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.TAEmail) ? "-" : item.TAEmail)</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.Email) ? "-" : item.Email)</td>
+            <td class="nowrap">@(item.SDTNB == 0 ? "" : item.SDTNB.ToString())</td>
+            <td class="nowrap">@(String.IsNullOrEmpty(item.SDT1) ? item.SDT2 : item.SDT1) @(String.IsNullOrEmpty(item.SDT2) ? "" : " / " + item.SDT2)</td>
+            <td class="nowrap">@item.NgayVao</td>
+            <td class="text-center nowrap">
+                <a href="javascript:;" data-href="/hcns/nhanvien/capnhat?id=@item.UserEnrollNumber" class="btnEdit"><i class="fa fa-edit"></i> Sửa</a>
+            </td>
+        </tr>
+            }
+        }
+        else
+        {
+        <tr>
+            <td colspan="12" class="text-center">Chưa có dữ liệu</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        if ($('#hcns-table tbody tr').length > 1) {
+            $('#hcns-table').callDataTableCustomSearchPage('vi', '8', '#fsearch', 30);
+        }
+        $(".btnEdit").click(function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+    });
+</script>

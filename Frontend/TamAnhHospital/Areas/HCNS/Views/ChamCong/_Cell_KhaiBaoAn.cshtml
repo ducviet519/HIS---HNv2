@@ -1,0 +1,148 @@
+﻿@model System.Data.DataTable
+
+<style type="text/css">
+    fieldset.fieldset-border {
+        border: 1px groove #ddd !important;
+        padding: 0 1.4em 1.4em 1.4em !important;
+        margin: 0 0 1.5em 0 !important;
+        -webkit-box-shadow: 0px 0px 0px 0px #000;
+        box-shadow: 0px 0px 0px 0px #000;
+    }
+</style>
+
+@{
+    var dangkyan = "Có";
+    var loai = "null";
+}
+
+<fieldset class="fieldset-border">
+    <legend class="fieldset-border">Đề xuất ăn</legend>
+
+    <div class="content-block table-responsive">
+        <table id="dataFilter" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th style="text-align:center">Thời điểm</th>
+                    <th style="text-align:center">Ngày</th>
+                    <th style="text-align:center">Đăng ký ăn</th>
+                    <th style="text-align:center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Rows.Count > 0)
+                {
+                    foreach (System.Data.DataRow item in Model.Rows)
+                    {
+                        <tr>
+                            @for (int i = 0; i <= 3; i++)
+                            {
+                                if (i != 3)
+                                {
+                                    <td>@item[i].ToString()</td>
+                                }
+                                else
+                                {
+                                    loai = item[i].ToString();
+                                }
+                                if (i == 2)
+                                {
+                                    dangkyan = item[i].ToString();
+                                }
+                            }
+                            @if (dangkyan == "Có")
+                            {
+
+                                if (loai == "1")
+                                {
+                                    <td>
+                                        <a href="javascript:;" onclick="XacNhanHuy('@ViewBag.UserEnrollNumber','@ViewBag.date', '1')">Hủy</a>
+                                    </td>
+                                }
+                                if (loai == "2")
+                                {
+                                    <td>
+                                        <a href="javascript:;" onclick="XacNhanHuy('@ViewBag.UserEnrollNumber','@ViewBag.date', '2')">Hủy</a>
+                                    </td>
+                                }
+                                if (loai == "3")
+                                {
+                                    <td>
+                                        <a href="javascript:;" onclick="XacNhanHuy('@ViewBag.UserEnrollNumber','@ViewBag.date', '3')">Hủy</a>
+                                    </td>
+                                }
+                            }
+                            else
+                            {
+                                if (loai == "1")
+                                {
+                                    <td>
+                                        <a href="javascript:;" onclick="XacNhan('@ViewBag.UserEnrollNumber','@ViewBag.date', '1')">Đăng ký</a>
+                                    </td>
+                                }
+                                if (loai == "2")
+                                {
+                                    <td>
+                                        <a href="javascript:;" onclick="XacNhan('@ViewBag.UserEnrollNumber','@ViewBag.date', '2')">Đăng ký</a>
+                                    </td>
+                                }
+                                if (loai == "3")
+                                {
+                                    <td>
+                                        <a href="javascript:;" onclick="XacNhan('@ViewBag.UserEnrollNumber','@ViewBag.date', '3')">Đăng ký</a>
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</fieldset>
+
+<script type="text/javascript">
+
+    function XacNhanHuy(userenrollnumber, date, _loai) {
+        var obj = {
+            "UserEnrollNumber": userenrollnumber,
+            "Date": date,
+            "Loai": _loai,
+        };
+        $.ajax({
+            url: '@Url.Action("XacNhanHuy", "ChamCong")',
+            type: 'POST',
+            cache: false,
+            contentType: "application/json",
+            data: JSON.stringify(obj)
+        }).success(function (data) {
+            if (data.result == true) {
+                $(this).callToast("success", 'Hủy thành công.', data.message);
+                $(".btnCloseModal").focus().click();
+            } else {
+                $(this).callToast("error", 'Lỗi cập nhật', data.message);
+            }
+        });
+    }
+
+    function XacNhan(userenrollnumber, date, _loai) {
+        var obj = {
+            "UserEnrollNumber": userenrollnumber,
+            "Date": date,
+            "Loai": _loai,
+        };
+        $.ajax({
+            url: '@Url.Action("XacNhan", "ChamCong")',
+            type: 'POST',
+            cache: false,
+            contentType: "application/json",
+            data: JSON.stringify(obj)
+        }).success(function (data) {
+            if (data.result == true) {
+                $(this).callToast("success", 'Đăng ký thành công.', data.message);
+                $(".btnCloseModal").focus().click();
+            } else {
+                $(this).callToast("error", 'Lỗi cập nhật hoặc đã quá giờ đăng ký chấm ăn', data.message);
+            }
+        });
+    }
+</script>

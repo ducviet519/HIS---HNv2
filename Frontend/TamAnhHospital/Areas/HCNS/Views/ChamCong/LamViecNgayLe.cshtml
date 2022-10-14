@@ -1,0 +1,689 @@
+﻿@{
+    ViewBag.Title = "DANH SÁCH ĐỐI CHIẾU CHỮ KÝ TRÊN BÁO PHÁT";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var userAuth = ViewBag.UserAuth as string;
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+}
+<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<style>
+    tr.expiring-soon td {
+        background-color: #fff9d8 !important;
+    }
+
+    tr.expried td {
+        background-color: #f1f1f1 !important;
+    }
+
+    .dataTables_wrapper > .row:first-child {
+        display: none;
+    }
+
+    .dataTable thead th {
+        background: #3882b6;
+        color: #fff;
+        padding: 10px 8px !important;
+    }
+
+    .dataTable tbody tr.pending {
+        background: #fff3d2;
+    }
+
+    .dataTable tbody tr.selected td {
+        background: #eee;
+    }
+
+    .dataTable tbody td p {
+        margin-bottom: 5px;
+    }
+
+        .dataTable tbody td p:last-child {
+            margin-bottom: 0;
+        }
+
+    .form-search .row {
+        margin-left: -5px;
+        margin-right: -5px;
+        margin-bottom: 10px;
+    }
+
+        .form-search .row [class*="col-md"] {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+
+    .form-search input, .form-search select {
+        max-width: 100%;
+    }
+
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .flex-col {
+        display: flex;
+        flex-direction: column;
+        flex-flow: column;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+    }
+
+        .flex-col.flex-fill {
+            width: 100%;
+        }
+
+    .flex-right {
+        margin-left: auto;
+        width: 30%;
+        padding-top: 68px;
+    }
+
+    .flex-left {
+        flex-grow: 1;
+        max-width: 100%;
+        padding-right: 10px;
+    }
+
+    .chosen-container-single .chosen-single {
+        height: 30px !important;
+        line-height: 30px !important;
+    }
+
+    .form-search .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+    .form-search .col-md-1, .form-search .col-md-2, .form-search .col-md-3, .form-search .col-xs-1, .form-search .col-xs-2, .form-search .col-xs-3 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .title-bar {
+        border-bottom: 1px solid #ccc;
+    }
+
+        .title-bar h4 {
+            margin: 0;
+        }
+
+    .ui-autocomplete {
+        z-index: 10;
+    }
+</style>
+<div class="head-section">
+    <div class="title">
+        <h4>LÀM VIỆC NGÀY LỄ</h4>
+    </div>
+    <div class="form-row">
+        <div class="form-search">
+            <div class="row">
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">Xem từ ngày</label>
+                    <input type="text" id="sdate" class="form-control timepicker input-sm" value="@ViewBag.StartDate" autocomplete="off"/>
+                </div>
+                <div class="col-md-1">
+                    <label for="date_cc">đến ngày</label>
+                    <input type="text" id="edate" class="form-control timepicker input-sm" value="@ViewBag.EndDate" autocomplete="off"/>
+                </div>
+                <div class="col-md-2">
+                    <label>Khoa/Phòng</label>
+                    @if (userAuth == "HCNS_Admin")
+                    {
+                        @Html.DropDownList("Department", new SelectList(ViewBag.KhoaPhong, "Key", "Value", userInfo.KhoaPhong), "-- Chọn tất cả --", new { @class = "form-control input-sm chosen-dll" })
+                    }
+                    else
+                    {
+                        @Html.DropDownList("Department", new SelectList(ViewBag.KhoaPhong, "Key", "Value", userInfo.KhoaPhong), new { @class = "form-control input-sm chosen-dll" })
+                    }
+                </div>
+                <div class="col-md-1">
+                    <label for="UserFullName">Nhân viên</label>
+                    <input type="text" id="UserFullName" name="UserFullName" class="form-control input-sm" value="" autocomplete="off" />
+                </div>
+                <div class="col-md-2">
+                    <label for="status">Trạng thái</label>
+                    <select class="form-control input-sm chosen-dll" id="status" name="status">
+                        <option value="-1" selected>-- Chưa chọn --</option>
+                        <option value="-2">Chưa đề xuất</option>
+                        @*<option value="0">Khoa/Phòng từ chối</option>*@
+                        <option value="1">Khoa/Phòng đề xuất</option>
+                        <option value="2">HCNS đã duyệt</option>
+                        <option value="3">HCNS từ chối</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="btnTimKiem" class="btn btn-success btn-sm" style="margin-top: 22px;">Tìm kiếm</button>
+                </div>
+                @if (userAuth == "HCNS_Manager")
+                {
+                    <div class="col-md-1">
+                        <label for="loaica">Loại ca</label>
+                        <select class="form-control input-sm chosen-dll" id="loaica" name="loaica">
+                            <option value="1" selected>Đi trực</option>
+                            <option value="2">Đi làm</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label for="lydo">Lý do</label>
+                        <input type="text" id="lydo" name="lydo" class="form-control input-sm" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="btnDeXuat" class="btn btn-success btn-sm" style="margin-top: 22px;">Đề xuất</button>
+                        <button type="button" id="btnHoanDeXuat" class="btn btn-success btn-sm" style="margin-top: 22px;">Hoàn</button>
+                        <button type="button" id="btnExcel" class="btn btn-success btn-sm" style="margin-top: 22px;">Excel</button>
+                    </div>
+                    @*<div class="col-md-1">
+                        <button type="button" id="btnHoanDeXuat" class="btn btn-success btn-sm" style="margin-top: 22px;">Hoàn</button>
+                    </div>*@
+                }
+                else if (userAuth == "HCNS_Admin")
+                {
+                    <div class="col-md-3">
+                        <button type="button" id="btnDuyet" class="btn btn-success btn-sm" style="margin-top: 22px;">Duyệt</button>
+                        <button type="button" id="btnHoan" class="btn btn-success btn-sm" style="margin-top: 22px;">Hoàn</button>
+                        <button type="button" id="btnTuChoi" class="btn btn-success btn-sm" style="margin-top: 22px;">Từ chối</button>
+                        <button type="button" id="btnExcel" class="btn btn-success btn-sm" style="margin-top: 22px;">Excel</button>
+                    </div>
+                    @*<div class="col-md-1">
+                            <button type="button" id="btnHoan" class="btn btn-success btn-sm" style="margin-top: 22px;">Hoàn</button>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" id="btnTuChoi" class="btn btn-success btn-sm" style="margin-top: 22px;">Từ chối</button>
+                        </div>*@
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="inner-content">
+    <table class="table table-condensed table-bordered table-hover" id="data-table" style="width: 100%;">
+        <thead>
+            <tr>
+                <th class="text-center">STT</th>
+                <th class="text-left">Mã NV</th>
+                <th class="text-left">Họ tên</th>
+                <th class="text-left">Khoa/Phòng</th>
+                <th class="text-left">Thứ</th>
+                <th class="text-left">Ngày</th>
+                <th class="text-left">Ca</th>
+                <th class="text-left">Loại</th>
+                <th class="text-left">Lý do</th>
+                <th class="text-left">Trạng thái</th>
+                <th class="text-left">Ngày cập nhật</th>
+                <th width="10" class="no-sort text-center" style="padding:0;">
+                    <input type="checkbox" name="checkAll" id="checkAll" />
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="12" class="text-center">Chưa có dữ liệu</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $('.timepicker').datepicker({ format: 'dd/mm/yyyy' });
+
+    function Reload_DataTable(id, columns, source) {
+
+        $.fn.dataTable.moment('DD/MM/YYYY');
+        id = "#" + id;
+        if ($.fn.dataTable.isDataTable(id)) {
+            $(id).DataTable().destroy();
+            $(id).find('tbody').empty();
+        }
+        var _tabledata = $(id).DataTable({
+            "ajax": {
+                "url": source,
+                "type": "GET",
+                "datatype": "json",
+            },
+            "pageLength": 15,
+            "autoWidth": true,
+            "processing": true,
+            "columns": columns,
+            "deferRender": true,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            "createdRow": function (row, data, dataIndex) {
+            },
+            "language": {
+                "sProcessing": "Đang tải dữ liệu...",
+                "sLengthMenu": "Xem _MENU_ mục",
+                "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm:",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "Đầu",
+                    "sPrevious": "Trước",
+                    "sNext": "Tiếp",
+                    "sLast": "Cuối"
+                }
+            },
+            "initComplete": function (settings, json) {
+                $("#dsdc-tongso").html(this.api().page.info().recordsTotal);
+            }
+        });
+        _tabledata.on('page.dt order.dt draw.dt', function () {
+            _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + _tabledata.page.info().start;
+            });
+        }).draw();
+
+        $(id).on('processing.dt', function (e, settings, processing) {
+            $('#processingIndicator').css('display', processing ? 'block' : 'none');
+        }).dataTable();
+
+        $(id).on('page.dt', function () {
+            $("input[name='checkAll']").removeAttr("checked");
+        });
+    }
+    var _columns = [
+        {
+            "data": {},
+            "render": function (data) {
+                return data.STT;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.MaNV;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.HoTen;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.KhoaP;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.Thu;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.Ngay;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.CaLV;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.TrangThaiDL;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.LyDo;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                if (data.Approve == "0") {
+                    return "Chưa đề xuất";
+                }
+                if (data.Approve == "1") {
+                    return "Khoa phòng đề xuất";
+                }
+                if (data.Approve == "2") {
+                    return "HCNS đã duyệt";
+                }
+                if (data.Approve == "3") {
+                    return "HCNS từ chối";
+                }
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.NgayCN;
+            }
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                if ('@userAuth' == 'HCNS_Manager') {
+                    if (data.Approve == '0' || data.Approve == '1') {
+                        return "<input type=\"checkbox\" name=\"chkXacNhan\" class=\"chkXacNhan\" onchange=\"CheckRowSelected()\" value='" + data.STT + "' data-val='" + data.UserEnrollNumber + ":" + data.Ngay + ":" + data.CaLV + "'></input>";
+                    }
+                    else {
+                        return "";
+                    }
+                }
+                else {
+                    if (data.Approve == "0") {
+                        return "";
+                    }
+                    else {
+                        return "<input type=\"checkbox\" name=\"chkXacNhan\" class=\"chkXacNhan\" onchange=\"CheckRowSelected()\" value='" + data.STT + "' data-val='" + data.UserEnrollNumber + ":" + data.Ngay + ":" + data.CaLV + "'></input>";
+                    }
+                }
+            }, "class": "text-center"
+        }
+    ];
+    function Load_Data() {
+        var objsearch = {
+            TuNgay: $("#sdate").val(),
+            DenNgay: $("#edate").val(),
+            KhoaPhong: $("#Department option:selected").val(),
+            MaNV: $("#UserFullName").val(),
+            Status: $("#status option:selected").val()
+        };
+
+        Reload_DataTable("data-table", _columns, "/hcns/chamcong/table_lamviecngayle?" + $.param(objsearch));
+    }
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+        $(".chosen-dll").chosen();
+
+        Load_Data();
+
+        $("#btnTimKiem").click(function (e) {
+           e.preventDefault();
+            Load_Data();
+            $("#checkAll").removeAttr("checked");
+        });
+
+        $("#btnExcel").click(function (e) {
+            var objsearch = {
+                TuNgay: $("#sdate").val(),
+                DenNgay: $("#edate").val(),
+                KhoaPhong: $("#Department option:selected").val(),
+                MaNV: $("#UserFullName").val(),
+                Status: $("#status option:selected").val()
+            };
+
+            var url = "/hcns/chamcong/Excel_LamViecNgayLe?" + $.param(objsearch);
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function () {
+                    window.location = url;
+                }
+            });
+            e.preventDefault();
+        });
+
+        $("#btnDeXuat").click(function (e) {
+            var _tabledata = $("#data-table").DataTable();
+
+            var lydo = $("#lydo").val();
+            var loaica = $("#loaica option:selected").val();
+
+            var id = [];
+
+            $(_tabledata.$('input[name="chkXacNhan"]').map(function () {
+                if ($(this).prop("checked")) {
+                    var _id = $(this).attr("data-val");
+                    id.push(_id.replace('-', ''));
+                }
+            }));
+            if (id.length == 0) {
+                alert("Bạn chưa chọn bản ghi nào.");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/chamcong/Push_DeXuatLamViecNgayLe",
+                    data: { lydo : lydo, loaica : loaica, id: id.toString() },
+                    beforeSend: function () {
+                        $(this).attr("disabled", "disabled");
+                    },
+                    success: function (data, status) {
+                        if (data.result == true) {
+                            $(this).callToast("success", 'Cập nhật hoàn thành.', '');
+                            Load_Data();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                            } else {
+                                $(this).callToast("error", data.message, '');
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(this).removeAttr("disabled");
+                        $("#data-table").DataTable().ajax.reload(null, false);
+                    }
+                });
+            }
+        });
+
+        $("#btnHoanDeXuat").click(function (e) {
+            var _tabledata = $("#data-table").DataTable();
+
+            var lydo = "";
+            var loaica = "";
+
+            var id = [];
+
+            $(_tabledata.$('input[name="chkXacNhan"]').map(function () {
+                if ($(this).prop("checked")) {
+                    var _id = $(this).attr("data-val");
+                    id.push(_id.replace('-', ''));
+                }
+            }));
+            if (id.length == 0) {
+                alert("Bạn chưa chọn bản ghi nào.");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/chamcong/Push_HoanDeXuatLamViecNgayLe",
+                    data: { lydo: lydo, loaica: loaica, id: id.toString() },
+                    beforeSend: function () {
+                        $(this).attr("disabled", "disabled");
+                    },
+                    success: function (data, status) {
+                        if (data.result == true) {
+                            $(this).callToast("success", 'Cập nhật hoàn thành.', '');
+                            Load_Data();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                            } else {
+                                $(this).callToast("error", data.message, '');
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(this).removeAttr("disabled");
+                        $("#data-table").DataTable().ajax.reload(null, false);
+                    }
+                });
+            }
+        });
+
+        $("#btnDuyet").click(function (e) {
+            var _tabledata = $("#data-table").DataTable();
+
+            var lydo = "";
+            var loaica = "";
+
+            var id = [];
+
+            $(_tabledata.$('input[name="chkXacNhan"]').map(function () {
+                if ($(this).prop("checked")) {
+                    var _id = $(this).attr("data-val");
+                    id.push(_id.replace('-', ''));
+                }
+            }));
+            if (id.length == 0) {
+                alert("Bạn chưa chọn bản ghi nào.");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/chamcong/Push_DuyetLamViecNgayLe",
+                    data: { lydo: lydo, loaica: loaica, id: id.toString() },
+                    beforeSend: function () {
+                        $(this).attr("disabled", "disabled");
+                    },
+                    success: function (data, status) {
+                        if (data.result == true) {
+                            $(this).callToast("success", 'Cập nhật hoàn thành.', '');
+                            Load_Data();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                            } else {
+                                $(this).callToast("error", data.message, '');
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(this).removeAttr("disabled");
+                        $("#data-table").DataTable().ajax.reload(null, false);
+                    }
+                });
+            }
+        });
+
+        $("#btnHoan").click(function (e) {
+            var _tabledata = $("#data-table").DataTable();
+
+            var lydo = "";
+            var loaica = "";
+
+            var id = [];
+
+            $(_tabledata.$('input[name="chkXacNhan"]').map(function () {
+                if ($(this).prop("checked")) {
+                    var _id = $(this).attr("data-val");
+                    id.push(_id.replace('-', ''));
+                }
+            }));
+            if (id.length == 0) {
+                alert("Bạn chưa chọn bản ghi nào.");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/chamcong/Push_HoanLamViecNgayLe",
+                    data: { lydo: lydo, loaica: loaica, id: id.toString() },
+                    beforeSend: function () {
+                        $(this).attr("disabled", "disabled");
+                    },
+                    success: function (data, status) {
+                        if (data.result == true) {
+                            $(this).callToast("success", 'Cập nhật hoàn thành.', '');
+                            Load_Data();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                            } else {
+                                $(this).callToast("error", data.message, '');
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(this).removeAttr("disabled");
+                        $("#data-table").DataTable().ajax.reload(null, false);
+                    }
+                });
+            }
+        });
+
+        $("#btnTuChoi").click(function (e) {
+            var _tabledata = $("#data-table").DataTable();
+
+            var lydo = "";
+            var loaica = "";
+
+            var id = [];
+
+            $(_tabledata.$('input[name="chkXacNhan"]').map(function () {
+                if ($(this).prop("checked")) {
+                    var _id = $(this).attr("data-val");
+                    id.push(_id.replace('-', ''));
+                }
+            }));
+            if (id.length == 0) {
+                alert("Bạn chưa chọn bản ghi nào.");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/chamcong/Push_TuChoiLamViecNgayLe",
+                    data: { lydo: lydo, loaica: loaica, id: id.toString() },
+                    beforeSend: function () {
+                        $(this).attr("disabled", "disabled");
+                    },
+                    success: function (data, status) {
+                        if (data.result == true) {
+                            $(this).callToast("success", 'Cập nhật hoàn thành.', '');
+                            Load_Data();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                            } else {
+                                $(this).callToast("error", data.message, '');
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(this).removeAttr("disabled");
+                        $("#data-table").DataTable().ajax.reload(null, false);
+                    }
+                });
+            }
+        });
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                $(this).blur();
+                $('#btnTimKiem').focus().click();
+            }
+        }
+        $('.head-section').keypress(keypressHandler);
+    });
+    $(document).on('click', '#checkAll', function () {
+        $("input[name='chkXacNhan']").not(this).prop('checked', this.checked);
+        CheckRowSelected();
+    });
+    function CheckRowSelected() {
+        var allChooses = [];
+        var _tabledata = $("#data-table").DataTable();
+
+        $(_tabledata.$("input[name='chkXacNhan']").map(function () {
+            return $(this).prop("checked") ? allChooses.push($(this).val()) : null;
+        }));
+    }
+</script>

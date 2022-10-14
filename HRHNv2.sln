@@ -1,0 +1,83 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{364D148F-F2B5-43BF-AE67-F046BA76D7FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{8E5A8971-8431-4BE9-A998-1BEF1E67FB07}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Entities", "Backend\Entities\Entities.shproj", "{30C9A5F9-6595-4DD7-B5F5-721403C0BC1D}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Repositories", "Backend\Repositories\Repositories.shproj", "{EBA28B18-98B2-4146-B3AC-0CEDFE797971}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TamAnhHospital", "Frontend\TamAnhHospital\TamAnhHospital.csproj", "{58E3B4F5-6451-4CD9-BFD7-6FDB72933A7A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Services", "Backend\Services\Services.shproj", "{62EB8072-928B-4108-A2AE-5DBE2D9D2436}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Backend\Entities\Entities.projitems*{30c9a5f9-6595-4dd7-b5f5-721403c0bc1d}*SharedItemsImports = 13
+		Backend\Entities\Entities.projitems*{58e3b4f5-6451-4cd9-bfd7-6fdb72933a7a}*SharedItemsImports = 4
+		Backend\Repositories\Repositories.projitems*{58e3b4f5-6451-4cd9-bfd7-6fdb72933a7a}*SharedItemsImports = 4
+		Backend\Services\Services.projitems*{58e3b4f5-6451-4cd9-bfd7-6fdb72933a7a}*SharedItemsImports = 4
+		Backend\Services\Services.projitems*{62eb8072-928b-4108-a2ae-5dbe2d9d2436}*SharedItemsImports = 13
+		Backend\Repositories\Repositories.projitems*{eba28b18-98b2-4146-b3ac-0cedfe797971}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{58E3B4F5-6451-4CD9-BFD7-6FDB72933A7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58E3B4F5-6451-4CD9-BFD7-6FDB72933A7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58E3B4F5-6451-4CD9-BFD7-6FDB72933A7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58E3B4F5-6451-4CD9-BFD7-6FDB72933A7A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{30C9A5F9-6595-4DD7-B5F5-721403C0BC1D} = {364D148F-F2B5-43BF-AE67-F046BA76D7FE}
+		{EBA28B18-98B2-4146-B3AC-0CEDFE797971} = {364D148F-F2B5-43BF-AE67-F046BA76D7FE}
+		{58E3B4F5-6451-4CD9-BFD7-6FDB72933A7A} = {8E5A8971-8431-4BE9-A998-1BEF1E67FB07}
+		{62EB8072-928B-4108-A2AE-5DBE2D9D2436} = {364D148F-F2B5-43BF-AE67-F046BA76D7FE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {81AE9AC8-0027-4303-A6B1-74E3DC89443F}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/bvta
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Backend\\Entities\\Entities.shproj
+		SccProjectTopLevelParentUniqueName1 = HRHNv2.sln
+		SccProjectName1 = Backend/Entities
+		SccLocalPath1 = Backend\\Entities
+		SccProjectUniqueName2 = Backend\\Repositories\\Repositories.shproj
+		SccProjectTopLevelParentUniqueName2 = HRHNv2.sln
+		SccProjectName2 = Backend/Repositories
+		SccLocalPath2 = Backend\\Repositories
+		SccProjectUniqueName3 = Backend\\Services\\Services.shproj
+		SccProjectTopLevelParentUniqueName3 = HRHNv2.sln
+		SccProjectName3 = Backend/Services
+		SccLocalPath3 = Backend\\Services
+		SccProjectUniqueName4 = Frontend\\TamAnhHospital\\TamAnhHospital.csproj
+		SccProjectTopLevelParentUniqueName4 = HRHNv2.sln
+		SccProjectName4 = Frontend/TamAnhHospital
+		SccLocalPath4 = Frontend\\TamAnhHospital
+		SccProjectUniqueName5 = Backend\\Repositories\\Repositories.projitems
+		SccProjectTopLevelParentUniqueName5 = HRHNv2.sln
+		SccProjectName5 = Backend/Repositories
+		SccLocalPath5 = Backend\\Repositories
+		SccProjectUniqueName6 = Backend\\Services\\Services.projitems
+		SccProjectTopLevelParentUniqueName6 = HRHNv2.sln
+		SccProjectName6 = Backend/Services
+		SccLocalPath6 = Backend\\Services
+		SccProjectUniqueName7 = Backend\\Entities\\Entities.projitems
+		SccProjectTopLevelParentUniqueName7 = HRHNv2.sln
+		SccProjectName7 = Backend/Entities
+		SccLocalPath7 = Backend\\Entities
+	EndGlobalSection
+EndGlobal

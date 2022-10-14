@@ -1,0 +1,343 @@
+﻿@{
+    ViewBag.Title = "Danh sách nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var auth = ViewBag.Auth as string[];
+}
+
+<style type="text/css">
+    .head-section, .middle-section { margin-bottom: 10px; }
+
+        .head-section .input-group { display: flex; }
+
+    .form-group { margin-bottom: 0; }
+
+    .middle-action { border: 1px solid #ddd; padding: 5px; }
+
+    #fo-table_wrapper .row:first-child { display: none; }
+
+    .form .row { margin-left: -5px; margin-right: -5px; }
+
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    #hcns-table_wrapper > .row:first-child { display: none; }
+
+    #hcns-table thead tr { background-color: #3882b6; }
+
+        #hcns-table thead tr th { color: #fff; border-color: #2476af; }
+</style>
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Danh sách nhân viên</h4>
+        </div>
+
+        <div class="form">
+            <input type="hidden" value="s" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Nhân viên (Mã | Tên)</label>
+                        <input type="text" class="form-control input-sm" placeholder="Điền thông tin" id="UserEnrollNumber" name="UserEnrollNumber" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Chọn khoa phòng</label>
+                        @Html.DropDownList("PhongKhoaHC", new SelectList(ViewBag.DSKPHC, "Key", "Value"), "-- Chọn giá trị --", new { @class = "form-control input-sm chosen-ddl" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Nơi làm việc</label>
+                        @Html.DropDownList("PhongKhoa", new SelectList(ViewBag.DSKP, "Key", "Value"), "-- Chọn giá trị --", new { @class = "form-control input-sm chosen-ddl" })
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label for="SoGioLamViec">Số giờ làm việc</label>
+                        @Html.DropDownList("SoGioLamViec", new List<SelectListItem>() {
+                                        new SelectListItem { Value = "Full", Text = "Tất cả" },
+                                        new SelectListItem { Value = "44h", Text = "44h" },
+                                        new SelectListItem { Value = "48h", Text = "48h" },
+                                        new SelectListItem { Value = "Khác", Text = "Khác" }
+                                    }, new { @class = "form-control input-sm chosen-ddl" })
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label for="SoGioLamViec">Trạng thái</label>
+                        @Html.DropDownList("TrangThai", new List<SelectListItem>() {
+                                        new SelectListItem { Value = "0", Text = "Đang công tác" },
+                                        new SelectListItem { Value = "1", Text = "Đã nghỉ" },
+                                        new SelectListItem { Value = "2", Text = "Tất cả", Selected = true }
+                                    }, new { @class = "form-control input-sm chosen-ddl" })
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <input type="submit" value="Tìm kiếm" class="btn btn-info btn-sm" id="btnSearch" style="margin-top: 22px;" />
+                </div>
+                <div class="col-md-3">
+                    <div class="col-md-8">
+                        <label for="noian">Nơi ăn</label>
+                        @Html.DropDownList("noian", ViewBag.NoiAn as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                    </div>
+                    @if (auth.Contains(System.App.Entities.Common.StaticParams.HCNS_KhaiBaoNhanVienMoi_View))
+                    {
+                    }
+                    else
+                    {
+                        <div class="col-md-4">
+                            <input type="submit" value="Xác nhận" class="btn btn-info btn-sm" id="btnNoiAn" style="margin-top: 22px" />
+                        </div>
+                    }
+                </div>
+            </div>
+            @*<div class="row" style="margin-top: 3px;">
+                    <div class="col-md-6">
+
+                    </div>
+                    <div class="col-md-2">
+                        <label for="noian">Nơi ăn</label>
+                        @Html.DropDownList("noian", ViewBag.NoiAn as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                    </div>
+                    @if (auth.Contains(System.App.Entities.Common.StaticParams.HCNS_KhaiBaoNhanVienMoi_View))
+                    {
+                    }
+                    else
+                    {
+                        <div class="col-md-2">
+                            <input type="submit" value="Xác nhận" class="btn btn-info btn-sm" id="btnNoiAn" style="margin-top: 22px" />
+                        </div>
+                    }
+                </div>*@
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                @if (auth.Contains(System.App.Entities.Common.StaticParams.HCNS_KhaiBaoNhanVienMoi_View))
+                {
+                    <a href="javascript:;" onclick="window.location.reload(false);" class="btn btn-default btn-sm">Tải lại trang</a>
+                }
+                else
+                {
+                    <a href="javascript:;" id="btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>
+                    <a href="javascript:;" onclick="window.location.reload(false);" class="btn btn-default btn-sm">Tải lại trang</a>
+                }
+                <input type="text" class="form-control input-sm" placeholder="Điền từ khóa cần tìm kiếm" id="fsearch" style="float: right; max-width: 300px;" />
+            </div>
+        </div>
+
+        <div id="table-data">
+            @*@Html.Action("Table_Data", "NhanVien", new { areas = "HCNS.Controllers" })*@
+
+            <table class="table table-bordered table-hover" id="hcns-table" data-page-length='15' style="width: 100% !important;">
+                <thead class="bg-primary">
+                    <tr>
+                        <th width="45" class="nowrap">Mã CC</th>
+                        <th width="85" class="nowrap">Mã NV</th>
+                        <th class="nowrap">Họ và tên</th>
+                        <th class="nowrap">Khoa / Phòng</th>
+                        <th class="nowrap">Nơi chấm công</th>
+                        <th class="nowrap">Chức danh</th>
+                        <th class="nowrap">Email nội bộ</th>
+                        <th class="nowrap">Email liên hệ</th>
+                        <th class="nowrap">Số nội bộ</th>
+                        <th class="nowrap">Di động</th>
+                        <th class="nowrap">Ngày vào</th>
+                        <th class="nowrap">Tình trạng</th>
+                        <th class="nowrap"></th>
+                        <th width="20" class="no-sort text-center" style="padding:0;">
+                            <input type="checkbox" name="checkAll" id="checkAll" />
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+    });
+
+    $(function () {
+        var columnName = [
+            { "data": "UserEnrollNumber" },
+            { "data": "UserFullCode" },
+            { "data": "UserFullName" },
+            { "data": "Ten_PhongKhoaHC" },
+            { "data": "Ten_KhoaPhong", "autoWidth": true },
+            { "data": "ChucDanh" },
+            { "data": "TAEmail" },
+            { "data": "Email" },
+            { "data": "SDTNB" },
+            { "data": "SDT1", "width": "55px" },
+            { "data": "NgayVao" },
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.DaNghi == 0) {
+                        return "<span class=\"label label-success\">Đang công tác</span>";
+                    } else {
+                        return "<span class=\"label label-danger\">Đã nghỉ</span>";
+                    }
+                }
+            },
+            {
+                "data": "UserEnrollNumber",
+                "render": function (data) {
+                    if ('@auth.Contains(System.App.Entities.Common.StaticParams.HCNS_KhaiBaoNhanVienMoi_View)' == 'True') {
+                        return "";
+                    }
+                    else {
+                        return "<a href=\"javascript:;\" data-href=\"/hcns/nhanvien/capnhat?id=" + data + "\" class=\"btnEdit\"><i class=\"fa fa-edit\"></i> Sửa</a>";
+                    }
+
+                },
+                "width": "20px"
+            },
+            {
+                "data": {},
+                "render": function (data) {
+                    return "<input type=\"checkbox\" name=\"chkXacNhan\" class=\"chkXacNhan\" onchange=\"CheckRowSelected()\" value='" + data.UserEnrollNumber + "' data-val='" + data.UserEnrollNumber + "'></input>";
+                }, "class": "text-center"
+            }
+        ];
+
+        var _tabledata = $("#hcns-table").DataTable({
+            "ajax": {
+                "url": "/hcns/nhanvien/AjaxList",
+                "type": "GET",
+                "datatype": "json",
+            },
+            "columns": columnName,
+            "select": true,
+            "deferRender": true,
+            "order": [[0, "desc"]]
+        });
+
+        $(document).on('click', '.btnEdit', function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.head-section .form').keypress(keypressHandler);
+
+        $("#btnCreate").click(function () {
+            $(this).callModal("/hcns/nhanvien/capnhat");
+        });
+        $("#btnSearch").click(function () {
+            var _id = $("#UserEnrollNumber").val();
+            var _pk = $("#PhongKhoa option:selected").val();
+            var _pkhc = $("#PhongKhoaHC option:selected").val();
+            var _gio = $("#SoGioLamViec option:selected").val();
+            var _trangthai = $("#TrangThai option:selected").val();
+
+            var action = $("#action").val();
+
+            var urlParams = "a=" + action;
+            if ($.trim(_id) != "")
+                urlParams += "&id=" + encodeURIComponent($.trim(_id));
+            if (_pk != "")
+                urlParams += "&pk=" + _pk;
+            if (_pkhc != "")
+                urlParams += "&pkhc=" + _pkhc;
+            if (_trangthai != "")
+                urlParams += "&trangthai=" + _trangthai;
+            if (_gio != "")
+                urlParams += "&gio=" + _gio;
+
+            Reload_DataTable("hcns-table", columnName, "/hcns/nhanvien/AjaxList?" + urlParams);
+            //$("#table-data").load("/hcns/nhanvien/table_data?" + urlParams);
+        });
+
+        function Reload_DataTable(id, column, source) {
+            id = "#" + id;
+
+            if ($.fn.dataTable.isDataTable(id)) {
+                _tabledata.destroy();
+                $(id).find('tbody').empty();
+            }
+            _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "columns": columnName,
+                "select": true,
+                "deferRender": true,
+                "order": [[0, "desc"]],
+            });
+        }
+
+        $("#btnNoiAn").click(function () {
+            var _tabledata = $("#hcns-table").DataTable();
+
+            var noian = $("#noian option:selected").val();
+
+            var userenrollnumber = [];
+
+            $(_tabledata.$('input[name="chkXacNhan"]').map(function () {
+                if ($(this).prop("checked")) {
+                    var _userenrollnumber = $(this).attr("data-val");
+                    userenrollnumber.push(_userenrollnumber);
+                }
+            }));
+
+            if (userenrollnumber.length == 0) {
+                alert("Bạn chưa chọn bản ghi nào.");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/nhanvien/XacNhanNoiAn_Multi",
+                    data: { noian: noian, userenrollnumber: userenrollnumber.toString() },
+                    beforeSend: function () {
+                        $(this).attr("disabled", "disabled");
+                    },
+                    success: function (data, status) {
+                        if (data.result == true) {
+                            $(this).callToast("success", 'Cập nhật hoàn thành.', '');
+                            //Load_Data();
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", 'Lỗi khi đồng bộ dữ liệu.', '');
+                            } else {
+                                $(this).callToast("error", data.message, '');
+                            }
+                        }
+                    },
+                    complete: function () {
+                        $(this).removeAttr("disabled");
+                        $("#hcns-table").DataTable().ajax.reload(null, false);
+                    }
+                });
+            }
+        });
+    });
+    function CheckRowSelected() {
+        var allChooses = [];
+        var _tabledata = $("#hcns-table").DataTable();
+
+        $(_tabledata.$("input[name='chkXacNhan']").map(function () {
+            return $(this).prop("checked") ? allChooses.push($(this).val()) : null;
+        }));
+    }
+    $(document).on('click', '#checkAll', function () {
+        $("input[name='chkXacNhan']").not(this).prop('checked', this.checked);
+        CheckRowSelected();
+    });
+</script>

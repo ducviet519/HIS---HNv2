@@ -1,0 +1,153 @@
+﻿@{
+    ViewBag.Title = "TheoDoiCong_User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    System.App.Security.CustomPrincipal employeeInfo = HttpContext.Current.User as System.App.Security.CustomPrincipal;
+}
+
+<style type="text/css">
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input[type='text'], .form select { max-width: 100%; }
+    .form .form-group { margin-bottom: 5px; }
+    .chosen-container { font-size: 12px; }
+    .chosen-container-single .chosen-single { height: 30px !important; line-height: 30px !important; }
+    .form .datepicker { margin-top: 0 !important; }
+    @@media (max-width : 768px) {
+        .form .row { margin-bottom: 5px; }
+        .form .btn-group-action { text-align: center; }
+        #btnSearch, #btnError { margin-top: 0px !important; }
+    }
+</style>
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Xem công nhân viên: @employeeInfo.FullName</h4>
+        </div>
+
+        <div class="form">
+            <input type="hidden" value="s" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Nhân viên (Mã | Tên)</label>
+                        <input type="text" class="form-control input-sm" placeholder="Điền thông tin" id="UserEnrollNumber" name="UserEnrollNumber" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Khoa phòng chấm công</label>
+                        @Html.DropDownList("KhoaPhong", new SelectList(ViewBag.KhoaPhong, "Key", "Value"), "-- Chọn phòng ban --", new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Ngày bắt đầu</label>
+                        <input type="text" name="NGAY_BD" id="NGAY_BD" class="form-control input-sm datepicker" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>Ngày kết thúc</label>
+                        <input type="text" name="NGAY_KT" id="NGAY_KT" class="form-control input-sm datepicker" autocomplete="off" />
+                    </div>
+                </div>
+
+                <div class="col-md-2 btn-group-action">
+                    <input type="button" value="Xem công" class="btn btn-info btn-sm" id="btnSearch" style="margin-top: 22px;" />
+                    <input type="button" value="Báo lỗi" class="btn btn-danger btn-sm" id="btnError" style="margin-top: 22px;" />
+                </div>
+            </div>
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="table-responsive">
+            <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Mã NV</th>
+                        <th>Ngày công</th>
+                        <th>Giờ vào</th>
+                        <th>Giờ ra</th>
+                        <th>Mã ca</th>
+                        <th>Mã vắng</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datepicker({ format: 'dd/mm/yyyy' });
+        $("#KhoaPhong").chosen();
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.head-section .form').keypress(keypressHandler);
+
+    });
+</script>

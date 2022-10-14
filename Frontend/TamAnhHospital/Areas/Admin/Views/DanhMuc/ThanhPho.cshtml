@@ -1,0 +1,230 @@
+﻿@{
+    ViewBag.Title = "Danh mục Thành phố";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var auth = ViewBag.Auth as string[];
+}
+<link rel="stylesheet" href="~/Areas/IVF/Content/TimeLapse.css" />
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Danh mục Thành phố</h4>
+        </div>
+        <div class="form">
+            <fieldset>
+                <legend>Điều kiện tìm kiếm:</legend>
+                <form id="lv_search" class="form-inline">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label>Tên thành phố</label>
+                            @Html.TextBox("tp_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Đơn vị hành chính</label>
+                            @Html.TextBox("tp_donvi", "", new { @class = "form-control input-sm" })
+                        </div>                        
+                        <div class="btn-group col-md-1" style="margin-top: 22px; ">
+                            <button type="button" class="btn btn-sm btn-primary" id="tp_btnTimKiem">Tìm kiếm</button>
+                        </div>
+                    </div> <!-- form-row -->
+                </form>
+            </fieldset>
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                <a href="javascript:;" id="tp_btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>
+            </div>
+        </div>
+
+        <div class="inner-content" style="margin-bottom: 10px;">
+            <table class="table table-condensed table-bordered table-hover" id="tp_data-table" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên thành phố</th>
+                        <th>Đơn vị hành chính</th>
+                        <th>Dân số</th>
+                        <th>Diện tích</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" class="text-center">Chưa có dữ liệu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+    });
+
+    function Reload_DataTable(id, columns, source) {
+        $.fn.dataTable.moment('DD/MM/YYYY');
+        id = "#" + id;
+        if ($.fn.dataTable.isDataTable(id)) {
+            $(id).DataTable().destroy();
+            $(id).find('tbody').empty();
+        }
+        var _tabledata = $(id).DataTable({
+            "ajax": {
+                "url": source,
+                "type": "GET",
+                "datatype": "json",
+            },
+            "pageLength": 20,
+            "processing": true,
+            "columns": columns,
+            "deferRender": true,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            "createdRow": function (row, data, dataIndex) {
+                $(row).attr("onclick", "onClick_Row('" + data.ID + "')");
+            },
+            "language": {
+                "sProcessing": "Đang tải dữ liệu...",
+                "sLengthMenu": "Xem _MENU_ mục",
+                "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm:",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "Đầu",
+                    "sPrevious": "Trước",
+                    "sNext": "Tiếp",
+                    "sLast": "Cuối"
+                }
+            },
+            "initComplete": function (settings, json) {
+                //$("#ls-tongso").html(this.api().page.info().recordsTotal);
+            }
+        });
+        _tabledata.on('page.dt order.dt draw.dt', function () {
+            _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + _tabledata.page.info().start;
+            });
+        }).draw();
+
+        $(id).on('processing.dt', function (e, settings, processing) {
+            $('#processingIndicator').css('display', processing ? 'block' : 'none');
+        }).dataTable();
+
+        $(id).on('page.dt', function () {
+            // $("input[name='dsdc-checkAll']").removeAttr("checked");
+        });
+    }
+
+    var _columns = [
+        { "data": {}, "class": "no-sort" },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.TownName;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.TownShip;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.Pupulation;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.Area;
+            },
+        },        
+        {
+            "data": {},
+            "render": function (data) {
+                return "<a href=\"javascript:;\" onclick=\"Update('" + data.ID + "')\">Cập nhật</a>" + " - " + "<a href=\"javascript:;\" onclick=\"Delete('" + data.ID + "')\">Xóa</a>";
+            }, "class": "text-center"
+        }
+    ];
+
+    function Load_Data() {
+        var objsearch = {
+            TownName: $("#tp_ten").val(),
+            TownShip: $("#tp_donvi").val()
+        };
+        Reload_DataTable("tp_data-table", _columns, "/admin/danhmuc/DS_ThanhPho_Search?" + $.param(objsearch));
+    }
+
+    function Update(Code) {
+        if (Code == '') {
+            $(this).callToast("error", 'Xin mời chọn dòng dữ liệu cần cập nhật', '');
+            return;
+        }
+        var objsearch = {
+            ID: Code
+        };
+        $(this).callModal("/admin/danhmuc/Update_ThanhPho?" + $.param(objsearch));
+    };
+
+    function Delete(Code) {
+        var r = confirm("Bạn có muốn xóa bản ghi này không?");
+        if (r) {
+            var obj = {
+                "ID": Code,
+            };
+            $.ajax({
+                url: '@Url.Action("Delete_ThanhPho", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Xóa bản ghi thành công.', data.message);
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Lỗi cập nhật', data.message);
+                }
+            });
+        }
+    }
+
+    $(function () {
+        $("#tp_btnTimKiem").click(function (e) {
+            e.preventDefault();
+            Load_Data();
+        });
+
+        Load_Data();
+
+        $("#tp_btnCreate").click(function (e) {
+            $(this).callModal("/admin/danhmuc/Create_ThanhPho?");
+            e.preventDefault();
+        });
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#tp_btnTimKiem').focus().click();//give your submit an ID
+            }
+        }
+
+        $('.head-section .form').keypress(keypressHandler);
+
+    });
+</script>

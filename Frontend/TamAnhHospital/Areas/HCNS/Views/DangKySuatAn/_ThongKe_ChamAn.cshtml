@@ -1,0 +1,49 @@
+﻿@model System.Data.DataTable
+<style>
+    table td, table th {
+        white-space: nowrap !important;
+    }
+
+    #dataFilter_wrapper > .row:first-child {
+        display: none;
+    }
+</style>
+@{
+    var count = 0;
+}
+<div class="content-block table-responsive">
+    <table id="dataFilter" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                @foreach (System.Data.DataColumn column in Model.Columns)
+                {
+                    count++;
+                    <th>@column.ColumnName</th>
+                }
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Rows.Count > 0)
+            {
+                foreach (System.Data.DataRow item in Model.Rows)
+                {
+                    <tr>
+                        @foreach (System.Data.DataColumn column in Model.Columns)
+                        {
+                            <th>@item[column].ToString()</th>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        //var i = '@ViewBag.SONGAY';
+        //$('#dataFilter').callDataTableCustomSearch('vi', '', '#hoten');
+        //console.log(item);
+    });
+</script>

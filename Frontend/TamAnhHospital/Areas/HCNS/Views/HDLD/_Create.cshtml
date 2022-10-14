@@ -1,0 +1,263 @@
+﻿@model System.App.Entities.HCNS.HDLD
+<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<style type="text/css">
+    .modal-lg { width: 1200px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .panel-body { padding: 15px; max-height: 500px; overflow: auto; }
+        .panel-body input, .panel-body select { max-width: inherit; }
+        .panel-body .form-group { margin-bottom: 10px; }
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+        .panel-body textarea { max-width: 100%; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    #load-day > div { float: left; width: 49px; margin-bottom: 5px; }
+        #load-day > div > input[type='checkbox'] { float: left; margin: 1px 5px 0 0; }
+    #staticModal .info { background-color: #e7f3fe; border-left: 6px solid #2196F3; padding: 8px; margin-bottom: 10px; }
+        #staticModal .info p { margin-bottom: 0; font-size: 11px; color: #696969; }
+
+    #table_dsdk_wrapper > .row:first-child { display: none; }
+    #table_dsdk_wrapper > .row > .col-sm-12 { padding: 0 5px 0 5px; }
+</style>
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog modal-lg">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                @using (Html.BeginForm("Push_HDLD", "HDLD", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+                {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(x => x.UserEnrollNumber)
+
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Thêm mới hợp đồng</h4>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body form">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="TimeDate">Chọn nhân viên</label>
+                                        @Html.EditorFor(model => model.UserFullName, new { htmlAttributes = new { @class = "form-control input-sm", required = true } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-md-7 col-xs-7">
+                                    <div class="form-group">
+                                        <label for="LoaiHD">Loại hợp đồng</label>
+                                        @Html.DropDownListFor(x => x.LoaiHD, new SelectList(ViewBag.LoaiHD, "Key", "Value"), new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-xs-5">
+                                    <div class="form-group">
+                                        <label for="NgayKy">Ngày ký</label>
+                                        @Html.TextBoxFor(x => x.NgayKy, new { @class = "form-control input-sm chonngay", autocomplete = "off", style = "margin-top: 0;", required = true })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="ConNo">Số hợp đồng</label>
+                                        @Html.TextBoxFor(x => x.ConNo, new { @class = "form-control input-sm", autocomplete = "off", required = true, style = "margin-top: 0;" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-xs-4">
+                                    <div class="form-group">
+                                        <label for="NgayDG">Ngày đánh giá</label>
+                                        @Html.TextBoxFor(x => x.NgayDG, new { @class = "form-control input-sm chonngay", autocomplete = "off", style = "margin-top: 0;" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-xs-4">
+                                    <div class="form-group">
+                                        <label for="NgayHH">Ngày hết hạn</label>
+                                        @Html.TextBoxFor(x => x.NgayHH, new { @class = "form-control input-sm chonngay", autocomplete = "off", style = "margin-top: 0;" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- end col-md-8 -->
+
+                        <div class="col-md-7">
+                            <fieldset>
+                                <legend style="margin-bottom: 1px; font-size: 12px;">Danh sách hợp đồng đã ký</legend>
+                                <div style="height: 206px; overflow: auto;">
+                                    <table class="table table-bordered table-hover" id="table_dsdk">
+                                        <thead>
+                                            <tr>
+                                                <th width="10"></th>
+                                                <th class="no-sort">Tên loại hợp đồng</th>
+                                                <th class="no-sort">Ngày ký</th>
+                                                <th class="no-sort">Ngày hết hạn</th>
+                                                <th class="no-sort">Ngày đánh giá</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="5" class="text-center">Chưa có dữ liệu</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </fieldset>
+                        </div><!-- end col-md-4 -->
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="form-inline">
+                        <div class="form-group"><input type="submit" value="Cập nhật" class="btn btn-primary btn-sm" id="btnSubmit" /></div>
+                        <div class="form-group"><input type="button" class="btn btn-default btn-sm" data-dismiss="modal" value="Đóng" /></div>
+                    </div>
+                </div><!-- ./panel-footer -->
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#NgayKy").change(function (e) {
+            $.ajax({
+                type: "POST",
+                url: "/hcns/hdld/CapSoHopDong",
+                data: {
+                    userid: $("#modalForm #UserEnrollNumber").val(),
+                    mahd: $("#modalForm #LoaiHD option:selected").val(),
+                    ngayky: $("#modalForm #NgayKy").val()
+                },
+                success: function (data) {
+                    $("#modalForm #ConNo").val(data.result);
+                }
+            });
+
+            e.preventDefault();
+        });
+        $("#modalForm #UserFullName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/hcns/nhanvien/GetUser",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefix: request.term },
+                    success: function (data) {
+                        response($.map(JSON.parse(data), function (item) {
+                            var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+                            return { label: display, value: display, id: item.UserEnrollNumber };
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#modalForm #UserEnrollNumber").val(ui.item.id);
+                //$("#modalForm #UserFullName").val(ui.item.label);
+                Reload_DataTable("table_dsdk", _columns, "/hcns/hdld/dshd_daky?userid=" + ui.item.id);
+            }
+        });
+
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+            var userEnroll = $("#modalForm #UserEnrollNumber").val();
+
+            if (userEnroll == '') {
+                $(this).callToast("error", '', 'Thông tin nhân viên không đúng, vui lòng chọn lại.');
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        setTimeout(location.reload.bind(location), 2000);
+                    }
+                    else {
+                        if (data.message == '') {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc lịch đặt bị trùng.");
+                        } else {
+                            $(this).callToast("error", '', data.message);
+                        }
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+        $('.chonngay').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+
+        var _columns = [
+            { "data": {} },
+            { "data": "Ten_LoaiHD" },
+            { "data": "NgayKy" },
+            { "data": "NgayHH" },
+            { "data": "NgayDG" },
+        ];
+
+        function Reload_DataTable(id, columns, source) {
+            id = "#" + id;
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 5,
+                //"autoWidth": true,
+                "processing": true,
+                "columns": columns,
+                "deferRender": true,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "language": {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+        }
+    });
+</script>

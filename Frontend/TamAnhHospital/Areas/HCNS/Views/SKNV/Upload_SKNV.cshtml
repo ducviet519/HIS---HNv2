@@ -1,0 +1,53 @@
+﻿@{
+    ViewBag.Title = "Upload_SKNV";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Upload dữ liệu sức khỏe nhân viên</h2>
+
+@using (Html.BeginForm("Push_Upload_SKNV", "SKNV", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+{
+<div class="panel-body">
+    <div class="form-group">
+        <input type="file" class="form-control" id="fileUpload" name="fileUpload" />
+    </div>
+</div>
+<div class="panel-footer">
+    <div class="form-inline">
+        <div class="form-group"><input type="submit" value="Cập nhật" class="btn btn-primary" id="btnSubmit" /></div>
+    </div>
+</div><!-- ./panel-footer -->
+}
+
+@*<script type="text/javascript">
+        $(function () {
+            $("#btnSubmit").click(function (e) {
+                if (window.FormData !== undefined) {
+                    var files = $("#uploadExcelControl").get(0).files;
+                    var fileData = new FormData();
+
+                    for (var i = 0; i < files.length; i++) {
+                        fileData.append("uploadExcelControl", files[i]);
+                    }
+
+                    $.ajax({
+                        url: '/hcns/sknv/Push_Upload_SKNV',
+                        type: "POST",
+                        dataType: "json",
+                        //contentType: true, // Not to set any content header
+                        //processData: true, // Not to process data
+                        data: fileData,
+                        success: function (result) {
+                            alert(result);
+                        },
+                        error: function (err) {
+                            alert(err.statusText);
+                        }
+                    });
+                } else {
+                    alert("FormData is not supported.");
+                }
+                e.preventDefault();
+            });
+        });
+    </script>*@

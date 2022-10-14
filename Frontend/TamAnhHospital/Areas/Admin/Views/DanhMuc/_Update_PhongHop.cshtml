@@ -1,0 +1,71 @@
+﻿@model System.App.Entities.DanhMuc_PhongHop
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục Phòng họp</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Mã phòng họp</label>
+                            @Html.TextBox("upd_ph_ma", Model.Code, new { @class = "form-control input-sm", @readonly = true })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Tên phòng họp</label>
+                            @Html.TextBox("upd_ph_ten", Model.Name, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_ph_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_ph_btnUpdate").click(function (e) {
+            var _Code = $("#upd_ph_ma").val();
+            var _Name = $("#upd_ph_ten").val();
+            if (_Code == '') {
+                $(this).callToast("error", 'Chưa nhập mã phòng họp', '');
+                return;
+            }
+            if (_Name == '') {
+                $(this).callToast("error", 'Chưa nhập tên phòng họp', '');
+                return;
+            }
+
+            var obj = {
+                "Code": _Code,
+                "Name": _Name,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_PhongHop", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Mã phòng họp đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

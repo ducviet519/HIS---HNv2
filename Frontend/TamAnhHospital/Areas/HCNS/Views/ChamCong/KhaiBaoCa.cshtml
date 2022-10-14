@@ -1,0 +1,362 @@
+﻿@{
+    ViewBag.Title = "Khai báo ca";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    tr.expiring-soon td { background-color: #fff9d8 !important; }
+
+    tr.expried td { background-color: #f1f1f1 !important; }
+
+    .dataTables_wrapper > .row:first-child { display: none; }
+
+    .dataTable thead th { background: #3882b6; color: #fff; padding: 10px 8px !important; }
+
+    .dataTable tbody tr.pending { background: #fff3d2; }
+
+    .dataTable tbody tr.selected td { background: #eee; }
+
+    .dataTable tbody td p { margin-bottom: 5px; }
+
+        .dataTable tbody td p:last-child { margin-bottom: 0; }
+
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    .form input { max-width: 100%; }
+
+    .flex-row { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: flex-start; width: 100%; }
+
+    .flex-col { display: flex; flex-direction: column; flex-flow: column; flex-wrap: nowrap; justify-content: flex-start; }
+
+        .flex-col.flex-fill { width: 100%; }
+
+    .flex-right { margin-left: auto; width: 30%; padding-top: 68px; }
+
+    .flex-left { flex-grow: 1; max-width: 100%; padding-right: 10px; }
+
+    .chosen-container-single .chosen-single { height: 30px !important; line-height: 30px !important; }
+
+    .form-search .row { margin-left: -5px; margin-right: -5px; }
+
+    .form-search .col-md-1, .form-search .col-md-2, .form-search .col-md-3, .form-search .col-xs-1, .form-search .col-xs-2, .form-search .col-xs-3 { padding-left: 5px; padding-right: 5px; }
+
+    .title-bar { border-bottom: 1px solid #ccc; }
+
+        .title-bar h4 { margin: 0; }
+
+    .box-table::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); background-color: #F5F5F5; }
+</style>
+@{
+
+    var auth = ViewBag.Auth as string;
+    var userinfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM01");
+    var sdate = ""; var edate = "";
+    if (DateTime.UtcNow.AddHours(7).Month == 4 || DateTime.UtcNow.AddHours(7).Month == 6 || DateTime.UtcNow.AddHours(7).Month == 9 || DateTime.UtcNow.AddHours(7).Month == 11)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("30/MM/yyyy");
+    }
+    else if (DateTime.UtcNow.AddHours(7).Month == 1 || DateTime.UtcNow.AddHours(7).Month == 3 || DateTime.UtcNow.AddHours(7).Month == 5 || DateTime.UtcNow.AddHours(7).Month == 7 || DateTime.UtcNow.AddHours(7).Month == 8 || DateTime.UtcNow.AddHours(7).Month == 10 || DateTime.UtcNow.AddHours(7).Month == 12)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("31/MM/yyyy");
+    }
+    else
+    {
+        if (DateTime.UtcNow.AddHours(7).Year / 4 == 0)
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("29/MM/yyyy");
+        }
+        else
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("28/MM/yyyy");
+        }
+    }
+}
+<div class="row title-bar">
+    <div class="col-md-12">
+        <h4>Cập nhật ca làm việc</h4>
+        <div style="margin: 10px 0;">
+            @if (auth == System.App.Entities.Common.StaticParams.HCNS_User || auth == System.App.Entities.Common.StaticParams.HCNS_DieuDuong)
+            {
+
+            }
+            else if (auth == System.App.Entities.Common.StaticParams.HCNS_Manager && ViewBag.Locked == 0)
+            {
+                <button type="button" id="btnAdd" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Cập nhật ca phụ</button>
+                <button type="button" id="btnAddMul" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Cập nhật nhiều nhân viên</button>
+                <button type="button" id="btnKhaiBaoVang" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Khai báo vắng</button>
+                <button type="button" id="btnDuyetCa" class="btn btn-warning btn-sm" style="margin-right: 5px;">Danh sách ca chưa duyệt</button>
+            }
+            else if (auth == System.App.Entities.Common.StaticParams.HCNS_Admin)
+            {
+                <button type="button" id="btnAdd" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Cập nhật ca phụ</button>
+                <button type="button" id="btnAddMul" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Cập nhật nhiều nhân viên</button>
+                <button type="button" id="btnLichtrinh" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Khai báo lịch trình</button>
+                <button type="button" id="btnKhaiBaoVang" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Khai báo vắng</button>
+                <button type="button" id="btnGioiHanCa" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Khai báo giới hạn ca</button>
+                <button type="button" id="btnDuyetCa" class="btn btn-warning btn-sm" style="margin-right: 5px;">Danh sách ca chưa duyệt</button>
+            }
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-search">
+            <div class="form-row">
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">Xem từ ngày</label>
+                    <input type="text" id="sdate" class="form-control timepicker input-sm" value="@(ViewBag.StartDate)" autocomplete="off" readonly required />
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">đến ngày</label>
+                    <input type="text" id="edate" class="form-control timepicker input-sm" value="@(ViewBag.EndDate)" autocomplete="off" readonly required />
+                </div>
+                @if (auth == System.App.Entities.Common.StaticParams.HCNS_Admin || auth == System.App.Entities.Common.StaticParams.HCNS_DieuDuong)
+                {
+                    <div class="col-md-2 col-xs-2">
+                        <label>Khoa/Phòng</label>
+                        @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value", userinfo.KhoaPhong), "Xem tất cả", new { @class = "form-control input-sm chosen-dll" })
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-2 col-xs-2">
+                        <label>Khoa/Phòng</label>
+                        @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value", userinfo.KhoaPhong), new { @class = "form-control input-sm chosen-dll" })
+                    </div>
+                }
+                <div class="col-md-2 col-xs-2">
+                    <label>Loại nhân viên</label>
+                    @Html.DropDownList("UserType", new SelectList(ViewBag.UserType, "Key", "Value"), "Xem tất cả", new { @class = "form-control input-sm chosen-dll" })
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <label>Mã nhân viên</label>
+                    <input type="text" class="form-control input-sm" placeholder="Nhập thông tin..." id="nhanvien" autocomplete="off" @(auth == "HCNS_User" ? "readonly" : "") />
+                </div>
+                <div class="col-md-2 col-xs-2">
+                    <div class="form">
+                        <button type="button" id="btnSearch" class="btn btn-primary btn-sm" style="margin-top: 22px;">Xem ca</button>
+                        <button type="button" id="btnExport" class="btn btn-info btn-sm" style="margin-top: 22px; margin-left: 10px;">Xuất file</button>
+                    </div>
+                </div>
+                @if (auth != System.App.Entities.Common.StaticParams.HCNS_DieuDuong)
+                {
+                    <div class="col-md-3 col-xs-3">
+                        @using (Html.BeginForm("Push_ImportFile", "NhanVien", FormMethod.Post, new { enctype = "multipart/form-data", id = "importSubmit" }))
+                        {
+                            <div class="form-row" style="margin-top: 22px;">
+                                <div class="col-md-9">
+                                    <input type="file" class="form-control" id="fileUpload" name="fileUpload" />
+                                    <a href="~/Uploads/UpCaPhu.xlsx" style="font-size: 11px; margin-top:5px;">Tải file mẫu</a>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="submit" value="Cập nhật" class="btn btn-primary" id="btnSubmit" />
+                                </div>
+                            </div>
+
+                            @*<button type="submit" id="btnSubmit" class="btn btn-primary btn-sm" style="margin-top: 22px;">Cập nhật</button>*@
+
+                        }
+                    </div>
+                }
+
+            </div>
+        </div>
+        <div id="loadPartial"></div>
+    </div>
+    @*<div class="col-md-4" id="loadAdd"></div>*@
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#importSubmit").submit(function (e) {
+            var form = $(this);
+            //var _fileexcel = "20";
+            var url = form.attr('action');
+
+            var formData = new FormData();
+            var totalFiles = document.getElementById("imageUploadForm").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("imageUploadForm").files[i];
+                formData.append("imageUploadForm", file);
+            }
+            //formData.append("ID", _fileexcel);
+            //console.log(formData);
+            $.ajax({
+                type: "POST",
+                url: url,
+                //data: form.serialize(),
+                data: formData,
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        setTimeout(location.reload.bind(location), 2000);
+                    }
+                    else {
+                        $(this).callToast("error", '', data.mess);
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+
+        AutoHeight();
+        $("#btnExport").click(function (e) {
+            var url = "/hcns/chamcong/export_khaibaoca?s=" + $("#sdate").val() + "&e=" + $("#edate").val() + "&kp=" + $("#Department option:selected").val() + "&manv=" + $("#nhanvien").val() + "&type=" + $("#UserType option:selected").val();
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data, status) {
+                    window.location = url;
+                }
+            });
+            e.preventDefault();
+        });
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.form-search').keypress(keypressHandler);
+
+        function AutoHeight() {
+            var __height = $(window).height() - 60;
+            var __contentHeight = $(".fixed_header tbody").height();
+            var __setHeight = 0;
+
+            if (__contentHeight <= __height)
+                __setHeight = __height;
+            else
+                __setHeight = __contentHeight;
+
+            $(".fixed_header tbody").height(__setHeight);
+        }
+
+        $('.timepicker').datepicker({ format: 'dd/mm/yyyy' });
+        $(".chosen-dll").chosen();
+        $("#loadPartial").load("/hcns/chamcong/table_khaibaoca?s=" + $("#sdate").val() + "&e=" + $("#edate").val() + "&makp=" + $("#Department option:selected").val() + "&type=" + $("#UserType option:selected").val() + "&auth='@auth'");
+
+        $("#loadAdd").load("/hcns/chamcong/add_khaibaoca");
+
+        $("#btnAdd").click(function () {
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+            var startDate = new Date(formatDate(_from));
+            var endDate = new Date(formatDate(_to));
+            var songay = (endDate - startDate) / 1000 / 60 / 60 / 24;
+
+            if (songay >= 32) {
+                $(this).callToast("error", 'Cảnh báo', "Không được chọn khoảng tìm kiếm quá 32 ngày.");
+                return;
+            }
+            $(this).callModal("/hcns/chamcong/add_khaibaoca?s=" + encodeURIComponent($("#sdate").val()) + "&e=" + encodeURIComponent($("#edate").val()) + "&kp=" + $("#Department option:selected").val());
+        });
+
+        $("#btnAddMul").click(function () {
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+            var startDate = new Date(formatDate(_from));
+            var endDate = new Date(formatDate(_to));
+            var songay = (endDate - startDate) / 1000 / 60 / 60 / 24;
+
+            var allVals = [];
+            $.each($("input[name='checkUser']:checked"), function () {
+                allVals.push($(this).val());
+            });
+
+            if (songay >= 32) {
+                $(this).callToast("error", 'Cảnh báo', "Không được chọn khoảng tìm kiếm quá 32 ngày.");
+                return;
+            }
+
+            if (allVals.length == 0) {
+                $(this).callToast("error", "Bạn chưa chọn nhân viên để khai báo.");
+                return;
+            }
+
+            $(this).callModal("/hcns/chamcong/Add_KhaiBaoNhieuCa?s=" + encodeURIComponent($("#sdate").val()) + "&e=" + encodeURIComponent($("#edate").val()) + "&users=" + allVals.toString());
+        });
+
+        $("#btnDuyetCa").click(function () {
+            $(this).callModal("/hcns/chamcong/danhsachcachuaduyet?userid=@userinfo.UserEnrollNumber");
+        });
+        $("#btnKhaiBaoVang").click(function () {
+            $(this).callModal("/hcns/nhanvien/add_khaibaovang");
+        });
+        $("#btnGioiHanCa").click(function () {
+            var allVals = [];
+            $.each($("input[name='checkUser']:checked"), function () {
+                allVals.push($(this).val());
+            });
+
+            if (allVals.length == 0) {
+                $(this).callToast("error", "Bạn chưa chọn nhân viên để khai báo.");
+                return;
+            }
+
+            $(this).callModal("/hcns/chamcong/gioihanca?users=" + allVals.toString());
+        });
+        $("#btnSearch").click(function () {
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+
+            var startDate = new Date(formatDate(_from));
+            var endDate = new Date(formatDate(_to));
+            var songay = (endDate - startDate) / 1000 / 60 / 60 / 24;
+
+            if (songay >= 32) {
+                $(this).callToast("error", 'Cảnh báo', "Không được chọn khoảng tìm kiếm quá 32 ngày.");
+                return;
+            }
+
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+            var _department = $("#Department option:selected").val();
+            var _type = $("#UserType option:selected").val();
+            var _nhanvien = $("#nhanvien").val();
+
+            $("#loadPartial").load("/hcns/chamcong/table_khaibaoca?s=" + _from + "&e=" + _to + "&makp=" + _department + "&manv=" + _nhanvien + "&type=" + _type + "&auth='@auth'");
+        });
+
+        $("#btnLichtrinh").click(function () {
+            var allVals = [];
+            $.each($("input[name='checkUser']:checked"), function () {
+                allVals.push($(this).val());
+            });
+
+            if (allVals.length == 0) {
+                $(this).callToast("error", "Bạn chưa chọn nhân viên để khai báo.");
+                return;
+            }
+
+            $(this).callModal("/hcns/chamcong/add_khaibaolichtrinh?users=" + allVals.toString());
+
+        });
+
+        function formatDate(str) {
+            var d = str.split("/")[0];
+            var m = str.split("/")[1];
+            var y = str.split("/")[2];
+            var date = m + "/" + d + "/" + y
+
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('/');
+        }
+    });
+</script>

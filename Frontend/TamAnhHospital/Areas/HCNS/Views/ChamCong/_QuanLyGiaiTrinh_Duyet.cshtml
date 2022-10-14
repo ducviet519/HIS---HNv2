@@ -1,0 +1,102 @@
+﻿@model System.App.Entities.HCNS.UserWTRequests
+
+<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    #staticModal textarea { max-width: 100%; }
+</style>
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Xác nhận giải trình ngày @Model.Date</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="label-control">Nội dung ghi chú</label>
+                            @Html.TextArea("Note", new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <input type="button" value="Duyệt" class="btn btn-primary btn-sm" id="submit-xn" />
+                    <input type="button" value="Không phê duyệt" class="btn btn-danger btn-sm" id="submit-huy" />
+                    <input type="button" value="Đóng" class="btn btn-default btn-sm" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#submit-xn").on("click", function (e) {
+            var note = $("#Note").val();
+            var userid = @Model.UserEnrollNumber;
+            var date = '@Model.Date';
+            var auth = '@ViewBag.Auth';
+
+            var url = "/hcns/chamcong/QLGT_duyet?p=" + auth + "&userid=" + userid + "&date=" + date + "&note=" + note + "&a=ok";
+            $.ajax({
+                type: "POST",
+                url: url,
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Xác nhận thành công');
+                        //$("#partialCont").load("/hcns/chamcong/table_quanlygiaitrinh?from=" + $("#sdate").val() + "&to=" + $("#edate").val());
+                        $(".form-search #btnSearch").focus().click();
+                        $("#staticModal").modal('hide');
+                    } else if (data.result == false && data.message != '') {
+                        $(this).callToast("error", '', "" + data.message + "");
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+
+        $("#submit-huy").on("click", function (e) {
+            var note = $("#Note").val();
+            var userid = @Model.UserEnrollNumber;
+            var date = '@Model.Date';
+            var auth = '@ViewBag.Auth';
+
+            var url = "/hcns/chamcong/QLGT_duyet?p=" + auth + "&userid=" + userid + "&date=" + date + "&note=" + note + "&a=no";
+            $.ajax({
+                type: "POST",
+                url: url,
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Xóa thành công');
+                        //$("#partialCont").load("/hcns/chamcong/table_quanlygiaitrinh?from=" + $("#sdate").val() + "&to=" + $("#edate").val());\
+                        $(".form-search #btnSearch").focus().click();
+                        $("#staticModal").modal('hide');
+                    } else if (data.result == false && data.message != '') {
+                        $(this).callToast("error", '', "" + data.message + "");
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+    });
+</script>

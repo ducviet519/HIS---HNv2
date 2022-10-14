@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Danh sách chờ</title>
+    @*<meta http-equiv="refresh" content="60" />*@
+    <script type="text/javascript" src="/Scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/mousetrap.js"></script>
+    <link rel="stylesheet" href="/Content/lcd.css">
+    <link rel="stylesheet" href="/Content/bootstrap.min.css">
+</head>
+<body>
+    <script type="text/javascript">
+        $(function () {
+            window.setInterval(function () {
+                $('#col-left .inner').load("/lcd/display?code=" + $("input[name='for-left']").val());
+                $('#col-right .inner').load("/lcd/display?code=" + $("input[name='for-right']").val());
+            }, 5000); // Every 5 seconds, 5000 ms
+        });
+
+        $(document).ready(function () {
+            $.fn.callModal = function (url) {
+                $.ajax({
+                    url: url,
+                    dataType: 'html',
+                    success: function (data) {
+                        $('#partialContainer').html(data);
+                        $("#staticModal").modal({ backdrop: 'static', keyboard: false });
+                    }
+                });
+            }
+            var height = $(window).height();
+            var width = $(window).width();
+            $(".col").css("width", width / 2);
+            $(".col-container").css("height", height);
+
+            Mousetrap.bind('command+shift+k', function (e) {
+                $(this).callModal("/lcd/config");
+                return false;
+            });
+
+            $(".title-box").click(function () {
+                $(this).callModal("/lcd/config");
+                return false;
+            });
+        });
+    </script>
+    <div class="col-container">
+        <input type="hidden" name="for-left" value="001" />
+        <input type="hidden" name="for-right" value="001" />
+        <div class="col" id="col-left"><div class="title-box text-center" style="border-right: 1px solid #fff;"></div><div class="inner"></div></div>
+        <div class="col" id="col-right"><div class="title-box text-center" style="border-right: 1px solid #fff;"></div><div class="inner"></div></div>
+    </div>
+    <div id="partialContainer"></div>
+</body>
+</html>

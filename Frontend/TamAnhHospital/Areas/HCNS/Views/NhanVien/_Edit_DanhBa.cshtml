@@ -1,0 +1,107 @@
+﻿@model System.App.Entities.HCNS.HCNS_NhanVien
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Cập nhật danh bạ điện thoại</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Tòa nhà</label>
+                            @Html.DropDownList("edit-toanha", ViewBag.DSTOANHA as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Tầng</label>
+                            @Html.DropDownList("edit-tang", ViewBag.DSTANG as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Khoa/Phòng</label>
+                            @Html.DropDownList("edit-khoaphong", ViewBag.DSKHOAPHONG as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-8">
+                            <label>Vị trí</label>
+                            @Html.TextBox("edit-vitri", Model.ViTri, new { @class = "form-control input-sm", @autocomplete = "off" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Số điện thoại</label>
+                            @Html.TextBox("edit-sodienthoai", Model.SoDienThoai, new { @class = "form-control input-sm", @autocomplete = "off" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="edit-btnEdit" style="width: 50px;">Sửa</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="edit-btnDelete" style="width: 50px;">Xóa </button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" style="width: 50px;">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#edit-btnEdit").click(function (e) {
+            var khoaphong = $("#edit-khoaphong").val();
+            var toanha = $("#edit-toanha").val();
+            var tang = $("#edit-tang").val();
+            var vitri = $("#edit-vitri").val();
+            var sodienthoai = $("#edit-sodienthoai").val();
+
+            var obj = {
+                "ID": '@ViewBag.ID',
+                "KHOAPHONG": khoaphong,
+                "TOANHA": toanha,
+                "TANG": tang,
+                "VITRI": vitri,
+                "SODIENTHOAI": sodienthoai,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_DanhBaDienThoai", "nhanvien")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Lỗi cập nhật', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+
+        $("#edit-btnDelete").click(function (e) {
+            var obj = {
+                "ID": '@ViewBag.ID',
+            };
+            $.ajax({
+                url: '@Url.Action("Delete_DanhBaDienThoai", "nhanvien")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Xóa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Lỗi Xóa dữ liệu', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

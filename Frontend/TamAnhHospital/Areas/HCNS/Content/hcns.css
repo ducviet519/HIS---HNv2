@@ -1,0 +1,24 @@
+﻿a:hover, a::selection { text-decoration: none; }
+.content-block { position: relative; }
+.abs-tool { position: absolute; top: 0; left: 0; z-index: 100; }
+.modal-content { margin: 30px auto !important; padding: 15px; }
+input { max-width: 100%; }
+canvas { display: block !important; }
+
+@media screen and (max-width: 767px) {
+    div.dataTables_wrapper div.dataTables_length, div.dataTables_wrapper div.dataTables_filter, div.dataTables_wrapper div.dataTables_info, div.dataTables_wrapper div.dataTables_paginate { text-align: right !important; }
+    .table-responsive { border: 0 !important; }
+}
+
+.datepicker { margin-top: 0; }
+.dataTables_wrapper > .row:first-child { display: none; }
+.dataTables_wrapper thead tr { background: #eaeaea; }
+.dataTables_wrapper tbody p, table p { margin-bottom: 0 !important; line-height: 16px; }
+input, select, textarea { max-width: 100% !important; }
+.dataTables_wrapper .dropdown-menu { right: 0; left: auto; }
+.tab-pane { padding: 10px 0; }
+
+.panel-heading { padding: 5px 15px; background: #3882b6; }
+    .panel-heading h5 { margin: 5px 0; color: #fff; }
+
+.row_approve2 { background-color: #d0ffbc; }

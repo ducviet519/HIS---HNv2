@@ -1,0 +1,62 @@
+﻿<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4>Lý do OnCall</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Lý do</label>
+                                <input type="text" id="lydo" class="form-control" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button class="btn btn-primary btn-sm" id="btnLuu">Lưu</button>
+                    <input type="button" value="Hủy" class="btn btn-danger btn-sm" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#btnLuu").click(function () {
+            var lydo = $("#lydo").val();
+            if (lydo.trim() == '') {
+                $(this).callToast("error", '', 'Lý do không được để trống');
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/hcns/chamcong/Push_GhepCa",
+                data: { vals: '@ViewBag.Val', lydo: lydo },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+
+                        $("#dataFilter").DataTable().ajax.reload(null, false);
+
+                        $('#staticModal').modal('toggle');
+                    }
+                    else {
+                        if (data.message == '') {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                        } else {
+                            $(this).callToast("error", '', data.message);
+                        }
+                    }
+                }
+            });
+            return false;
+        });
+</script>

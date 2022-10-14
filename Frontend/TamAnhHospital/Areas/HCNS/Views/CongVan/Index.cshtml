@@ -1,0 +1,209 @@
+﻿@{
+    ViewBag.Title = "Danh sách Công văn đã chuyển";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    tr.expiring-soon td { background-color: #fff9d8 !important; }
+    tr.expried td { background-color: #f1f1f1 !important; }
+    .dataTables_wrapper > .row:first-child { display: none; }
+    .dataTable thead th { background: #3882b6; color: #fff; padding: 10px 8px !important; }
+    .dataTable tbody tr.pending { background: #fff3d2; }
+    .dataTable tbody tr.selected td { background: #eee; }
+    .dataTable tbody td p { margin-bottom: 5px; }
+        .dataTable tbody td p:last-child { margin-bottom: 0; }
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input, .form-search input { max-width: 100%; }
+    .flex-row { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: flex-start; width: 100%; }
+    .flex-col { display: flex; flex-direction: column; flex-flow: column; flex-wrap: nowrap; justify-content: flex-start; }
+        .flex-col.flex-fill { width: 100%; }
+    .flex-right { margin-left: auto; width: 30%; padding-top: 68px; }
+    .flex-left { flex-grow: 1; max-width: 100%; padding-right: 10px; }
+    .chosen-container-single .chosen-single { height: 30px !important; line-height: 30px !important; }
+    .chosen-search .chosen-search-input { max-width: 100%; }
+
+    .form-search { margin: 10px 0; }
+        .form-search .row { margin-left: -5px; margin-right: -5px; }
+        .form-search .col-md-1, .form-search .col-md-2, .form-search .col-md-3, .form-search .col-xs-1, .form-search .col-xs-2, .form-search .col-xs-3 { padding-left: 5px; padding-right: 5px; }
+    .title-bar { border-bottom: 1px solid #ccc; }
+        .title-bar h4 { margin: 0; }
+</style>
+<div class="row title-bar">
+    <div class="col-md-12">
+        <h4>Danh sách Công văn đã chuyển</h4>
+        <div style="margin: 10px 0;">
+            <button type="button" id="btnAdd" class="btn btn-primary btn-sm" style="margin-right: 5px;"><i class="fa fa-plus"></i> Cập nhật mới công văn</button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-search">
+            <div class="row">
+                <div class="col-md-2 col-xs-3">
+                    <label>Từ ngày</label>
+                    @Html.TextBox("tungay", DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy"), new { @class = "form-control datepicker input-sm", autocomplete = "off", @readonly = true })
+                </div>
+                <div class="col-md-2 col-xs-3">
+                    <label>đến ngày</label>
+                    @Html.TextBox("denngay", DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy"), new { @class = "form-control datepicker input-sm", autocomplete = "off", @readonly = true })
+                </div>
+                <div class="col-md-3 col-xs-3">
+                    <label>Khoa/Phòng</label>
+                    @Html.DropDownList("KhoaPhong", new SelectList(ViewBag.KhoaPhong, "Key", "Value"), "--- Chọn khoa phòng ---", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-md-2 col-xs-3">
+                    <button type="button" id="btnSearch" class="btn btn-default btn-sm" style="margin-top: 22px;">Tìm kiếm</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="box-table">
+            <table class="table table-bordered table-hover " id="table-data">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="text-center">Số Công văn</th>
+                        <th>Ngày gửi</th>
+                        <th>Ngày nhận</th>
+                        <th class="text-center">Nơi nhận</th>
+                        <th class="text-center">Người nhận</th>
+                        <th>Người thực hiện</th>
+                        <th>Ngày cập nhật</th>
+                        <th></th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $("#KhoaPhong").chosen();
+        var _columns = [
+            { "data": {}, "width": "30px" },
+            {
+                "data": {}, "render": function (data) {
+
+                    return "<a class=\"btn-update\" href=\"javascript:;\" data-url=\"/hcns/congvan/Update_CongVan?id=" + data.ID + "\">" + (data.SO_CV == '' ? "[Chưa có tên]" : data.SO_CV) + "</a>";
+                }
+            },
+            { "data": "NGAY_GUI" },
+            { "data": "NGAY_NHAN" },
+            { "data": "TEN_NOI_NHAN" },
+            { "data": "TEN_NGUOI_NHAN" },
+            { "data": "TEN_NGUOI_THUC_HIEN" },
+            { "data": "NGAY_CAP_NHAT" },
+            {
+                "data": {}, "render": function (data) {
+                    if (data.TEN_FILE == "" || data.TEN_FILE == null) {
+                        return "Không có file";
+                    } else {
+                        return "<a href='/uploads/congvan/" + data.TEN_FILE + "'>Tải file</a>";
+                    }
+
+                }
+            },
+            {
+                "data": {},
+                "render": function (data) {
+                    var text = "";
+                    if (data.TRANG_THAI == 0) {
+                        text = "Chưa xử lý";
+                    } else if (data.TRANG_THAI == 1) {
+                        text = "Đã gửi";
+                    } else if (data.TRANG_THAI == 2) {
+                        text = "Đã nhận";
+                    } else if (data.TRANG_THAI == 3) {
+                        text = "Đang xử lý";
+                    } else {
+                        text = "Đã hoàn thành";
+                    }
+
+                    return text;
+                }
+            },
+        ];
+
+        Reload_DataTable("table-data", _columns, "/hcns/congvan/Data_DanhSachCongVan?tungay=" + $("#tungay").val() + "&denngay=" + $("#denngay").val() + "&kp=" + $("#KhoaPhong option:selected").val());
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.form-search').keypress(keypressHandler);
+
+        $("#btnAdd").click(function () {
+            $(this).callModal("/hcns/congvan/Add_CongVan");
+        });
+
+        $("#btnSearch").click(function () {
+            Reload_DataTable("table-data", _columns, "/hcns/congvan/Data_DanhSachCongVan?tungay=" + $("#tungay").val() + "&denngay=" + $("#denngay").val() + "&kp=" + $("#KhoaPhong option:selected").val());
+        });
+        $(document).on('click', '.btn-update', function (e) {
+            var _url = $(this).attr("data-url");
+            $(this).callModal(_url);
+
+            e.preventDefault();
+        });
+
+        function Reload_DataTable(id, columns, source) {
+            id = "#" + id;
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 15,
+                "autoWidth": true,
+                "processing": true,
+                "columns": columns,
+                "deferRender": true,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "language": {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+        }
+    });
+</script>

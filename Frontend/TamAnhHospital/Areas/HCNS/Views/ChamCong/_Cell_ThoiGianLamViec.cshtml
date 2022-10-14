@@ -1,0 +1,204 @@
+﻿@model System.App.Entities.HCNS.UserWStats
+@{
+    List<SelectListItem> selectListS1Items = new List<SelectListItem>();
+    foreach (var item in ViewBag.S1 as IEnumerable<System.App.Entities.HCNS.WorkStatsType>)
+    {
+        selectListS1Items.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Des });
+    }
+    var selectListS1 = new SelectList(selectListS1Items, "Value", "Text", 2);
+
+    List<SelectListItem> selectListS2Items = new List<SelectListItem>();
+    foreach (var item in ViewBag.S2 as IEnumerable<System.App.Entities.HCNS.WorkStatsType>)
+    {
+        selectListS2Items.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Des });
+    }
+    var selectListS2 = new SelectList(selectListS2Items, "Value", "Text", 2);
+
+    List<SelectListItem> selectListS3Items = new List<SelectListItem>();
+    foreach (var item in ViewBag.S3 as IEnumerable<System.App.Entities.HCNS.WorkStatsType>)
+    {
+        selectListS3Items.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Des });
+    }
+    var selectListS3 = new SelectList(selectListS3Items, "Value", "Text", 2);
+
+    List<SelectListItem> selectListTTItems = new List<SelectListItem>();
+    foreach (var item in ViewBag.TTOps as Dictionary<int, string>)
+    {
+        selectListTTItems.Add(new SelectListItem() { Value = item.Key.ToString(), Text = item.Value });
+    }
+    var selectListTT = new SelectList(selectListTTItems, "Value", "Text");
+
+    List<SelectListItem> selectListLTGItems = new List<SelectListItem>();
+    foreach (var item in ViewBag.LTGOps as Dictionary<int, string>)
+    {
+        selectListLTGItems.Add(new SelectListItem() { Value = item.Key.ToString(), Text = item.Value });
+    }
+    var selectListLTG = new SelectList(selectListLTGItems, "Value", "Text");
+}
+<style type="text/css">
+    fieldset.fieldset-border { border: 1px groove #ddd !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important; -webkit-box-shadow: 0px 0px 0px 0px #000; box-shadow: 0px 0px 0px 0px #000; }
+</style>
+@{
+    var userAuth = ViewBag.UserAuth as string;
+}
+@using (Html.BeginForm("push_cell_thoigianlamviec", "chamcong", FormMethod.Post, new { @class = "formFieldset", id = "form_tglv" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.UserEnrollNumber)
+    @Html.HiddenFor(x => x.Date)
+
+    <fieldset class="fieldset-border" id="formTGLV">
+        <legend class="fieldset-border">Đề xuất thời gian làm việc</legend>
+
+        @if (userAuth == "HCNS_Manager")
+        {
+            if (Model.WStats1 != null || Model.WStats2 != null || Model.WStats3 != null)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <p style="border-left: 5px solid #ff3c3c; padding: 8px; background: #ffcbcb; margin: 0;">Bạn đang đề xuất @(Model.W1Stats > 0 && !string.IsNullOrEmpty(Model.WStats1) ? "[" + Model.S1 + "]" : "") @(Model.W2Stats > 0 && !string.IsNullOrEmpty(Model.WStats2) ? "[" + Model.S2 + "]" : "") @(Model.W3Stats > 0 && !string.IsNullOrEmpty(Model.WStats3) ? "[" + Model.S3 + "]" : ""). Bạn có thể cập nhật lại đề xuất theo nội dung dưới và chọn xác nhận.</p>
+                    </div>
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-md-4 col-xs-4">
+                    <label>Đi muộn về sớm</label>
+                    @Html.DropDownListFor(x => x.WStats1, selectListS1, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-md-4 col-xs-4">
+                    <label>Làm thêm giờ</label>
+                    @Html.DropDownListFor(x => x.WStats2, selectListS2, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-md-4 col-xs-4">
+                    <label>Trực trưa</label>
+                    @Html.DropDownListFor(x => x.WStats3, selectListS3, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Lý do muộn/sớm</label>
+                    @Html.TextBoxFor(x => x.Note, new { @class = "form-control input-sm", autocomplete = "off" })
+                </div>
+                <div class="col-md-4">
+                    <label>Loại lý do làm thêm giờ</label>
+                    @Html.DropDownListFor(x => x.LTGType, selectListLTG, "-- Chọn lý do --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-md-4">
+                    <label>Loại lý do trực trưa</label>
+                    @Html.DropDownListFor(x => x.TTType, selectListTT, "-- Chọn lý do --", new { @class = "form-control input-sm" })
+                </div>
+            </div>
+            @*<div class="row">
+                <div class="col-md-12">
+                    <label>Lý do</label>
+                    @Html.TextBoxFor(x => x.Note, new { @class = "form-control input-sm", autocomplete = "off" })
+                </div>
+            </div>*@
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" id="btnTGLV" value="Xác nhận đề xuất thời gian làm việc" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        }
+        @if (userAuth == "HCNS_Admin")
+        {
+            if (Model.WStats1 != null || Model.WStats2 != null || Model.WStats3 != null)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>Bạn đã khai báo <b>@(Model.W1Stats > 0 && !string.IsNullOrEmpty(Model.S1) ? "[" + Model.S1 + "]" : "") @(Model.W2Stats > 0 && !string.IsNullOrEmpty(Model.S2) ? "[" + Model.S2 + "]" : "") @(Model.W3Stats > 0 && !string.IsNullOrEmpty(Model.S3) ? "[" + Model.S3 + "]" : "")</b>. Bạn có thể cập nhật lại đề xuất theo nội dung dưới và chọn xác nhận.</p>
+                    </div>
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-md-4 col-xs-4">
+                    <label>Đi muộn về sớm</label>
+                    <!-- danh sách ca -->
+                    @Html.DropDownListFor(x => x.WStats1, selectListS1, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-md-4 col-xs-4">
+                    <label>Làm thêm giờ</label>
+                    <!-- danh sách ca -->
+                    @Html.DropDownListFor(x => x.WStats2, selectListS2, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-md-4 col-xs-4">
+                    <label>Trực trưa</label>
+                    <!-- danh sách ca -->
+                    @Html.DropDownListFor(x => x.WStats3, selectListS3, "-- Chọn lịch --", new { @class = "form-control input-sm" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Lý do muộn/sớm</label>
+                    @Html.TextBoxFor(x => x.Note, new { @class = "form-control input-sm", autocomplete = "off" })
+                </div>
+                <div class="col-md-4">
+                    <label>Loại lý do làm thêm giờ</label>
+                    @Html.DropDownListFor(x => x.LTGType, selectListLTG, "-- Chọn lý do --", new { @class = "form-control input-sm" })
+                </div>
+                <div class="col-md-4">
+                    <label>Loại lý do trực trưa</label>
+                    @Html.DropDownListFor(x => x.TTType, selectListTT, "-- Chọn lý do --", new { @class = "form-control input-sm" })
+                </div>
+            </div>
+            @*<div class="row">
+                <div class="col-md-12">
+                    <label>Lý do</label>
+                    @Html.TextBoxFor(x => x.Note, new { @class = "form-control input-sm", autocomplete = "off" })
+                </div>
+            </div>*@
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" id="btnTGLV" value="Xác nhận đề xuất thời gian làm việc" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        }
+    </fieldset>
+    <script type="text/javascript">
+    $(function () {
+        $("#form_tglv").submit(function (e) {
+            var w1 = $("#formTGLV #WStats1 option:selected").val();
+            var w2 = $("#formTGLV #WStats2 option:selected").val();
+            var w3 = $("#formTGLV #WStats3 option:selected").val();
+            var note = $("#Note").val();
+
+            if (w1 == "" && w2 == "" && w3 == "") {
+                $(this).callToast("error", '', 'Bạn chưa chọn hướng xử lý loại thời gian làm việc.');
+                return false;
+            }
+            if (w1 != "" && note == "") {
+                $(this).callToast("error", '', 'Chưa điền lý do đề xuất.');
+                return false;
+            }
+
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                beforeSend: function () {
+                    $("#btnTGLV").hide();
+                },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+
+                        $("#cell_thoigianlamviec").load("/hcns/chamcong/cell_thoigianlamviec?userid=@Model.UserEnrollNumber&date=@Model.Date")
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }, complete: function () {
+                    $("#btnTGLV").show();
+                }
+            });
+
+            e.preventDefault();
+        });
+    });
+    </script>
+}

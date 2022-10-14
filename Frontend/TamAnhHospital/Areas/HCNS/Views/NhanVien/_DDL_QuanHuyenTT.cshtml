@@ -1,0 +1,12 @@
+﻿@model System.App.Entities.HCNS.HCNS_NhanVien
+
+@Html.DropDownListFor(x => x.QuanTT, new SelectList(ViewBag.DS_QuanHuyen, "Key", "Value"), new { @class = "form-control input-sm" })
+
+<script type="text/javascript">
+    $(function () {
+        $("#QuanTT").change(function () {
+            var id = $("#modalForm #QuanTT option:selected").val();
+            $("#PhuongXaTT_block").load("/hcns/nhanvien/DDL_PhuongXaTT?quanhuyen=" + id);
+        });
+    });
+</script>

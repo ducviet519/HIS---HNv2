@@ -1,0 +1,131 @@
+﻿@model System.App.Entities.DanhMuc_LoaiVang
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục loại vắng</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Mã</label>
+                            @Html.TextBox("upd_lv_ma", Model.AbsentCode, new { @class = "form-control input-sm", @readonly = true })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Mô tả</label>
+                            @Html.TextBox("upd_lv_mota", Model.AbsentDescription, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Viết tắt</label>
+                            @Html.TextBox("upd_lv_viettat", Model.AbsentSymbol, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Sử dụng</label>
+                            @if (Model.IsYes == "1")
+                            {
+                                @Html.DropDownList("upd_lv_isyes", new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "1", Text = "Có", Selected = true},
+                                    new SelectListItem() { Value = "0", Text = "Không" }
+                                }, new { @class = "form-control input-sm chosen-ddl" })
+                            }
+                            else
+                            {
+                                @Html.DropDownList("upd_lv_isyes", new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "1", Text = "Có" },
+                                    new SelectListItem() { Value = "0", Text = "Không", Selected = true }
+                                }, new { @class = "form-control input-sm chosen-ddl" })
+                            }
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Đếm</label>
+                            @if (Model.IsCount == "True")
+                            {
+                                @Html.DropDownList("upd_lv_iscount", new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "1", Text = "Có", Selected = true},
+                                    new SelectListItem() { Value = "0", Text = "Không" }
+                                }, new { @class = "form-control input-sm chosen-ddl" })
+                            }
+                            else
+                            {
+                                @Html.DropDownList("upd_lv_iscount", new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "1", Text = "Có" },
+                                    new SelectListItem() { Value = "0", Text = "Không", Selected = true }
+                                }, new { @class = "form-control input-sm chosen-ddl" })
+                            }
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Số công</label>
+                            @Html.TextBox("upd_lv_score", Model.Score, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_lv_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_lv_btnUpdate").click(function (e) {
+            var _AbsentCode = $("#upd_lv_ma").val();
+            var _AbsentDescription = $("#upd_lv_mota").val();
+            var _AbsentSymbol = $("#upd_lv_viettat").val();
+            var _IsYes = $("#upd_lv_isyes").val();
+            var _IsCount = $("#upd_lv_iscount").val();
+            var _Score = $("#upd_lv_score").val();
+            if (_AbsentCode == '') {
+                $(this).callToast("error", 'Chưa nhập mã loại vắng', '');
+                return;
+            }
+            if (_AbsentDescription == '') {
+                $(this).callToast("error", 'Chưa nhập thông tin mô tả', '');
+                return;
+            }
+            if (_AbsentSymbol == '') {
+                $(this).callToast("error", 'Chưa nhập viết tắt cho loại vắng', '');
+                return;
+            }
+            if (_Score == '') {
+                $(this).callToast("error", 'Chưa nhập số công', '');
+                return;
+            }
+
+            var obj = {
+                "AbsentCode": _AbsentCode,
+                "AbsentDescription": _AbsentDescription,
+                "AbsentSymbol": _AbsentSymbol,
+                "IsYes": _IsYes,
+                "IsCount": _IsCount,
+                "Score": _Score,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_LoaiVang", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Mã loại vắng đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

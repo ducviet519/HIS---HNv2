@@ -1,0 +1,36 @@
+﻿@model IEnumerable<System.App.Entities.Employee>
+
+<table class="table table-bordered table-condensed" id="lstEmpSelected">
+    <thead>
+        <tr>
+            <th width="60" class="text-center">Mã NV</th>
+            <th>Tên nhân viên</th>
+            <th width="">Khoa/ bộ phận</th>
+            <th width="">Chức danh</th>
+            <th width="120">Tổng khóa học</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr class="remove_@item.UserEnrollNumber" data-id="@item.UserEnrollNumber">
+            <td class="text-center">@item.UserFullCode</td>
+            <td>@item.UserFullName</td>
+            <td>@item.PhongKhoaHC</td>
+            <td>@item.ChucDanh</td>
+            <td>@item.Total_Course khóa (<a href="javascript:void(0);" class="detail" data-code="@item.UserEnrollNumber">Chi tiết</a>)</td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        $('#lstEmpSelected').callDataTable('vi', '');
+
+        $("a.detail").click(function () {
+            var id = $(this).attr("data-code");
+            $(this).callModal("/hcns/trainingcourse/TrainingCourseWithEmpID?empId=" + id);
+        });
+    });
+</script>

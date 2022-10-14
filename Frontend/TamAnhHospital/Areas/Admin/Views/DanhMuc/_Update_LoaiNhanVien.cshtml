@@ -1,0 +1,66 @@
+﻿@model System.App.Entities.DanhMuc_LoaiNhanVien
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 500px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục loại nhân viên</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Mã loại làm thêm</label>
+                            @Html.TextBox("upd_lnv_ten", Model.TypeDes, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_lnv_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_lnv_btnUpdate").click(function (e) {
+            var _TypeDes = $("#upd_lnv_ten").val();
+            if (_TypeDes == '') {
+                $(this).callToast("error", 'Chưa nhập loại nhân viên', '');
+                return;
+            }
+
+            var obj = {
+                "ID": @Model.ID,
+                "TypeDes": _TypeDes,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_LoaiNhanVien", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Loại nhân viên đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

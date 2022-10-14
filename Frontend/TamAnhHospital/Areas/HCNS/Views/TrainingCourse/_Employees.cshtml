@@ -1,0 +1,103 @@
+﻿<style type="text/css">
+    .filter { position: absolute; left: 15px; z-index: 100; }
+</style>
+<div id="staticModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-content" style="width: 1200px !important;">
+        <input type="hidden" value="@ViewBag.CourseId" id="courseID" />
+        <div class="row">
+            <div class="col-md-6" style="border-right: 1px solid #ddd; position: relative;">
+                <h4>Danh sách cán bộ/ nhân viên</h4>
+                <div class="filter">
+                    @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value"), new { @class = "form-control" })
+                </div>
+                <div id="tableEmployee" class="table-responsive">
+                    @Html.Action("TableEmployee", "TrainingCourse", new { dept = 0 })
+                </div>
+            </div><!-- / .col-md-6 -->
+
+            <div class="col-md-6">
+                <h4>Danh sách tham gia khóa học</h4>
+                <table class="table table-bordered table-condensed" id="lstEmpSelected">
+                    <thead>
+                        <tr>
+                            <th width="60" class="text-center">Mã NV</th>
+                            <th>Tên nhân viên</th>
+                            <th width="90">Khoa/ bộ phận</th>
+                            <th width="100">Chức danh</th>
+                            <th width="60"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in ViewBag.EmployeesSelected as IEnumerable<System.App.Entities.Employee>)
+                        {
+                        <tr class="remove_@item.UserEnrollNumber" data-id="@item.UserEnrollNumber">
+                            <td class="text-center">@item.UserFullCode</td>
+                            <td>@item.UserFullName</td>
+                            <td>@item.PhongKhoaHC</td>
+                            <td>@item.ChucDanh</td>
+                            <td class="text-center"><a href="javascript:;" data-code="@item.UserEnrollNumber" class="lnkDestroy">Hủy</a></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div><!-- / .col-md-6 -->
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center"><button type="button" class="btn btn-default btn-sm" data-dismiss="modal" aria-label="Close" style="margin-top: 10px;"><span class="glyphicon glyphicon-remove"></span> Đóng lại</button></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        //$('#lstEmp').callDataTable('vi', '3,4');
+        $('#lstEmpSelected').callDataTable('vi', '3,4');
+
+        $("#Department").change(function () {
+            var id = $("#Department").find("option:selected").val();
+            $("#tableEmployee").load("/hcns/trainingCourse/TableEmployee?dept=" + id + "&courseId="+@ViewBag.CourseId);
+        });
+
+        $(".lnkRegister").click(function () {
+            var code = $(this).attr("data-code");
+            var $tr = $(this).closest('tr');
+            var $clone = $tr.clone();
+            $clone.find('.lnkRegister').html('');
+            var emp = $tr.attr('data-id');
+            var course = $("#courseID").val();
+
+            if ($("#lstEmpSelected tr[data-id='" + code + "']").length == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: '/hcns/trainingcourse/UpdateClone',
+                    data: { courseId: course, empId: emp },
+                    success: function (data) {
+                        if (data.result == true) {
+                            $("#lstEmpSelected tbody").append($clone);
+                        }
+                    }
+                });
+            } else {
+                $(this).callToast("error", '', 'Nhân viên này hiện đã trong danh sách đăng ký');
+            }
+        });
+
+        $(".lnkDestroy").click(function () {
+            var code = $(this).attr("data-code");
+            var $tr = $(this).closest('tr');
+            var course = $("#courseID").val();
+            var emp = $tr.attr('data-id');
+
+            $.ajax({
+                type: "POST",
+                url: '/hcns/trainingcourse/UpdateDestroy',
+                data: { courseId: course, empId: emp },
+                success: function (data) {
+                    if (data.result == true) {
+                        $("tr.remove_" + code).remove();
+                    }
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,119 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục thiết bị</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Mã thiết bị(chỉ số)</label>
+                            @Html.TextBox("cre_tb_machineid", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Tên thiết bị</label>
+                            @Html.TextBox("cre_tb_devicename", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Địa chỉ IP</label>
+                            @Html.TextBox("cre_tb_ipaddress", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Cổng kết nối</label>
+                            @Html.TextBox("cre_tb_port", "", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Chấm ăn</label>
+                            @Html.DropDownList("cre_tb_ischaman", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "0", Text = "Không" },
+                                new SelectListItem() { Value = "1", Text = "Có" }
+                            }, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Cổng socket</label>
+                            @Html.TextBox("cre_tb_portsocket", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Địa chỉ IP máy in</label>
+                            @Html.TextBox("cre_tb_tenmayin", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Trạng thái</label>
+                            @Html.DropDownList("cre_tb_areaid", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "0", Text = "Không hoạt động" },
+                                new SelectListItem() { Value = "1", Text = "Hoạt động", Selected = true }
+                            }, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_tb_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_tb_btnCreate").click(function (e) {
+            var _MachineID = $("#cre_tb_machineid").val();
+            var _DeviceName = $("#cre_tb_devicename").val();
+            var _IPAddress = $("#cre_tb_ipaddress").val();
+            var _Port = $("#cre_tb_port").val();
+            var _IsChamAn = $("select[name='cre_tb_ischaman'] option:selected").val();
+            var _PortSocket = $("#cre_tb_portsocket").val();
+            var _TenMayIn = $("#cre_tb_tenmayin").val();
+            var _AreaID = $("select[name='cre_tb_areaid'] option:selected").val();
+            if (_MachineID == '') {
+                $(this).callToast("error", 'Chưa nhập mã thiết bị', '');
+                return;
+            }
+            if (_DeviceName == '') {
+                $(this).callToast("error", 'Chưa nhập tên thiết bị', '');
+                return;
+            }
+            if (_IPAddress == '') {
+                $(this).callToast("error", 'Chưa nhập địa chỉ IP', '');
+                return;
+            }
+            if (_Port == '') {
+                $(this).callToast("error", 'Chưa nhập cổng kết nối', '');
+                return;
+            }
+
+            var obj = {
+                "MachineID": _MachineID,
+                "DeviceName": _DeviceName,
+                "IPAddress": _IPAddress,
+                "Port": _Port,
+                "IsChamAn": _IsChamAn,
+                "PortSocket": _PortSocket,
+                "TenMayIn": _TenMayIn,
+                "AreaID": _AreaID,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_ThietBi", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Mã thiết bị đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

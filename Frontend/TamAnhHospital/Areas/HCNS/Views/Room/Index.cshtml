@@ -1,0 +1,319 @@
+﻿@{
+    var auth = ViewBag.Auth as string[];
+}
+@{
+    ViewBag.Title = "Danh sách phòng đã đặt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var userAuth = ViewBag.UserAuth as string[];
+}
+
+<link rel="stylesheet" href="~/Areas/HCNS/Content/hcns.css" />
+<div id="sform">
+    <fieldset>
+        <legend>Điều kiện tìm kiếm:</legend>
+        <form id="fsearch">
+            <div class="form-row d-flex">
+                <div class="form-group col-md-1">
+                    <label for="DateReg">Ngày đặt từ</label>
+                    @Html.TextBox("sDateRegF", "", new { @class = "form-control input-sm datepicker", @Value = DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy") })
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="DateReg">đến</label>
+                    @Html.TextBox("sDateRegT", "", new { @class = "form-control input-sm datepicker", @Value = DateTime.UtcNow.AddHours(7).AddDays(7).ToString("dd/MM/yyyy") })
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="KhoaPhong">Khoa/Phòng</label>
+                    @Html.DropDownList("sKhoaPhong", ViewBag.DepartmentSelect as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="sTypeSelect">Loại phòng</label>
+                    @Html.DropDownList("sTypeSelect", ViewBag.TypeSelect as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                </div>
+                <div class="col-auto" style="margin-top: 22px;">
+                    <button type="button" class="btn btn-info btn-sm" id="btnSearch">Tìm kiếm</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btnAdd">Đăng ký phòng</button>
+                </div>
+            </div> <!-- form-row -->
+
+            
+        </form>
+    </fieldset>
+</div>
+<div class="clearfix"></div>
+<div class="row" style="margin-bottom: 10px;">
+    <div class="col-md-12">
+        @*@if (auth.Contains(System.App.Entities.Common.StaticParams.TIMELAPSE_ADMIN) || auth.Contains(System.App.Entities.Common.StaticParams.TIMELAPSE_BS))
+            {
+                <button type="button" class="btn btn-primary btn-sm" id="btnAdd">Đăng ký mới</button>
+            }*@
+        
+        @*<button type="button" class="btn btn-success btn-sm" id="btnExportExcel">Xuất excel</button>*@
+    </div>
+</div>
+<div class="clearfix"></div>
+<div id="table-area">
+    <table class="table table-bordered table-hover table-sm" id="table-data">
+        <thead>
+            <tr>
+                <th class="no-sort">STT</th>
+                <th>Ngày đăng ký</th>
+                <th>Bộ phận</th>
+                <th>Loại phòng</th>
+                <th>Bắt đầu</th>
+                <th>Kết thúc</th>
+                <th>Thiết bị yêu cầu</th>
+                <th>Người đăng ký</th>
+                <th>Ngày thao tác</th>
+                <th>Mục đích sử dụng</th>
+                <th>Ghi chú</th>
+                <th>Tình trạng</th>
+                <th width="60"></th>
+                <th width="60"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="12" class="text-center">Chưa có dữ liệu</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var columns = [
+            { "data": {} },
+            { "data": "DateReg" },
+            {
+                "data": {}, "render": function (data) {
+                    return data.DepartmentName;
+                }
+            },
+            { "data": "RoomTypeName" },
+            { "data": "StartTime" },
+            { "data": "EndTime" },
+            { "data": "Accessories" },
+            { "data": "UserFullName" },
+            { "data": "DateCreatedView" },
+            {
+                "data": {}, "render": function (data) {
+                    if ('@userAuth.Contains(System.App.Entities.Common.StaticParams.HCNS_RoomAdmin)' == 'True') {
+                        return data.PurposeUsed;
+                    } else if ('@userAuth.Contains(System.App.Entities.Common.StaticParams.HCNS_RoomAdmin)' != 'True' && data.Level < 2) {
+                        return data.PurposeUsed;
+                    } else {
+                        return "-";
+                    }
+                }
+            },
+            {
+                "data": {}, "render": function (data) {
+                    if ('@userAuth.Contains(System.App.Entities.Common.StaticParams.HCNS_RoomAdmin)' == 'True') {
+                        return data.Note;
+                    } else if ('@userAuth.Contains(System.App.Entities.Common.StaticParams.HCNS_RoomAdmin)' != 'True' && data.Level < 2) {
+                        return data.Note;
+                    } else {
+                        return "-";
+                    }
+                }
+            },
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.Status == -1) {
+                        return "<span class=\"label label-danger\">Đã hủy lịch</span>";
+                    } else if (data.Status == 0) {
+                        return "<span class=\"label label-info\">Chưa thực hiện</span>";
+                    } else if (data.Status == 1) {
+                        return "<span class=\"label label-warning\">Đã chuẩn bị xong</span>";
+                    } else if (data.Status == 2) {
+                        return "<span class=\"label label-danger\">Đã thực hiện</span>";
+                    } else {
+                        return "<span class=\"label label-warning\">Chưa xác định</span>";
+                    }
+                }
+            },
+            {
+                "data": {},
+                "render": function (data) {
+                    if ('@userAuth.Contains(System.App.Entities.Common.StaticParams.HCNS_RoomAdmin)' == 'True') {
+                        if (data.Approve == 1) {
+                            return "<a href=\"javascript:;\" data-url=\"/hcns/room/PushUpdateApprove?id=" + data.ID + "\" class=\"btn-approve\">Duyệt lịch</a>";
+                        } else if (data.Approve == 2) {
+                            return "<a href=\"javascript:;\" data-url=\"/hcns/room/update?id=" + data.ID + "\" class=\"btn-edit\">Sửa lịch</a>";
+                        } else {
+                            return "";
+                        }
+                    } else { //User
+                        if (data.Approve == 2 || data.Status == -1 || data.Status == 2) {
+                            return "";
+                        } else {
+                            return "<a href=\"javascript:;\" data-url=\"/hcns/room/update?id=" + data.ID + "\" class=\"btn-edit\">Sửa lịch</a>";
+                        }
+                    }
+                }
+            },
+            {
+                "data": {},
+                "render": function (data) {
+                    if ('@userAuth.Contains(System.App.Entities.Common.StaticParams.HCNS_RoomAdmin)' == 'True' && data.Status >= 0) {
+                        return "<a href=\"javascript:;\" data-url=\"/hcns/room/updateStatus?id=" + data.ID + "&status=-1\" class=\"btn-updateStatus\">Hủy lịch</a>";
+                    } else {
+                        return "";
+                    }
+                }
+            }
+        ];
+
+        $("#btnAdd").click(function () {
+            $(this).callModal("/hcns/room/add");
+        });
+        $(document).on('click', '.btn-edit', function (e) {
+            var url = $(this).attr("data-url");
+
+            $(this).callModal(url);
+            e.preventDefault();
+        });
+        $(document).on('click', '.btn-approve', function (e) {
+            var url = $(this).attr("data-url");
+            var _confirm = confirm("Xác nhận lịch hẹn?"); 
+
+            if (_confirm) {
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", 'Duyệt thành công', '');
+                            $("#btnSearch").focus().click();
+                        }
+                        else {
+                            if (data.message == "") {
+                                $(this).callToast("error", 'Lỗi cập nhật dữ liệu, vui lòng kiểm tra lại.', '');
+                            } else {
+                                $(this).callToast("error", data.message, '');
+                            }
+                        }
+                    }
+                });
+            }
+            
+            e.preventDefault();
+        });
+        $(document).on('click', '.btn-updateStatus', function (e) {
+            var url = $(this).attr("data-url");
+
+            var _confirm = confirm("Xác nhận hủy lịch đã hẹn?");
+
+            if (_confirm) {
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", 'Cập nhật thành công', '');
+                            $("#btnSearch").focus().click();
+                        }
+                        else {
+                            if (data.message == "") {
+                                $(this).callToast("error", 'Lỗi cập nhật dữ liệu, vui lòng kiểm tra lại.', '');
+                            } else {
+                                $(this).callToast("error", data.message, '');
+                            }
+                        }
+                    }
+                });
+            }
+            e.preventDefault();
+        });
+
+        $(".chosen-ddl").chosen();
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.fsearch').keypress(keypressHandler);
+
+        FilterList();
+
+        $("#btnSearch").click(function () {
+            FilterList();
+        });
+
+        function Reload_DataTable(id, columns, source) {
+            $.fn.dataTable.moment('DD/MM/YYYY');
+            id = "#" + id;
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 15,
+                "autoWidth": true,
+                "processing": true,
+                "columns": columns,
+                "deferRender": true,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "createdRow": function (row, data, dataIndex) {
+                    if (data.Approve == 2 && data.Status >= 0) {
+                        $(row).addClass("row_approve2");
+                    }
+                },
+                "language": {
+                    "sProcessing": "Đang tải dữ liệu...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+        }
+
+        function FilterList() {
+            var objsearch = {
+                DateRegF: $("#sDateRegF").val(),
+                DateRegT: $("#sDateRegT").val(),
+                KhoaPhong: $("#sKhoaPhong option:selected").val(),
+                RoomType: $("#sTypeSelect option:selected").val()
+            };
+
+            Reload_DataTable("table-data", columns, "/hcns/room/data_getRooms?" + $.param(objsearch));
+        }
+    });
+</script>

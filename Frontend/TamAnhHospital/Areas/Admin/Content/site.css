@@ -1,0 +1,26 @@
+﻿/*
+.form-group { margin-bottom: 10px; }
+.field-validation-error { color: #ff0000; display: block; line-height: 20px; margin-top: 5px; }
+
+*/
+.white-background { position: absolute; top: 50px; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,.8); }
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus { color: #fff; background: none; margin-right: 0; border: 0; }
+.nav.nav-tabs { float: left; display: block; margin-right: 20px; border-bottom: 0; border-right: 1px solid #ddd; padding-right: 15px; }
+.nav-tabs .nav-link { border: 1px solid transparent; border-top-left-radius: .25rem; border-top-right-radius: .25rem; background: #ccc; }
+    .nav-tabs .nav-link.active { color: #fff; background-color: #174bb6 !important; border-color: transparent !important; margin-right: 0; }
+.nav-tabs .nav-link { border: 0; color: #000; background: none; }
+.nav.nav-tabs { float: none; display: block; border-bottom: 0; margin: 0; padding: 0; border: 0; }
+    .nav.nav-tabs .nav-item { display: block; float: none; margin-bottom: 0; transition: all 250ms; }
+        .nav.nav-tabs .nav-item.active { background: #174bb6; }
+        .nav.nav-tabs .nav-item:hover > a, .nav.nav-tabs .nav-item > a:hover { margin: 0; border: 0; }
+.tab-content > .active { display: block; background: #ffffff; height: 100%; }
+.body-content .col-left { position: absolute; left: 0; top: 0; bottom: 0; background: #ececec; width: 210px; z-index: 100; }
+.body-content .tab-content { margin-left: 205px; height: 100%; background: #fff; padding-top: 5px; position: relative; z-index: 99; }
+.tab-content .form { width: 320px; height: 100%; border-right: 1px solid #ddd; position: absolute; left: 0; bottom: 0; top: 0; z-index: 99; padding-top: 20px; padding-right: 10px; }
+.load_container { margin-left: 330px; padding: 0; }
+.table tbody > tr > td { padding: 8px 5px; }
+.control-group input[type='text'] { float: left; }
+.form-container { position: relative; }
+    .form-container h5 { position: absolute; left: 0; top: 5px; font-weight: bold; }
+tr.colorScreen { background: #d4ffe1; }
+tr.colorYellow { background: #fcffc3; }

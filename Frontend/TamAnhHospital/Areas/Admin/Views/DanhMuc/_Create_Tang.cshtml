@@ -1,0 +1,72 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục tầng</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Tên tầng</label>
+                            @Html.TextBox("cre_tang_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Tên tòa</label>
+                            @Html.DropDownList("cre_tang_toa", new List<SelectListItem>() {
+                                new SelectListItem() { Value = "1", Text = "Tòa 1" },
+                                new SelectListItem() { Value = "2", Text = "Tòa 2" },
+                                new SelectListItem() { Value = "3", Text = "Tòa 3" },
+                                new SelectListItem() { Value = "4", Text = "Tòa 4" }
+                            }, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_tang_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_tang_btnCreate").click(function (e) {
+            var _FloorDes = $("#cre_tang_ten").val();
+            var _Block = $("select[name='cre_tang_toa'] option:selected").val();
+            if (_FloorDes == '') {
+                $(this).callToast("error", 'Chưa nhập tên tầng', '');
+                return;
+            }
+
+            var obj = {
+                "FloorDes": _FloorDes,
+                "Block": _Block,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_Tang", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Tên tầng đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

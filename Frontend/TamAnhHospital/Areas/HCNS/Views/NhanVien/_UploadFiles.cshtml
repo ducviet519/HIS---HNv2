@@ -1,0 +1,32 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog modal-lg">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <input type="file" id="imageUploadForm" name="image" multiple />
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#imageUploadForm").change(function () {
+            var formData = new FormData();
+            var totalFiles = document.getElementById("imageUploadForm").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("imageUploadForm").files[i];
+                formData.append("imageUploadForm", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '/hcns/nhanvien/PushUploadFiles',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false
+            }).success(function () {
+                alert('success');
+            });
+        });
+    });
+</script>

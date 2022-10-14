@@ -1,0 +1,181 @@
+﻿@model System.App.Entities.HCNS.UserWTRequests
+
+@{
+    List<SelectListItem> selectListItems = new List<SelectListItem>();
+
+    foreach (var item in ViewBag.DS_DeXuat as Dictionary<int, string>)
+    {
+        selectListItems.Add(new SelectListItem() { Value = item.Key.ToString(), Text = item.Value.ToString() });
+    }
+
+    var selectListDanhSach = new SelectList(selectListItems, "Value", "Text", 2);
+}
+<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    #staticModal .info { background-color: #ffd9d9; border-left: 6px solid #dc0000; padding: 8px; margin-bottom: 10px; }
+        #staticModal .info p { margin-bottom: 0; font-size: 11px; color: #696969; }
+</style>
+@using (Html.BeginForm("Push_XemCong_DeXuat", "ChamCong", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+{
+@Html.AntiForgeryToken()
+@Html.HiddenFor(x => x.UserEnrollNumber)
+@Html.HiddenFor(x => x.Date)
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Giải trình sửa công ngày: @Model.Date</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body form">
+                    @if (Model.DeptStats1 == 1 || Model.HRStats1 == 1)
+                        {
+                    <div class="info">
+                        @if (Model.DeptStats1 == 1)
+                                {
+                        <p>- <b>Khoa phòng đã xác nhận</b> @(string.IsNullOrEmpty(Model.DeptNote1) ? "" : ("Nội dung:" + Model.DeptNote1))</p>
+                                }
+                        @if (Model.HRStats1 == 1)
+                                {
+                        <p>- <b>HCNS đã xác nhận</b> @(string.IsNullOrEmpty(Model.HRNote1) ? "" : ("Nội dung:" + Model.HRNote1))</p>
+                                }
+                    </div>
+                        }
+
+                    @if (Model.DeptStats1 == 1 || Model.HRStats1 == 1)
+                        {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Đề xuất phương án xử lý</label>
+                            @Html.DropDownListFor(x => x.Fix1, selectListDanhSach, new { @class = "form-control input-sm", @readonly = true })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Giờ đề xuất vào</label>
+                            @Html.TextBoxFor(x => x.In1F, new { @class = "form-control input-sm time", @readonly = true, placeholder = "00:00:00", autocomplete = "off" })
+                        </div>
+                        <div class="col-md-6">
+                            <label>Giờ đề xuất ra</label>
+                            @Html.TextBoxFor(x => x.Out1F, new { @class = "form-control input-sm time", @readonly = true, placeholder = "00:00:00", autocomplete = "off" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Lý do đề xuất</label>
+                            @Html.TextAreaFor(x => x.UserNote1, new { @class = "form-control input-sm", @readonly = true })
+                        </div>
+                    </div>
+                        }
+                        else
+                        {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Đề xuất phương án xử lý</label>
+                            @Html.DropDownListFor(x => x.Fix1, selectListDanhSach, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Giờ đề xuất vào</label>
+                            @Html.TextBoxFor(x => x.In1F, new { @class = "form-control input-sm time", placeholder = "00:00:00", autocomplete = "off" })
+                        </div>
+                        <div class="col-md-6">
+                            <label>Giờ đề xuất ra</label>
+                            @Html.TextBoxFor(x => x.Out1F, new { @class = "form-control input-sm time", placeholder = "00:00:00", autocomplete = "off" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Lý do đề xuất</label>
+                            @Html.TextAreaFor(x => x.UserNote1, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                        }
+                </div>
+
+                <div class="panel-footer text-center">
+                    @if (Model.DeptStats1 == 0 && Model.HRStats1 == 0)
+                        {
+                    <input type="submit" value="Xác nhận" class="btn btn-primary btn-sm" id="btnSubmit" />
+                    <input type="button" value="Hủy đề xuất" class="btn btn-danger btn-sm" id="btnEarse" />
+                        }
+                    <input type="button" value="Đóng" class="btn btn-default btn-sm" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+<script type="text/javascript">
+    $(function () {
+        $('.time').mask('00:00', { clearIfNotMatch: true });
+
+        $("#btnEarse").click(function () {
+            var _userid = $("#UserEnrollNumber").val();
+            var _date = $("#Date").val();
+
+            if (confirm("Xác nhận xóa đề xuất ngày " + $("#Date").val() + "?")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/chamcong/xoa_dexuat",
+                    data: {
+                        userid: _userid,
+                        date: _date
+                    },
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Hủy đề xuất thành công');
+                            $("#btnSearch").focus().click();
+                        }
+                        else {
+                            if (data.message == "") {
+                                $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                            } else {
+                                $(this).callToast("error", '', data.message);
+                            }
+
+                        }
+                    }
+                });
+            }
+            e.preventDefault();
+        });
+
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        $("#btnSearch").focus().click();
+                        //$('#modalForm').modal('toggle');
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+    });
+</script>

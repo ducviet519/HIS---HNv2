@@ -1,0 +1,234 @@
+﻿<style>
+    .mobile-menu {
+        color: #fff;
+        padding: 17px 10px;
+        line-height: 16px;
+        background-color: #3882B6;
+        font-size: 14px;
+        float: left;
+    }
+</style>
+
+<div id="top-bar" class="navbar navbar-fixed-top">
+    <nav class="navbar" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><img src="~/Images/logo_compact_white_200x200.png" style="width: 38px;" /></a>
+            <a href="/home/menu" class="mobile-menu hidden-lg hidden-md">Menu</a>
+            <a href="/admin/tool/tracuusdt" class="mobile-menu hidden-lg hidden-md">Tra cứu điện thoại</a>
+        </div>
+
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav btr-menu">
+                @*<li>
+            <a href="#">FO</a>
+            <ul class="submenu">
+                <li><a href="/admin/fo/DanhSachChoKham">Danh sách chờ khám</a></li>
+            </ul>
+        </li>*@
+                <li>
+                    <a href="#">HCNS</a>
+                    <ul class="submenu">
+
+                        <li>
+                            <a href="javascript:;">1. Quản lý nhân viên</a>
+                            <ul>
+                                <li><a href="/hcns/nhanvien">1.1. Khai báo nhân viên mới</a></li>
+                                <li><a href="/hcns/nhanvien/ttns">1.2. Thông tin nhân sự</a></li>
+                                <li><a href="/hcns/nhanvien/nghiviec">1.3. Nhân sự nghỉ việc</a></li>
+                                @*<li><a href="/hcns/nhanvien/ImportExcel">1.4. Upload thông tin</a></li>*@
+                                <li><a href="/hcns/zk">1.4. Quản lý vân tay</a></li>
+                                <li><a href="/hcns/hdld">1.5. Quản lý hợp đồng lao động</a></li>
+                                <li><a href="/hcns/nhanvien/taikhoan">1.6. Quản lý tài khoản</a></li>
+                                @*<li><a href="/hcns/nhanvien/ImportSalaryChange">1.8. Import Salary Change</a></li>*@
+                                @*<li><a href="/hcns/nhanvien/ImportNgayPC">1.9. Import ngày phụ cấp</a></li>*@
+                                <li><a href="/hcns/nhanvien/TheoDoiThaiSan">1.7. Theo dõi thai sản</a></li>
+                                <li><a href="/hcns/nhanvien/ImportFile">1.8. Import File</a></li>
+                                <li><a href="/hcns/nhanvien/ExportFile">1.9. Export File</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:;">2. Quản lý bằng cấp, chứng chỉ</a>
+                            <ul>
+                                <li><a href="/hcns/bccc/bangcap">2.1. Bằng cấp</a></li>
+                                <li><a href="/hcns/bccc/chungchi">2.2. Chứng chỉ</a></li>
+                                <li><a href="/hcns/bccc/chungchihanhnghe">2.3. Chứng chỉ hành nghề</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:;">3. Quản lý công</a>
+                            <ul>
+                                <li><a href="/hcns/nhanvien/khaibaovang">3.1. Khai báo vắng</a></li>
+                                <li><a href="/hcns/chamcong/khaibaoca">3.2. Khai báo ca làm việc</a></li>
+                                <li><a href="/hcns/chamcong/thoigianlamviec">3.3. Khai báo làm thêm giờ</a></li>
+                                <li><a href="/hcns/chamcong/quanlycong">3.4. Tổng hợp công theo Khoa / Phòng</a></li>
+                                <li><a href="/hcns/chamcong/quanlygiaitrinh">3.5. Quản lý giải trình / Đề xuất</a></li>
+                                <li><a href="/hcns/chamcong/suacong">3.6. Xem giờ vào - ra thực tế</a></li>
+                                <li><a href="/hcns/chamcong/xemcong">3.7. Xem chi tiết công theo nhân viên</a></li>
+                                <li><a href="/hcns/chamcong/lamthemtt">3.8. Làm thêm tính tiền</a></li>
+                                <li><a href="/hcns/chamcong/cakhongxacdinh">3.9. Ca không xác định</a></li>
+                                <li><a href="/hcns/chamcong/tonghopcong">3.10. Bảng tổng hợp công</a></li>
+                                <li><a href="/hcns/chamcong/danhsachca">3.11. Danh sách ca</a></li>
+                                @*<li><a href="/hcns/chamcong/vantaythucte">3.12. Vân tay thực tế</a></li>*@
+                                <li><a href="/hcns/chamcong/lamviecngayle">3.12. Làm việc ngày lễ</a></li>
+                            </ul>
+                        </li>
+                        @*<li><a href="/hcns/TrainingCourse">5. Quản lý đào tạo</a></li>*@
+                        <li><a href="/hcns/congvan">4. Quản lý công văn</a></li>
+                        <li>
+                            <a href="javascript:;">5. Quản lý suất ăn</a>
+                            <ul>
+                                <li><a href="~/HCNS/suatan/dangky">5.1. Đăng ký suất ăn</a></li>
+                                <li><a href="~/HCNS/suatan/doichieu">5.2. Đối chiếu suất ăn</a></li>
+                                <li><a href="~/HCNS/suatan/thongke">5.3. Thống kê suất ăn</a></li>
+                                <li><a href="~/HCNS/dangkysuatan/BaoCaoChamAn">5.4. Báo cáo chấm ăn</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:;">6. Sức khỏe nhân viên</a>
+                            <ul>
+                                <li><a href="/hcns/sknv/plsk">6.1. Phân loại sức khỏe nhân viên</a></li>
+                                <li><a href="/hcns/sknv/plsk_nam">6.2. Phân loại sức khỏe nhân viên theo năm</a></li>
+                                <li><a href="/hcns/sknv/tdsk">6.3. Theo dõi diễn tiến sức khỏe</a></li>
+                                @*<li><a href="/hcns/sknv/bieuDo_PLSK">9.4. Biểu đồ theo dõi phân loại sức khỏe</a></li>*@
+                                <li><a href="/hcns/sknv/plsk_tron">6.4. Biểu đồ theo dõi phân loại sức khỏe (dạng tròn)</a></li>
+                                @*<li><a href="/qlcl/bieudo/TinhHinhBenhTat">9.6. Tình hình bệnh tật</a></li>*@
+                                <li><a href="/hcns/sknv/ncbt">6.5. Nguy cơ bệnh tật</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/hcns/nhanvien/danhba">7. Danh bạ điện thoại</a></li>
+                        <li><a href="/hcns/zk/thietbi">8. Thông tin thiết bị</a></li>
+                    </ul>
+                </li>
+                <li><a href="/hcns/room">Quản lý lịch họp</a></li>
+                <li>
+                    <a href="#">Danh mục</a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="javascript:;">1. Đơn vị hành chính</a>
+                            <ul>
+                                <li><a href="/admin/danhmuc/quocgia">1.1. DM quốc gia</a></li>
+                                <li><a href="/admin/danhmuc/thanhpho">1.2. DM thành phố</a></li>
+                                <li><a href="/admin/danhmuc/quanhuyen">1.3. DM quận huyện</a></li>
+                                <li><a href="/admin/danhmuc/phuongxa">1.4. DM phường xã</a></li>
+                                <li><a href="/admin/danhmuc/noicapcmt">1.5. DM nơi cấp CMT</a></li>
+                                <li><a href="/admin/danhmuc/dantoc">1.6. DM dân tộc</a></li>
+                                <li><a href="/admin/danhmuc/tongiao">1.7. DM tôn giáo</a></li>
+                                <li><a href="/admin/danhmuc/benhvien">1.8. DM bệnh viện</a></li>
+                                <li><a href="/admin/danhmuc/bangcap">1.9. DM bằng cấp</a></li>
+                                <li><a href="/admin/danhmuc/tthonnhan">1.10. DM tình trạng hôn nhân</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:;">2. Hành chính bệnh viện</a>
+                            <ul>
+                                <li><a href="/admin/danhmuc/khoaphong">2.1. DM khoa phòng</a></li>
+                                <li><a href="/admin/danhmuc/khoaphongcc">2.2. DM khoa phòng chấm công</a></li>
+                                <li><a href="/admin/danhmuc/nganhang">2.3. DM ngân hàng</a></li>
+                                <li><a href="/admin/danhmuc/hopdong">2.4. DM hợp đồng</a></li>
+                                <li><a href="/admin/danhmuc/tang">2.5. DM tầng</a></li>
+                                <li><a href="/admin/danhmuc/noian">2.6. DM địa điểm ăn</a></li>
+                                <li><a href="/admin/danhmuc/ngaynghi">2.7. DM ngày nghỉ</a></li>
+                                <li><a href="/admin/danhmuc/kynang">2.8. DM chuyên môn nhân viên</a></li>
+                                <li><a href="/admin/danhmuc/doituongcc">2.9. DM đối tượng chấm công</a></li>
+                                <li><a href="/admin/danhmuc/loainhanvien">2.10. DM loại nhân viên</a></li>
+                                <li><a href="/admin/danhmuc/phonghop">2.11. DM phòng họp</a></li>
+                                <li><a href="/admin/danhmuc/thietbiphonghop">2.12. DM thiết bị phòng họp</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:;">3. Ca và lịch trình làm việc</a>
+                            <ul>
+                                <li><a href="/admin/danhmuc/calamviec">3.1. DM ca làm việc</a></li>
+                                <li><a href="/admin/danhmuc/lichlamviec">3.2. DM lịch làm việc</a></li>
+                                <li><a href="/admin/danhmuc/lichtrinh">3.3. Khai báo lịch trình</a></li>
+                                <li><a href="/admin/danhmuc/loaiOT">3.4. DM loại OT</a></li>
+                                <li><a href="/admin/danhmuc/loaiyeucausuacong">3.5. DM loại yêu cầu sửa công</a></li>
+                                <li><a href="/admin/danhmuc/loailamthem">3.6. DM loại làm thêm</a></li>
+                                <li><a href="/admin/danhmuc/loailoicc">3.7. DM loại lỗi chấm công</a></li>
+                                <li><a href="/admin/danhmuc/loaivang">3.8. DM loại vắng</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="/admin/danhmuc/thietbi">4. Thiết bị chấm công & chấm ăn</a>
+                        </li>
+                        <li>
+                            <a href="javascript:;">5. Phân quyền</a>
+                            <ul>
+                                <li><a href="/admin/danhmuc/ds_quyen">5.1. DM quyền</a></li>
+                                <li><a href="/admin/danhmuc/ds_nhom">5.2. DM nhóm quyền</a></li>
+                                <li><a href="/admin/danhmuc/ds_quyen_nguoidung">5.3. DM quyền của người dùng</a></li>
+                                <li><a href="/admin/danhmuc/PhanQuyenChamCong">5.4. Phân quyền chấm công</a></li>
+                                <li><a href="/admin/danhmuc/DS_Config">5.5. Config</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/user/logout">@(HttpContext.Current.Items["FullName"]?.ToString()) (IP: @System.Web.HttpContext.Current.Request.UserHostAddress)</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </nav>
+</div>
+
+<script type="text/javascript">
+    function callModalForMenu(url) {
+        $(this).callModal(url);
+    }
+
+    $(function () {
+        var $menu = $(".btr-menu");
+
+        $menu.find(".submenu").each(function () {
+            $(this).find('li').each(function () {
+                if ($(this).find("ul").length) {
+                    $(this).addClass("parent-menu");
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        //added for surface
+        window.USER_IS_TOUCHING = false;
+        window.addEventListener('touchstart', function onFirstTouch() {
+            window.USER_IS_TOUCHING = true;
+            // we only need to know once that a human touched the screen, so we can stop listening now
+            window.removeEventListener('touchstart', onFirstTouch, false);
+        }, false);
+
+        function isTouchDevice() {
+            return 'ontouchstart' in window        // works on most browsers
+                || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+        };
+        $('ul > li > a').click(function (e) {
+            var target = $(e.target);
+            var parent = target.parent(); // the li
+            if (isTouchDevice() || window.USER_IS_TOUCHING) {
+                if (target.hasClass("active")) {
+                    //run default action of the link
+                }
+                else {
+                    e.preventDefault();
+                    //remove class active from all links
+                    $('ul > li > a.active').removeClass('active');
+                    //set class active to current link
+                    target.addClass("active");
+                    parent.addClass("active");
+                }
+            }
+        });
+        $('ul > li > ul').click(function (e) {
+            //remove class active from all links if li was clicked
+            if (e.target == this) {
+                $(".active").removeClass('active');
+            }
+        });
+    });
+</script>

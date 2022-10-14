@@ -1,0 +1,492 @@
+﻿@{
+    ViewBag.Title = "SuaCong_User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<style type="text/css">
+    .form .row { margin-left: -5px; margin-right: -5px; }
+
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    .form input[type='text'], .form select { max-width: 100%; }
+
+    .form .form-group { margin-bottom: 10px; }
+
+    .chosen-container { font-size: 12px; }
+
+    .chosen-container-single .chosen-single { height: 30px !important; line-height: 30px !important; }
+
+    .form .datepicker { margin-top: 0 !important; }
+
+    .col-content { border-left: 1px solid #ddd; }
+
+    .card-header { margin-bottom: 10px; position: relative; }
+
+        .card-header .button-area { position: absolute; right: 0; top: 0; }
+
+    .button-area button { margin-left: 8px; }
+
+    .card-header h5 { border-bottom: 2px solid #3882b6; padding: 5px 5px 8px 0; font-weight: bold; }
+
+    .dataTables_wrapper > .row:first-child { display: none; }
+
+    @@media (max-width : 768px) {
+        .form .row { margin-bottom: 5px; }
+
+        .form .btn-group-action { text-align: center; }
+
+        #btnSearch, #btnError { margin-top: 0px !important; }
+
+        .col-content { border-left: 0 !important; }
+    }
+</style>
+@{
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+    var userAuth = ViewBag.Auth as string;
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM01");
+    var sdate = ""; var edate = "";
+    if (DateTime.UtcNow.AddHours(7).Month == 4 || DateTime.UtcNow.AddHours(7).Month == 6 || DateTime.UtcNow.AddHours(7).Month == 9 || DateTime.UtcNow.AddHours(7).Month == 11)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("30/MM/yyyy");
+    }
+    else if (DateTime.UtcNow.AddHours(7).Month == 1 || DateTime.UtcNow.AddHours(7).Month == 3 || DateTime.UtcNow.AddHours(7).Month == 5 || DateTime.UtcNow.AddHours(7).Month == 7 || DateTime.UtcNow.AddHours(7).Month == 8 || DateTime.UtcNow.AddHours(7).Month == 10 || DateTime.UtcNow.AddHours(7).Month == 12)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("31/MM/yyyy");
+    }
+    else
+    {
+        if (DateTime.UtcNow.AddHours(7).Year / 4 == 0)
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("29/MM/yyyy");
+        }
+        else
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("28/MM/yyyy");
+        }
+    }
+}
+<div class="row">
+    <div class="col-md-3 col-search">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fa fa-search-plus"></i> TIÊU CHÍ TÌM KIẾM</h5>
+            </div>
+            <div class="card-content">
+                <div class="form1">
+                    <div class="row action">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Khoa phòng chấm công</label>
+
+                                @if (userAuth == "HCNS_Admin")
+                                {
+                                    @*@Html.DropDownList("sKhoaPhong", new SelectList(ViewBag.KhoaPhong, "Key", "Value", userInfo.KhoaPhong), new { @class = "form-control input-sm chosen-ddl" })*@
+                                    <select class="form-control input-sm" id="sKhoaPhong" name="sKhoaPhong" disabled>
+                                        <option value="0">Tất cả khoa phòng</option>
+                                    </select>
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("sKhoaPhong", new SelectList(ViewBag.KhoaPhong, "Key", "Value", userInfo.KhoaPhong), new { @class = "form-control input-sm chosen-ddl" })
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Nhân viên</label>
+                                @if (userAuth == "HCNS_User")
+                                {
+                                    @Html.Hidden("sUserEnrollNumber", userInfo.UserEnrollNumber)
+                                    <input type="text" class="form-control input-sm" id="sUserFullName" name="sUserFullName" autocomplete="off" value="[@userInfo.UserFullCode] @userInfo.UserFullName" readonly />
+                                }
+                                else
+                                {
+                                    @Html.Hidden("sUserEnrollNumber")
+                                    @Html.Editor("sUserFullName", new { htmlAttributes = new { @class = "form-control input-sm", required = true } })
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Ngày bắt đầu</label>
+                                <input type="text" name="sNGAY_BD" id="sNGAY_BD" class="form-control input-sm datepicker" autocomplete="off" value="@ViewBag.StartDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Ngày kết thúc</label>
+                                <input type="text" name="sNGAY_KT" id="sNGAY_KT" class="form-control input-sm datepicker" autocomplete="off" value="@ViewBag.EndDate" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 btn-group-action">
+                            <input type="button" value="Xem công đã chấm" class="btn btn-info btn-sm" id="sbtnSearch" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9 col-content">
+        <div class="card">
+            <div class="card-header">
+                <h5>KẾT QUẢ TÌM KIẾM</h5>
+                <div class="button-area">
+                    @if (userAuth == "HCNS_Admin")
+                    {
+                        <button class="btn btn-primary btn-sm pull-right" id="btnAdd"><i class="fa fa-plus"></i> Thêm công</button>
+                    }
+                    @if (ViewBag.Locked == 0)
+                    {
+                        <button class="btn btn-primary btn-sm pull-right" id="btnPlus" style="display:none;"><i class="fa fa-plus"></i> Ghép thành ca</button>
+                    }
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-condensed table-hover" id="dataFilter">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>Mã NV</th>
+                                <th>Tên nhân viên</th>
+                                <th>Ngày chấm công</th>
+                                <th>Thời gian</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#sbtnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('#form1').keypress(keypressHandler);
+    });
+    $(function () {
+        $(document).on('change','input[name="chk_date"]', function () {
+            var person = [];
+            var _tabledata = $("#dataFilter").DataTable();
+            $(_tabledata.$('input[type="checkbox"]').map(function () {
+                return $(this).prop("checked") ? person.push($(this).val()) : null;
+            }));
+
+            if (person.length > 0) {
+                $("#btnPlus").show();
+            } else {
+                $("#btnPlus").hide();
+            }
+        });
+
+        $(document).on('click', "#btnPlus", function (e) {
+            var person = [];
+            var _tabledata = $("#dataFilter").DataTable();
+            $(_tabledata.$('input[name="chk_date"]').map(function () {
+                return $(this).prop("checked") ? person.push($(this).attr("data-val")) : null;
+            }));
+
+            $(this).callModal("/hcns/chamcong/ghepca?val=" + person.toString());
+            e.preventDefault();
+        });
+
+        $('.datepicker').datepicker({ format: 'dd/mm/yyyy' });
+        $(".chosen-ddl").chosen();
+        AutoHeight();
+        $("#sUserFullName").focusout(function () {
+            if ($(this).val() == "") {
+                $("#sUserEnrollNumber").val("");
+            }
+        });
+
+        $("#sUserFullName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/hcns/chamcong/GetUser",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefix: request.term, user: @userInfo.UserEnrollNumber, kp: $("#sKhoaPhong").val() },
+                    success: function (data) {
+                        response($.map(JSON.parse(data), function (item) {
+                            var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+                            return { label: display, value: display, id: item.UserEnrollNumber, code: item.UserFullCode };
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#sUserEnrollNumber").val(ui.item.id);
+                //$("#modalForm #UserFullName").val(ui.item.label);
+                //$("#modalForm #UserFullCode").val(ui.item.code);
+            }
+        });
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#sbtnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.head-section .form').keypress(keypressHandler);
+
+        function AutoHeight() {
+            var __height = $(window).height() - 60;
+            var __contentHeight = $(".col-content").height() - 60;
+            var __setHeight = 0;
+
+            if (__contentHeight <= __height)
+                __setHeight = __height;
+            else
+                __setHeight = __contentHeight;
+
+            $(".col-content").height(__setHeight);
+        }
+
+        var _columns = [
+            { "data": {}, "width": "30px" },
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.WorkCode == 0) {
+                        return "<input type=\"checkbox\" name=\"chk_date\" value=\"false\" data-val=\"" + data.UserEnrollNumber + "." + data.FullDate + "\" />";
+                    }
+                    else {
+                        return "<a class=\"xoa-ghepca\" href=\"javascript:;\" data-href=\"/hcns/chamcong/Xoa_GhepCa?user=" + data.UserEnrollNumber + "&date=" + data.FullDate + "&maql=" + data.MaQL + "\">(Xóa)</a>";
+                    }
+                },
+                "class": "text-center",
+                "width": "30px"
+            },
+            { "data": "UserEnrollNumber", "width": "50px" },
+            { "data": "UserFullName" },
+            { "data": "TimeDate" },
+            { "data": "TimeStr" },
+            {
+                "data": {},
+                "render": function (data) {
+                    var auth = '@userAuth';
+
+                    if (auth == "HCNS_User" || auth == "HCNS_Manager")
+                    {
+                        return "";
+                    }
+                    return "<a href=\"javascript:;\" data-href=\"/hcns/chamcong/suadulieucong?id=" + data.UserEnrollNumber + "&date=" + data.TimeDate + "&time=" + data.TimeStr + "\" class=\"btnEdit\"><i class=\"fa fa-edit\"></i> Sửa</a>";
+                },
+                "width": "20px"
+            },
+            {
+                "data": {},
+                "render": function (data) {
+                    var auth = '@userAuth';
+
+                    if (auth == "HCNS_User" || auth == "HCNS_Manager") {
+                        return "";
+                    }
+                    return "<a href=\"javascript:;\" data-href=\"/hcns/chamcong/XoaDuLieuCong?id=" + data.UserEnrollNumber + "&date=" + data.TimeDate + "&time=" + data.TimeStr + "\" class=\"btnDel\" style='color:#ff0000;'><i class=\"fa fa-remove\"></i> Xóa</a>";
+
+                },
+                "width": "20px"
+            }
+        ];
+
+        //Reload_DataTable("dataFilter", _columns, "/hcns/chamcong/Data_SuaCong?id=718");
+
+        $(document).on('click', ".btnEdit", function (e) {
+            var __url = $(this).attr("data-href");
+            $(this).callModal(__url);
+
+            e.preventDefault();
+        });
+        $(document).on('click', "#btnAdd", function (e) {
+            var _id = $("#sUserEnrollNumber").val();
+            var urlParams = "";
+            if ($.trim(_id) != "")
+                urlParams += "&id=" + encodeURIComponent($.trim(_id));
+            $(this).callModal("/hcns/chamcong/themdulieucong?" + urlParams);
+            e.preventDefault();
+        });
+
+        $(document).on('click', ".xoa-ghepca", function (e) {
+            var __url = $(this).attr("data-href");
+            if (confirm("Bạn muốn xóa dữ liệu?")) {
+                $.ajax({
+                    type: "POST",
+                    url: __url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+                            $("#dataFilter").DataTable().ajax.reload(null, false);
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                            } else {
+                                $(this).callToast("error", '', data.message);
+                            }
+
+                        }
+                    }
+                });
+            }
+            e.preventDefault();
+            e.preventDefault();
+        });
+
+        $("#sbtnSearch").click(function () {
+            var _from = $("#sNGAY_BD").val();
+            var _to = $("#sNGAY_KT").val();
+
+            var startDate = new Date(formatDate(_from));
+            var endDate = new Date(formatDate(_to));
+            var songay = (endDate - startDate) / 1000 / 60 / 60 / 24;
+
+            if (songay >= 32) {
+                $(this).callToast("error", 'Cảnh báo', "Không được chọn khoảng tìm kiếm quá 32 ngày.");
+                return;
+            }
+
+            var _id = $("#sUserEnrollNumber").val();
+            var _pk = $("#sKhoaPhong option:selected").val();
+            var _batdau = $("#sNGAY_BD").val();
+            var _ketthuc = $("#sNGAY_KT").val();
+
+            var urlParams = "";
+
+            if ($.trim(_id) == "") {
+                $(this).callToast("error", '', "Bạn chưa nhập thông tin nhân viên.");
+                return;
+            }
+
+            if ($.trim(_id) != "")
+                urlParams += "&id=" + encodeURIComponent($.trim(_id));
+            if (_pk != "")
+                urlParams += "&pk=" + _pk;
+            if (_batdau != "")
+                urlParams += "&batdau=" + _batdau;
+            if (_ketthuc != "")
+                urlParams += "&ketthuc=" + _ketthuc;
+
+            Reload_DataTable("dataFilter", _columns, "/hcns/chamcong/Data_SuaCong?" + urlParams);
+        });
+
+        $(document).on('click', '.btnDel', function (e) {
+            var __url = $(this).attr('data-href');
+            var __ngay = $(this).closest('tr').find("td:nth-child(4)").html();
+            var __gio = $(this).closest('tr').find("td:nth-child(5)").html();
+
+            if (confirm("Bạn muốn xóa dữ liệu ngày: " + __ngay + " - " + __gio)) {
+                $.ajax({
+                    type: "POST",
+                    url: __url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+                            $("#dataFilter").DataTable().ajax.reload(null, false);
+                        }
+                        else {
+                            if (data.message == '') {
+                                $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc lịch đặt bị trùng.");
+                            } else {
+                                $(this).callToast("error", '', data.message);
+                            }
+
+                        }
+                    }
+                });
+            }
+            e.preventDefault();
+        });
+        function Reload_DataTable(id, columns, source) {
+            id = "#" + id;
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 20,
+                "autoWidth": true,
+                "processing": true,
+                "columns": columns,
+                "deferRender": true,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "createdRow": function (row, data, index) {
+                    if (data.PAID == 0) {
+                        $(row).addClass('pending');
+                    } else {
+                        $(row).addClass('complete');
+                    }
+                },
+                "language": {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+        }
+
+        function formatDate(str) {
+            var d = str.split("/")[0];
+            var m = str.split("/")[1];
+            var y = str.split("/")[2];
+            var date = m + "/" + d + "/" + y
+
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('/');
+        }
+
+    });
+</script>

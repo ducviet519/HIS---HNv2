@@ -1,0 +1,104 @@
+﻿@model System.App.Entities.HCNS.ChucDanh
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            @using (Html.BeginForm("Update_ChucDanh", "DanhMuc", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ID" value="@Model.ID" />
+                <input type="hidden" name="Status" value="@Model.Status" />
+
+                <div class="model-panel panel">
+                    <div class="panel-heading">
+
+                        <h4><i class="fa fa-list"></i> Thêm mới danh mục chức danh</h4>
+                        <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                    </div><!-- ./panel-heading -->
+                    <div class="panel-body form">
+                        <div class="form-row mb-2">
+                            <div class="col-md-12">
+                                <label class="control-label">Khoa/Phòng</label>
+                                <select name="DeptID" id="DeptID" class="form-control input-sm jselect"></select>
+                            </div>
+                        </div>
+                        <div class="form-row mb-2">
+                            <div class="form-group col-md-3">
+                                <label>Mã chức danh</label>
+                                <input type="text" class="form-control input-sm" name="MaChucDanh" id="MaChucDanh" value="@Model.MaChucDanh" />
+                            </div>
+                            <div class="col-md-9">
+                                <label>Tên chức danh</label>
+                                <input type="text" class="form-control input-sm" name="TenChucDanh" id="TenChucDanh" value="@Model.TenChucDanh" />
+                            </div>
+                        </div>
+                        <div class="form-row mb-2">
+                            <div class="col-md-12">
+                                <label class="control-label">Phân loại</label>
+                                <input type="text" name="PhanLoai" id="PhanLoai" class="form-control input-sm" value="@Model.PhanLoai"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer text-center">
+                        <button type="button" class="btn btn-sm btn-primary" id="btnSave">Lưu dữ liệu</button>
+                        <button type="button" class="btn btn-sm btn-danger " data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function onLoad_KhoaPhong(control, url, label) {
+        $.get(url, function (data) {
+            var options = "";
+            var selected = "@Model.DeptID";
+
+            if (label != null)
+                options += "<option value=\"\">" + label + "</option>";
+
+            $.each(data, function (idx, option) {
+                if (option.id == selected)
+                    options += "<option data-index=" + idx + " value='" + option.id + "' selected>" + option.display + "</option>";
+                else
+                    options += "<option data-index=" + idx + " value='" + option.id + "'>" + option.display + "</option>";
+            });
+
+            $(control).html(options);
+        }).done(function () {
+            $(".jselect").chosen();
+        });
+    }
+
+    $(function () {
+        onLoad_KhoaPhong("#DeptID", "/admin/danhmuc/danhsachkhoaphongops", "--- Chọn khoa phòng ---");
+
+        $("#btnSave").click(function (e) {
+            var form = $("#modalForm");
+            var _url = form.attr('action');
+            if ($("#MaChucDanh").val() == "") {
+                $(this).callToast("error", '', 'Chưa nhập mã chức danh.');
+            } else if ($("#TenChucDanh").val() == "") {
+                $(this).callToast("error", '', 'Chưa nhập tên chức danh.');
+            } else {
+                $("#modalForm").ajaxSubmit(
+                    {
+                        url: _url,
+                        type: 'POST',
+                        success: function (o) {
+                            if (o.result == true) {
+                                $(this).callToast("success", '', 'Cập nhật thành công');
+                                $("#dataTable_chucdanh").DataTable().ajax.reload();
+                            }
+                            else {
+                                $(this).callToast("error", 'Lỗi cập nhật', o.message);
+                            }
+                        }
+                    }
+                )
+            }
+            return;
+        });
+    });
+</script>
+<script type="text/javascript" src="~/Scripts/jquery.form.js"></script>

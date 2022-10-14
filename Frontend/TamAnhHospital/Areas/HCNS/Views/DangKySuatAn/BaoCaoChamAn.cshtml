@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "Báo cáo chấm ăn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var _dept = "-1";
+    var _noian = "-1";
+    var sdate = "";
+    var edate = "";
+    sdate = DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy");
+    edate = DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy");
+    var _thoidiem = "tatca";
+    var _loai = "dangky";
+}
+
+<style type="text/css">
+    .head-section, .middle-section {
+        margin-bottom: 10px;
+    }
+
+        .head-section .input-group {
+            display: flex;
+        }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .middle-action {
+        border: 1px solid #ddd;
+        padding: 5px;
+    }
+
+    #fo-table_wrapper .row:first-child {
+        display: none;
+    }
+
+    .form .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+        .form .row [class*="col-md"] {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+</style>
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Báo cáo chấm ăn</h4>
+        </div>
+        <div class="form">
+            <input type="hidden" value="s" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-1">
+                    <label>Từ ngày</label>
+                    <input type="text" class="form-control input-sm datepicker" name="tungay" autocomplete="off" value="@sdate" />
+                </div>
+                <div class="col-md-1">
+                    <label>Đến ngày</label>
+                    <input type="text" class="form-control input-sm datepicker" name="denngay" autocomplete="off" value="@edate" />
+                </div>
+                <div class="col-md-2">
+                    <label>Khoa/Phòng</label>
+                    @Html.DropDownList("department", ViewBag.Departments as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                </div>
+                <div class="col-md-2">
+                    <label>Nơi chấm ăn</label>
+                    @Html.DropDownList("eatplace", ViewBag.EatPlace as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                </div>
+                <div class="col-md-2">
+                    <label>Thời điểm</label>
+                    <select class="form-control chosen-ddl input-sm" id="thoidiem">
+                        <option value="tatca" selected>-- Tất cả --</option>
+                        <option value="buasang">Bữa sáng</option>
+                        <option value="buatrua">Bữa trưa</option>
+                        <option value="buatoi">Bữa tối</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Loại</label>
+                    <select class="form-control chosen-ddl input-sm" id="loai">
+                        <option value="dangky" selected>Đăng ký</option>
+                        <option value="thucte">Thực tế</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="btnSubmit" class="btn btn-default btn-sm" style="margin-top: 22px;"><i class="fa fa-search"></i>Theo nơi ăn</button>
+                    <button type="button" id="btnSubmit2" class="btn btn-default btn-sm" style="margin-top: 22px;"><i class="fa fa-search"></i>Theo khoa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="middle-section">
+        <div id="loadPartial">
+            @Html.Action("thongke_chaman", "dangkysuatan", new { dept = _dept, tungay = sdate, denngay = edate, thoidiem = _thoidiem, noian = _noian, loai = _loai })
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $(function () {
+            $(".chosen-ddl").chosen();
+        });
+        //$("#btnExport").click(function () {
+        //    var tungay = $("[name='tungay']").val();
+        //    var denngay = $("[name='denngay']").val();
+        //    var khoaphong = encodeURI($("#department option:selected").val() == "" ? "" : $("#department option:selected").val());
+        //    var thoidiem = encodeURI($("#thoidiem option:selected").val());
+        //    var url = "/phieu/sant/ThongKe_Excel?tungay=" + tungay + "&denngay=" + denngay + "&dept=" + khoaphong + "&thoidiem=" + thoidiem;
+        //    window.location = url;
+        //});
+        $("#btnSubmit").click(function () {
+            var tungay = $("[name='tungay']").val();
+            var denngay = $("[name='denngay']").val();
+            var khoaphong = encodeURI($("#department option:selected").val() == "" ? "" : $("#department option:selected").val());
+            var noian = encodeURI($("#eatplace option:selected").val() == "" ? "" : $("#eatplace option:selected").val());
+            var thoidiem = encodeURI($("#thoidiem option:selected").val());
+            var loai = encodeURI($("#loai option:selected").val());
+            var url = "/hcns/dangkysuatan/thongke_chaman?tungay=" + tungay + "&denngay=" + denngay + "&dept=" + khoaphong + "&thoidiem=" + thoidiem + "&noian=" + noian + "&loai=" + loai+"&theo=noian";
+            $("#loadPartial").load(url);
+        });
+        $("#btnSubmit2").click(function () {
+            var tungay = $("[name='tungay']").val();
+            var denngay = $("[name='denngay']").val();
+            var khoaphong = encodeURI($("#department option:selected").val() == "" ? "" : $("#department option:selected").val());
+            var noian = encodeURI($("#eatplace option:selected").val() == "" ? "" : $("#eatplace option:selected").val());
+            var thoidiem = encodeURI($("#thoidiem option:selected").val());
+            var loai = encodeURI($("#loai option:selected").val());
+            var url = "/hcns/dangkysuatan/thongke_chaman?tungay=" + tungay + "&denngay=" + denngay + "&dept=" + khoaphong + "&thoidiem=" + thoidiem + "&noian=" + noian + "&loai=" + loai + "&theo=khoa";
+            $("#loadPartial").load(url);
+        });
+    });
+</script>

@@ -1,0 +1,153 @@
+﻿@model System.App.Entities.HCNS.AbsentR
+
+<style type="text/css">
+    fieldset.fieldset-border { border: 1px groove #ddd !important; padding: 0 1.4em 1.4em 1.4em !important; margin: 0 0 1.5em 0 !important; -webkit-box-shadow: 0px 0px 0px 0px #000; box-shadow: 0px 0px 0px 0px #000; }
+</style>
+
+@using (Html.BeginForm("Push_Cell_KhaiBaoVang", "chamcong", FormMethod.Post, new { @class = "formFieldset", id = "form_khaibaovang" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.UserEnrollNumber)
+    @Html.HiddenFor(x => x.Date)
+
+    <fieldset class="fieldset-border">
+        <legend class="fieldset-border">Đề xuất khai báo vắng</legend>
+
+        @if (!string.IsNullOrEmpty(Model.AbsentInfo.AbsentCode))
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Bạn đã được xác nhận khai báo vắng. Nội dung: @Model.AbsentInfo.AbsentDescription @(string.IsNullOrEmpty(Model.Reason) ? "-" : "- Lý do: " + Model.Reason) @(string.IsNullOrEmpty(Model.AbsentInfo.Lydo) ? "-" : "- Nội dung duyệt: " + Model.AbsentInfo.Lydo)@*, bạn có thể thay đổi dữ liệu <a href="/hcns/nhanvien/khaibaovang" target="_blank">tại đây</a>*@</p>
+                </div>
+            </div>
+        }
+        else if (Model.Status == 0)
+        {
+            if (!string.IsNullOrEmpty(Model.AbsentCode))
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <p style="border-left: 5px solid #ff3c3c; padding: 8px; background: #ffcbcb; margin: 0;">Bạn đã đề xuất [@Model.AbsentDescription @(string.IsNullOrEmpty(Model.Reason) ? "" : "- Lý do: " + Model.Reason)] nhưng chưa được duyệt. Bạn có thể cập nhật lại đề xuất theo nội dung dưới hoặc ấn <strong>[<a href="javascript:;" data-url="/hcns/chamcong/push_xoadexuatkbvang?userid=@(Model.UserEnrollNumber)&date=@(Model.Date)" class="del-kbv">Xóa</a>]</strong> để hủy đề xuất.</p>
+                    </div>
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Lý do đề xuất</label>
+                    @Html.DropDownListFor(x => x.AbsentCode, new SelectList(ViewBag.DS_AbsentSymbol, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Lý do đề xuất</label>
+                    @Html.TextBoxFor(x => x.Reason, new { @class = "form-control input-sm" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" id="btnKhaiBaoVang" value="Xác nhận đề xuất vắng" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        }
+        else if (Model.Status == -1)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Đề xuất sửa ngày vắng của bạn bị hủy. Nội dung khai báo <b>[Đề xuất: @Model.AbsentDescription @(string.IsNullOrEmpty(Model.Reason) ? "" : "- Lý do: " + Model.Reason)]. Bạn có thể cập nhật lại đề xuất theo nội dung dưới</b></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Lý do đề xuất</label>
+                    @Html.DropDownListFor(x => x.AbsentCode, new SelectList(ViewBag.DS_AbsentSymbol, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Lý do đề xuất</label>
+                    @Html.TextBoxFor(x => x.Reason, new { @class = "form-control input-sm" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" id="btnKhaiBaoVang" value="Xác nhận đề xuất vắng" class="btn btn-primary btn-sm" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Đề xuất sửa ngày vắng của bạn đã được duyệt, bạn không thể khai báo tiếp. Nội dung đã duyệt <b>[Đề xuất: @Model.AbsentDescription @(string.IsNullOrEmpty(Model.Reason) ? "" : "- Lý do: " + Model.Reason)]</b></p>
+                </div>
+            </div>
+        }
+    </fieldset>
+    <script type="text/javascript">
+        $(function () {
+            $(".chosen-dll").chosen();
+
+            $(".del-kbv").on('click', function (e) {
+                var url = $(this).attr("data-url");
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Xóa thành công');
+                            $("#cell_khaibaovang").load("/hcns/chamcong/cell_khaibaovang?userid=@Model.UserEnrollNumber&date=@Model.Date")
+                        } else if (data.result == false && data.message != '') {
+                            $(this).callToast("error", '', "" + data.message + "");
+                        }
+                        else {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                        }
+                    }, complete: function () {
+                        $("#btnKhaiBaoLoi").show();
+                    }
+                });
+
+                e.preventDefault();
+
+            });
+            $("#form_khaibaovang").submit(function (e) {
+                var form = $(this);
+                var url = form.attr('action');
+
+                var absentCodeChoose = $(form).find("#AbsentCode option:selected").val();
+                var ghichu = $(form).find("#Reason").val().trim();
+
+                if ((absentCodeChoose == 'A32' || absentCodeChoose == 'A09' || absentCodeChoose == 'A03') && ghichu == '') {
+                    $(this).callToast("error", '', 'Bạn cần ghi rõ lý do nghỉ ở phần ghi chú.');
+                    return false;
+                } else {
+                    $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: form.serialize(),
+                    beforeSend: function () {
+                        $("#btnKhaiBaoVang").hide();
+                    },
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+
+                            $("#cell_khaibaovang").load("/hcns/chamcong/cell_khaibaovang?userid=@Model.UserEnrollNumber&date=@Model.Date")
+                        }
+                        else {
+                            $(this).callToast("error", '', data.errorMessage);
+                        }
+                    }, complete: function () {
+                        $("#btnKhaiBaoVang").show();
+                    }
+                });
+                }
+
+
+
+                e.preventDefault();
+            });
+        });
+    </script>
+}

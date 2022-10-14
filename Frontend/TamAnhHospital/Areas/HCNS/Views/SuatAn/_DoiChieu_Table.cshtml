@@ -1,0 +1,45 @@
+﻿@model IEnumerable<System.App.Entities.DoiChieuSuatAn>
+<style>
+    table td, table th { white-space: nowrap !important; }
+    #dataFilter_wrapper > .row:first-child { display: none; }
+</style>
+<div class="content-block table-responsive">
+    <table id="dataFilter" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>Mã nhân viên</th>
+                <th>Họ và tên</th>
+                <th>Khoa / Phòng</th>
+                <th>Ngày đăng ký</th>
+                <th>ĐK - Ăn trưa</th>
+                <th>VT - Ăn trưa</th>
+                <th>ĐK - Ăn tối</th>
+                <th>VT - Ăn tối</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count() > 0)
+            {
+                foreach (var item in Model as IEnumerable<System.App.Entities.DoiChieuSuatAn>)
+                {
+            <tr>
+                <td>@item.UserEnrollNumber</td>
+                <td>@item.UserFullName</td>
+                <td>@item.Description</td>
+                <td>@item.DateReg</td>
+                <td>@item.Lu</td>
+                <td>@item.LuR</td>
+                <td>@item.Di</td>
+                <td>@item.DiR</td>
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#dataFilter').callDataTableCustomSearch('vi', '', '#hoten');
+    });
+</script>

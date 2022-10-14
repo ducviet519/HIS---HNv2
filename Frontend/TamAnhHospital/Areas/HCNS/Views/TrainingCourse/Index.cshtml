@@ -1,0 +1,45 @@
+﻿@model IEnumerable<System.App.Entities.TrainingCourse>
+@{
+    ViewBag.Title = "Danh sách các khóa đào tạo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/Areas/HCNS/Content/hcns.css" />
+
+<style type="text/css">
+    .sorting, .sorting_desc, .sorting_asc { padding-right: 0 !important; }
+        .sorting::before, .sorting::after,
+        .sorting_desc::before, .sorting_desc::after,
+        .sorting_asc::before, .sorting_asc::after { content: "" !important; }
+</style>
+
+<h2>Danh sách các khóa đào tạo</h2>
+
+<div class="content-block table-responsive">
+    <div class="abs-tool">
+        @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value"), "--- Chọn phòng ban ---", new { @class = "form-control", style="display:inline-block;" })
+        <button type="button" id="create" class="btn btn-primary">Tạo mới khóa học</button>
+        <button type="button" id="total" class="btn btn-warning">Tổng hợp</button>
+    </div>
+
+    <div id="loadTable">
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#loadTable").load("/hcns/trainingcourse/Course_Table");
+
+        $("#total").click(function () {
+            $("#loadTable").load("/hcns/trainingcourse/Employee_Table");
+        });
+
+        $("button#create").click(function () {
+            $(this).callModal("/hcns/trainingcourse/create");
+        });
+        $("#Department").change(function () {
+            var id = $(this).find("option:selected").val();
+
+            $("#loadTable").load("/hcns/trainingCourse/Employee_Table?depid=" + id);
+        });
+    });
+</script>

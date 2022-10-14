@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="SharedProjectFile_SccProperties">
+    <SharedProjectFile_ProjectGuid>{e92680fc-d987-40de-b32a-072734155c77}</SharedProjectFile_ProjectGuid>
+    <SharedProjectFile_SccProjectName>SAK</SharedProjectFile_SccProjectName>
+    <SharedProjectFile_SccAuxPath>SAK</SharedProjectFile_SccAuxPath>
+    <SharedProjectFile_SccLocalPath>SAK</SharedProjectFile_SccLocalPath>
+    <SharedProjectFile_SccProvider>SAK</SharedProjectFile_SccProvider>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>62eb8072-928b-4108-a2ae-5dbe2d9d2436</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>System.App.Services</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Config_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DoiChieuSuatAn_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Employee_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\BCCC_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ChamCong_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\DaoTaoChungChi_Services.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\DK_SuatAn_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\HCNS_CongVan_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\HDLD_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\KhaiBaoVang_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\NhanVien_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\Room_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HCNS\ZK_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DoiChieuSuatAn_Interface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\Employee_Interface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\HCNS\DaoTaoChungChi_Interface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\HCNS\IBCCC.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\HDLD_Interface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IKhaiBaoVang.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ISKNV.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\KhoaPhong_Interface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\NhanVien_Interface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\TrainingCourse_Interface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DanhMuc_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KhoaPhong_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\BaseViewPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\ClearCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\CustomAuthorizeAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security\CustomPrincipal.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SKNV_Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TrainingCourse_Service.cs" />
+  </ItemGroup>
+</Project>

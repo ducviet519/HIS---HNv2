@@ -1,0 +1,84 @@
+﻿<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+
+@{
+    ViewBag.Title = "Bảng tổng hợp công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    tr.expiring-soon td { background-color: #fff9d8 !important; }
+    tr.expried td { background-color: #f1f1f1 !important; }
+    .dataTables_wrapper > .row:first-child { display: none; }
+    .dataTable thead th { background: #3882b6; color: #fff; padding: 10px 8px !important; }
+    .dataTable tbody tr.pending { background: #fff3d2; }
+    .dataTable tbody tr.selected td { background: #eee; }
+    .dataTable tbody td p { margin-bottom: 5px; }
+        .dataTable tbody td p:last-child { margin-bottom: 0; }
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input { max-width: 100%; }
+    .flex-row { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: flex-start; width: 100%; }
+    .flex-col { display: flex; flex-direction: column; flex-flow: column; flex-wrap: nowrap; justify-content: flex-start; }
+        .flex-col.flex-fill { width: 100%; }
+    .flex-right { margin-left: auto; width: 30%; padding-top: 68px; }
+    .flex-left { flex-grow: 1; max-width: 100%; padding-right: 10px; }
+    .chosen-container-single .chosen-single { height: 30px !important; line-height: 30px !important; }
+    .form-search .row { margin-left: -5px; margin-right: -5px; }
+    .form-search .col-md-1, .form-search .col-md-2, .form-search .col-md-3, .form-search .col-xs-1, .form-search .col-xs-2, .form-search .col-xs-3 { padding-left: 5px; padding-right: 5px; }
+
+    .title-bar { border-bottom: 1px solid #ccc; }
+        .title-bar h4 { margin: 0; }
+
+    .box-table::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); background-color: #F5F5F5; }
+    .form-search { margin: 10px 0; }
+
+    #table-data_wrapper > div.row:nth-child(2) { overflow: scroll; }
+
+    table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_desc_disabled:before { display: none; }
+    table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after { display: none; }
+    .table-bordered > thead > tr > th, .table-bordered > thead > tr > td { border-bottom-width: 1px; }
+    table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable td:last-child, table.table-bordered.dataTable td:last-child, table.table-bordered td:last-child, table.table-bordered th:last-child { border-right-width: 1px; }
+
+    table tfoot { display: table-header-group; }
+</style>
+
+@{
+    var userAuth = ViewBag.UserAuth as string;
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM25");
+
+    var sdate = ""; var edate = "";
+
+    if (int.Parse(currentDate) > int.Parse(limitDate))
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("25/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).AddMonths(1).ToString("24/MM/yyyy");
+    }
+    else
+    {
+        sdate = DateTime.UtcNow.AddHours(7).AddMonths(-1).ToString("25/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("24/MM/yyyy");
+    }
+}
+
+@Html.Hidden("UserPermission", userAuth)
+@Html.Hidden("UserEnrollNumber", userInfo.UserEnrollNumber)
+
+<div class="row title-bar">
+    <div class="col-md-12">
+        <h4>Tổng hợp công</h4>
+        <div style="margin: 10px 0;"></div>
+    </div>
+</div>
+
+@if (userAuth == "HCNS_Admin")
+{
+    @: @Html.Partial("_Cell_TongHopCong_Admin", new System.App.Entities.HCNS.HCNS_NhanVien() { KhoaPhong = userInfo.KhoaPhong, UserEnrollNumber = userInfo.UserEnrollNumber })
+}
+else if (userAuth == "HCNS_Manager")
+{
+    @: @Html.Partial("_Cell_TongHopCong_QL", new System.App.Entities.HCNS.HCNS_NhanVien() { KhoaPhong = userInfo.KhoaPhong, UserEnrollNumber = userInfo.UserEnrollNumber })
+}
+

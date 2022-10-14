@@ -1,0 +1,139 @@
+﻿@model System.App.Entities.HCNS.HCNS_NhanVien
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa thông tin theo dõi thai sản</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label>Mã nhân viên</label>
+                            @Html.TextBox("upd_userenrollnumber", Model.UserEnrollNumber, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label id="upd_hoten" style="margin-top:30px">@Model.UserFullName</label>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày thông báo</label>
+                            @Html.TextBox("upd_ngaythongbao", Model.NgayThongBao, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày dự sinh</label>
+                            @Html.TextBox("upd_ngaydusinh", Model.NgayDuSinh, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Ngày sinh con</label>
+                            @Html.TextBox("upd_ngaysinhcon", Model.NgaySinhCon, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày con mất</label>
+                            @Html.TextBox("upd_ngayconmat", Model.NgayConMat, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Nghỉ sinh từ ngày</label>
+                            @Html.TextBox("upd_nghisinhtungay", Model.NghiSinhTuNgay, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày nghỉ dưỡng sức</label>
+                            @Html.TextBox("upd_ngaynghi_ds", Model.NgayNghi_DS, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Số ngày nghỉ dưỡng sức</label>
+                            @Html.TextBox("upd_songaynghi_ds", Model.SoNgayNghi_DS, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            @*<label>Ghi chú</label>
+        @Html.TextBox("upd_ghichu", Model.GhiChu, new { @class = "form-control input-sm" })*@
+                            <label>Ghi chú</label>
+                            <select class="form-control input-sm chosen-ddl" id="upd_ghichu" name="upd_ghichu">
+                                <option value="1" @(Model.GhiChu == "Bình thường" ? "selected" : "")>Bình thường</option>
+                                <option value="2" @(Model.GhiChu == "Đi làm sớm sau 4 tháng" ? "selected" : "")>Đi làm sớm sau 4 tháng</option>
+                                <option value="3" @(Model.GhiChu == "Đi làm sớm sau 5 tháng" ? "selected" : "")>Đi làm sớm sau 5 tháng</option>
+                                <option value="4" @(Model.GhiChu == "Sinh đôi" ? "selected" : "")>Sinh đôi</option>
+                                <option value="5" @(Model.GhiChu == "Sinh ba" ? "selected" : "")>Sinh ba</option>
+                                <option value="6" @(Model.GhiChu == "Con mất dưới 2 tháng" ? "selected" : "")>Con mất dưới 2 tháng</option>
+                                <option value="7" @(Model.GhiChu == "Con mất trên 2 tháng" ? "selected" : "")>Con mất trên 2 tháng</option>
+                                <option value="8" @(Model.GhiChu == "Chưa sinh" ? "selected" : "")>Chưa sinh</option>
+                            </select>
+                            @*<label>Ghi chú</label>
+                            @Html.DropDownList("upd_ghichu", Model.GhiChu, new List<SelectListItem>() {
+                                new SelectListItem { Value = "1", Text = "Bình thường" },
+                                new SelectListItem { Value = "2", Text = "Đi làm sớm sau 4 tháng" },
+                                new SelectListItem { Value = "3", Text = "Đi làm sớm sau 5 tháng" },
+                                new SelectListItem { Value = "4", Text = "Sinh đôi" },
+                                new SelectListItem { Value = "5", Text = "Sinh ba" },
+                                new SelectListItem { Value = "6", Text = "Con mất dưới 2 tháng" },
+                                new SelectListItem { Value = "7", Text = "Con mất trên 2 tháng" },
+                                new SelectListItem { Value = "8", Text = "Chưa sinh" }
+                            }, new { @class = "form-control input-sm chosen-ddl" })*@
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_theodoithaisan_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+
+        $("#upd_theodoithaisan_btnUpdate").click(function (e) {
+            var _UserEnrollNumber = encodeURIComponent($("#upd_manhanvien").val());
+            var _NgayThongBao = $("#upd_ngaythongbao").val();
+            var _NgayDuSinh = $("#upd_ngaydusinh").val();
+            var _NgaySinhCon = $("#upd_ngaysinhcon").val();
+            var _NgayConMat = $("#upd_ngayconmat").val();
+            var _NghiSinhTuNgay = $("#upd_nghisinhtungay").val();
+            var _NgayNghi_DS = $("#upd_ngaynghi_ds").val();
+            var _SoNgayNghi_DS = $("#upd_songaynghi_ds").val();
+            var _GhiChu = $("#upd_ghichu option:selected").text();
+
+            var obj = {
+                "ID": '@ViewBag.ID',
+                "UserEnrollNumber": _UserEnrollNumber,
+                "NgayThongBao": _NgayThongBao,
+                "NgayDuSinh": _NgayDuSinh,
+                "NgaySinhCon": _NgaySinhCon,
+                "NgayConMat": _NgayConMat,
+                "NghiSinhTuNgay": _NghiSinhTuNgay,
+                "NgayNghi_DS": _NgayNghi_DS,
+                "SoNgayNghi_DS": _SoNgayNghi_DS,
+                "GhiChu": _GhiChu,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_TheoDoiThaiSan", "NhanVien")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Có lỗi khi cập nhật thông tin', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

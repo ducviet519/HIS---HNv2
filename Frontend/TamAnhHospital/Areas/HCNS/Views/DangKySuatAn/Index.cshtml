@@ -1,0 +1,400 @@
+﻿@{
+    ViewBag.Title = "Đăng ký suất ăn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Đăng ký suất ăn</h2>
+
+<div class="form">
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-md-1 col-xs-2">
+            <label for="date_cc">Ngày bắt đầu</label>
+            @if (ViewBag.Disabled == true)
+            {
+            <input type="text" id="date_cc" class="form-control input-sm" value="@DateTime.UtcNow.AddHours(7).AddDays(1).ToString("dd/MM/yyyy")" autocomplete="off" readonly />
+            }
+            else
+            {
+            <input type="text" id="date_cc" class="form-control timepicker input-sm" value="@DateTime.UtcNow.AddHours(7).AddDays(1).ToString("dd/MM/yyyy")" autocomplete="off" />
+            }
+        </div>
+        <div class="col-md-1 col-xs-2">
+            <label>Thời điểm</label>
+            <select class="form-control input-sm" id="thoidiem">
+                <option value="Br">Bữa sáng</option>
+                <option value="Lu" selected>Bữa trưa</option>
+                <option value="Di">Bữa tối</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-xs-3">
+            <label>Khoa/Phòng</label>
+            @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value"), "--- Chọn khoa phòng ---", new { @class = "form-control input-sm" })
+        </div>
+        <div class="col-md-2 col-xs-3">
+            <label>Mã/Tên nhân viên</label>
+            <input type="text" class="form-control input-sm" placeholder="Nhập thông tin..." id="nhanvien" autocomplete="off" />
+        </div>
+        <div class="col-md-2 col-xs-3">
+            <button type="button" id="btnSearch" class="btn btn-default btn-sm" style="margin-top: 22px;">Tìm kiếm</button>
+            <button type="button" id="btnSubmit" class="btn btn-primary btn-sm" style="margin-top: 22px;"><i class="fa fa-save"></i> Cập nhật</button>
+        </div>
+    </div>
+</div>
+<div id="loadPartial">
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.timepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $("#loadPartial").load("/hcns/suatan/DangKy_Table?d=" + encodeURIComponent($("#date_cc").val()));
+        $(document).on("click", "#btnSubmit", function (e) {
+            var data = [];
+            var $btnSubmit = $(this);
+
+            if ($("#Department").val() != "") {
+                var allPages = $("#table-data").DataTable().rows().nodes();
+                var _person = [];
+
+                $(allPages).each(function () {
+                    var _vals = [];
+                    var row = $(this).closest("tr");
+                    for (var i = 1; i < 31; i++) {
+                        //var i = (i <= 9 ? "0" + i : "" + i);
+                        _vals.push($(row).find(".sl-" + i).val());
+                    }
+
+                    _person.push({
+                        UserEnrollNumber: $(row).find(".user").val(),
+                        Ngay: $("#date_cc").val(),
+                        ThoiDiem: $("#thoidiem").val(),
+                        Scores: _vals.toString()
+                    });
+                });
+
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "/hcns/suatan/DangKy_CapNhat",
+                    data: JSON.stringify(_person),
+                    contentType: 'application/json; charset=utf-8',
+                    beforeSend: function () {
+                        $btnSubmit.html("Đang bổ sung dữ liệu...");
+                        $btnSubmit.attr("disabled", "disabled");
+                    },
+                    success: function (data, status) {
+                        if (data.result == true)
+                            $(this).callToast("success", 'Dữ liệu đã được cập nhật', '');
+                        else
+                            $(this).callToast("error", 'Lỗi khi cập nhật dữ liệu.', '');
+                    },
+                    complete: function () {
+                        $btnSubmit.html("Cập nhật");
+                        $btnSubmit.removeAttr("disabled");
+                    }
+                });
+            } else {
+                if ($.fn.dataTable.isDataTable("#table-data")) {
+                    $("#table-data").DataTable().destroy();
+                    $("#table-data").find('tbody').empty();
+                }
+            }
+            return false;
+        });
+        function Load_DataTable() {
+            if ($("#Department").val() != "") {
+                var pk = encodeURIComponent($("#Department option:selected").val());
+                var td = encodeURIComponent($("#thoidiem option:selected").val());
+                var nv = encodeURIComponent($("#nhanvien").val());
+                var ngay = encodeURIComponent($("#date_cc").val());
+
+                if ($.fn.dataTable.isDataTable("#table-data")) {
+                    $("#table-data").DataTable().destroy();
+                    $("#table-data").find('tbody').empty();
+                }
+
+                var _tabledata = $("#table-data").DataTable({
+                    "ajax": {
+                        "url": "/hcns/suatan/DangKy_DanhSach?manv=" + nv + "&kp=" + pk + "&thoidiem=" + td + "&ngay=" + ngay,
+                        "type": "GET",
+                        "datatype": "json",
+                    },
+                    "pageLength": 30,
+                    "autoWidth": true,
+                    "processing": true,
+                    "columns": columns,
+                    "deferRender": true,
+                    "language": languages,
+                    "createdRow": function (row, data, dataIndex) {
+                        // Add a class to the cell in the second column
+                        $(row).children(':nth-child(2)').addClass('text-left');
+                    }
+                });
+            } else {
+                if ($.fn.dataTable.isDataTable("#table-data")) {
+                    $("#table-data").DataTable().destroy();
+                    $("#table-data").find('tbody').empty();
+                }
+            }
+        }
+        $("#date_cc").change(function () {
+            $("#loadPartial").load("/hcns/suatan/DangKy_Table?d=" + encodeURIComponent($(this).val()));
+
+            $("#Department").val("");
+            $("#nhanvien").val("");
+        });
+        $("#Department").change(function () {
+            Load_DataTable();
+        });
+        $("#thoidiem").change(function () {
+            Load_DataTable();
+        });
+        $(document).on("click", "#btnSearch", function (e) {
+            Load_DataTable();
+            e.preventDefault();
+        });
+
+        var languages = {
+            "sProcessing": "Đang xử lý...",
+            "sLengthMenu": "Xem _MENU_ mục",
+            "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+            "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+            "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+            "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+            "sInfoPostFix": "",
+            "sSearch": "Tìm:",
+            "sUrl": "",
+            "oPaginate": {
+                "sFirst": "Đầu",
+                "sPrevious": "Trước",
+                "sNext": "Tiếp",
+                "sLast": "Cuối"
+            }
+        };
+        var columns = [
+            {
+                "data": "UserEnrollNumber",
+                "render": function (data) {
+                    return "<input type='hidden' value='" + data + "' data-id='" + data + "' class='user' />" + data;
+                }
+            },
+            { "data": "UserFullName" },
+            {
+                "render": function (data) {
+                    return "<select class=\"all\"><option value=\"0\">0</option><option value=\"1\">1</option><option value=\"2\">2</option></select>";
+                }
+            },
+            {
+                "data": "Val_01",
+                "render": function (data) {
+                    var str = "<select class=\"sl-1\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_02",
+                "render": function (data) {
+                    var str = "<select class=\"sl-2\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_03",
+                "render": function (data) {
+                    var str = "<select class=\"sl-3\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_04",
+                "render": function (data) {
+                    var str = "<select class=\"sl-4\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_05",
+                "render": function (data) {
+                    var str = "<select class=\"sl-5\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_06",
+                "render": function (data) {
+                    var str = "<select class=\"sl-6\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_07",
+                "render": function (data) {
+                    var str = "<select class=\"sl-7\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_08",
+                "render": function (data) {
+                    var str = "<select class=\"sl-8\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_09",
+                "render": function (data) {
+                    var str = "<select class=\"sl-9\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_10",
+                "render": function (data) {
+                    var str = "<select class=\"sl-10\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_11",
+                "render": function (data) {
+                    var str = "<select class=\"sl-11\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_12",
+                "render": function (data) {
+                    var str = "<select class=\"sl-12\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_13",
+                "render": function (data) {
+                    var str = "<select class=\"sl-13\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_14",
+                "render": function (data) {
+                    var str = "<select class=\"sl-14\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_15",
+                "render": function (data) {
+                    var str = "<select class=\"sl-15\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_16",
+                "render": function (data) {
+                    var str = "<select class=\"sl-16\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_17",
+                "render": function (data) {
+                    var str = "<select class=\"sl-17\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_18",
+                "render": function (data) {
+                    var str = "<select class=\"sl-18\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_19",
+                "render": function (data) {
+                    var str = "<select class=\"sl-19\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_20",
+                "render": function (data) {
+                    var str = "<select class=\"sl-20\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_21",
+                "render": function (data) {
+                    var str = "<select class=\"sl-21\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_22",
+                "render": function (data) {
+                    var str = "<select class=\"sl-22\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_23",
+                "render": function (data) {
+                    var str = "<select class=\"sl-23\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_24",
+                "render": function (data) {
+                    var str = "<select class=\"sl-24\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_25",
+                "render": function (data) {
+                    var str = "<select class=\"sl-25\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_26",
+                "render": function (data) {
+                    var str = "<select class=\"sl-26\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_27",
+                "render": function (data) {
+                    var str = "<select class=\"sl-27\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_28",
+                "render": function (data) {
+                    var str = "<select class=\"sl-28\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_29",
+                "render": function (data) {
+                    var str = "<select class=\"sl-29\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            },
+            {
+                "data": "Val_30",
+                "render": function (data) {
+                    var str = "<select class=\"sl-30\">";
+                    for (var i = 0; i < 3; i++) { if (i == data) { str += "<option value=" + i + " selected>" + i + "</option>"; } else { str += "<option value=" + i + ">" + i + "</option>"; } } str += "</select>"; return str;
+                }
+            }
+        ];
+
+    });
+</script>

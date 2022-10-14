@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "ImportSalaryChange";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    .panel-heading { background: #3882B6; }
+
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+
+            .panel-heading h4 i { margin-right: 5px; }
+
+    .panel-body { padding: 15px; max-height: 480px; overflow: auto; }
+
+        .panel-body input, .panel-body select { max-width: inherit; }
+
+        .panel-body .form-group { margin-bottom: 10px; }
+
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+</style>
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>UPLOAD FILE EXCEL</h4>
+        </div>
+        @using (Html.BeginForm("Push_ImportFile", "NhanVien", FormMethod.Post, new { enctype = "multipart/form-data", id = "importSubmit" }))
+        {
+            <div class="form-row">
+                <div class="col-2" style="width:270px">
+                    @Html.DropDownList("fileexcel", ViewBag.FileExcel as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                    <div class="clearfix"></div>
+                    <sub id="sub_link"></sub>
+                </div>
+                <div class="col-2">
+                    <input type="file" class="form-control" id="fileUpload" name="fileUpload" />
+                </div>
+                <div class="col-2">
+                    <div class="form-group"><input type="submit" value="Cập nhật" class="btn btn-primary" id="btnSubmit" /></div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(function () {
+            $(".chosen-ddl").chosen();
+        });
+
+        $("select[name='fileexcel']").change(function () {
+            var id = $("select[name='fileexcel'] option:selected").val();
+
+            $.getJSON("/NhanVien/GetFileLink?id=" + id, function (o) {
+                if (o == '') {
+                    $("#sub_link").html("");
+                    return;
+                }
+                var link = "<a href=\"/Files/" + o + "\">Link file mẫu</a>";
+                $("#sub_link").html(link);
+            });
+        });
+
+        $("#importSubmit").submit(function (e) {
+            var form = $(this);
+            var _fileexcel = $("#fileexcel option:selected").val();
+
+            var url = form.attr('action');
+
+            var formData = new FormData();
+            var totalFiles = document.getElementById("imageUploadForm").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("imageUploadForm").files[i];
+                formData.append("imageUploadForm", file);
+            }
+            formData.append("ID", _fileexcel);
+            $.ajax({
+                type: "POST",
+                url: url,
+                //data: form.serialize(),
+                data: formData,
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        setTimeout(location.reload.bind(location), 2000);
+                    }
+                    else {
+                        $(this).callToast("error", '', data.mess);
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+    });
+</script>

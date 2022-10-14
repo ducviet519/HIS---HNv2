@@ -1,0 +1,300 @@
+﻿@{
+    ViewBag.Title = "Danh mục Ca làm việc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var auth = ViewBag.Auth as string[];
+}
+<link rel="stylesheet" href="~/Areas/IVF/Content/TimeLapse.css" />
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Danh mục Ca làm việc</h4>
+        </div>
+        <div class="form">
+            <fieldset>
+                <legend>Điều kiện tìm kiếm:</legend>
+                <form id="calv_search" class="form-inline">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Mã ca làm việc</label>
+                            @Html.TextBox("calv_ma", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="btn-group col-md-1" style="margin-top: 22px; ">
+                            <button type="button" class="btn btn-sm btn-primary" id="calv_btnTimKiem">Tìm kiếm</button>
+                        </div>
+                    </div> <!-- form-row -->
+                </form>
+            </fieldset>
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                <a href="javascript:;" id="calv_btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>
+            </div>
+        </div>
+
+        <div class="inner-content" style="margin-bottom: 10px;">
+            <table class="table table-condensed table-bordered table-hover" id="calv_data-table" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã ca</th>
+                        <th>Giờ bắt đầu</th>
+                        <th>Giờ kết thúc</th>
+                        <th>Qua đêm</th>
+                        <th>Phút được CC vào</th>
+                        <th>Phút hết CC vào</th>
+                        <th>Phút được CC ra</th>
+                        <th>Phút hết CC ra</th>
+                        <th>Bắt đầu ăn trưa</th>
+                        <th>Kết thúc ăn trưa</th>
+                        <th>Tổng phút làm việc</th>
+                        <th>Số ngày công</th>
+                        <th>OT ngày nghỉ</th>
+                        <th>Loại ca</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="16" class="text-center">Chưa có dữ liệu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+    });
+
+    function Reload_DataTable(id, columns, source) {
+        $.fn.dataTable.moment('DD/MM/YYYY');
+        id = "#" + id;
+        if ($.fn.dataTable.isDataTable(id)) {
+            $(id).DataTable().destroy();
+            $(id).find('tbody').empty();
+        }
+        var _tabledata = $(id).DataTable({
+            "ajax": {
+                "url": source,
+                "type": "GET",
+                "datatype": "json",
+            },
+            "pageLength": 20,
+            "processing": true,
+            "columns": columns,
+            "deferRender": true,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            "createdRow": function (row, data, dataIndex) {
+                $(row).attr("onclick", "onClick_Row('" + data.ID + "')");
+            },
+            "language": {
+                "sProcessing": "Đang tải dữ liệu...",
+                "sLengthMenu": "Xem _MENU_ mục",
+                "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm:",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "Đầu",
+                    "sPrevious": "Trước",
+                    "sNext": "Tiếp",
+                    "sLast": "Cuối"
+                }
+            },
+            "initComplete": function (settings, json) {
+                //$("#ls-tongso").html(this.api().page.info().recordsTotal);
+            }
+        });
+        _tabledata.on('page.dt order.dt draw.dt', function () {
+            _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + _tabledata.page.info().start;
+            });
+        }).draw();
+
+        $(id).on('processing.dt', function (e, settings, processing) {
+            $('#processingIndicator').css('display', processing ? 'block' : 'none');
+        }).dataTable();
+
+        $(id).on('page.dt', function () {
+            // $("input[name='dsdc-checkAll']").removeAttr("checked");
+        });
+    }
+
+    var _columns = [
+        { "data": {}, "class": "no-sort" },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.ShiftCode;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.Onduty;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.Offduty;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.DayCount;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.OnTimeIn;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.CutIn;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.OnTimeOut;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.CutOut;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.OnLunch;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.OffLunch;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.WorkingTime;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.Workingday;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.IsHolidayOT;
+            },
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                return data.WKOTLevel;
+            }, "class": "nowrap"
+        },
+        {
+            "data": {},
+            "render": function (data) {
+                if ('@auth.Contains(System.App.Entities.Common.StaticParams.CaLamViec_Update)' == 'True') {
+                    return "<a href=\"javascript:;\" onclick=\"Update('" + data.ShiftID + "')\">Cập nhật</a>" + " - " + "<a href=\"javascript:;\" onclick=\"Delete('" + data.ShiftID + "')\">Xóa</a>";
+                }
+                else {
+                    return "";
+                }
+            }, "class": "text-center"
+        }
+    ];
+
+    function Load_Data() {
+        var objsearch = {
+            ShiftCode: $("#calv_ma").val()
+        };
+        Reload_DataTable("calv_data-table", _columns, "/admin/danhmuc/DS_CaLamViec_Search?" + $.param(objsearch));
+    }
+
+    function Update(Code) {
+        if (Code == '') {
+            $(this).callToast("error", 'Xin mời chọn dòng dữ liệu cần cập nhật', '');
+            return;
+        }
+        var objsearch = {
+            ShiftID: Code
+        };
+        $(this).callModal("/admin/danhmuc/Update_CaLamViec?" + $.param(objsearch));
+    };
+
+    function Delete(Code) {
+        var r = confirm("Bạn có muốn xóa bản ghi này không?");
+        if (r) {
+            var obj = {
+                "ShiftID": Code,
+            };
+            $.ajax({
+                url: '@Url.Action("Delete_CalamViec", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Xóa bản ghi thành công.', data.message);
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Lỗi cập nhật', data.message);
+                }
+            });
+        }
+    }
+
+    $(function () {
+        $("#calv_btnTimKiem").click(function (e) {
+            e.preventDefault();
+            Load_Data();
+        });
+
+        Load_Data();
+
+        $("#calv_btnCreate").click(function (e) {
+            $(this).callModal("/admin/danhmuc/Create_CaLamViec?");
+            e.preventDefault();
+        });
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#calv_btnTimKiem').focus().click();//give your submit an ID
+            }
+        }
+
+        $('.head-section .form').keypress(keypressHandler);
+
+    });
+</script>

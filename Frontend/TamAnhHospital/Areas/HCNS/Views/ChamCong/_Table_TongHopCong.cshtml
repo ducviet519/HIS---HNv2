@@ -1,0 +1,56 @@
+﻿@model System.Data.DataTable
+<style>
+    .row { margin-bottom: 10px; }
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form input, .form select { max-width: 100%; }
+
+    .box-table { overflow: auto; width: 100%; max-height: 500px; border: 1px solid #ccc; height: 100%; }
+        .box-table td, th { }
+        /*.box-table th { background: #e2e2e2; }*/
+        .box-table table { table-layout: fixed; width: 100%; margin-bottom: 0; }
+        .box-table td:first-child, .box-table th:first-child { position: sticky; left: 0; z-index: 3; }
+        .box-table td:nth-child(2), .box-table th:nth-child(2) { position: sticky; left: 30px; z-index: 3; }
+        .box-table td:nth-child(3), .box-table th:nth-child(3) { position: sticky; left: 85px; z-index: 3; }
+        .box-table thead tr th { position: sticky; top: 0; z-index: 2; }
+        .box-table th:nth-child(1), .box-table th:nth-child(2), .box-table th:nth-child(3) { z-index: 3; }
+
+    .no-wrap { white-space: nowrap; }
+</style>
+<div class="box-table">
+    <table class="table table-bordered table-hover" id="table-data">
+        <thead>
+            <tr>
+                <th width="40" class="text-center" rowspan="2">STT</th> <!-- STT -->
+                <th colspan="3" class="text-center">Thông tin hành chính</th>
+                <th colspan="5" class="text-center">Thông tin công</th>
+            </tr>
+            <tr>
+                <th width="50" class="text-center">Mã NV</th> <!--UserFullCode-->
+                <th>Họ và tên</th> <!--UserFullName-->
+                <th>Khoa/Phòng</th> <!--Dept-->
+                <th>Tổng</th> <!--TongCong-->
+                <th>Trước TĐL (fixed)</th> <!--CongTruocFixEdited-->
+                <th>Sau TĐL (fixed)</th> <!--CongSauFixEdited-->
+                <th>Đi muộn</th> <!--LateInEdited-->
+                <th>Về sớm</th> <!--EarlyOutEdited-->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(System.Data.DataRow row in Model.Rows)
+            {
+            <tr>
+                <td>@row["STT"].ToString()</td>
+                <td style="max-width: 50px;">@row["UserFullCode"]</td>
+                <td class="no-wrap">@row["UserFullName"]</td>
+                <td class="no-wrap">@row["Dept"].ToString()</td>
+                <td>@row["TongCong"].ToString()</td>
+                <td>@row["CongTruocFixEdited"].ToString()</td>
+                <td>@row["CongSauFixEdited"].ToString()</td>
+                <td>@row["LateInEdited"].ToString() phút</td>
+                <td>@row["EarlyOutEdited"].ToString() phút</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,21 @@
+﻿<div id="chartContainer" style="height: 370px; max-width: 920px; margin: 10px auto;"></div>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                theme: "light2",
+	            title: {
+                    text: "Biểu đồ tình hình bệnh tật"
+	            },
+	            data: [{
+		            type: "pie",
+		            startAngle: 240,
+		            yValueFormatString: "##0.00'%'",
+		            indexLabel: "{label} {y}",
+                    dataPoints: @Html.Raw(ViewBag.DataPoints)
+	            }]
+            });
+            chart.render();
+    });
+</script>

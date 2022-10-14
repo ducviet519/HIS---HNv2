@@ -1,0 +1,200 @@
+﻿@model System.App.Entities.HCNS.UserInfExt
+@{
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+}
+<style>
+    .ui-widget-content {
+        z-index: 9999;
+    }
+</style>
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới Theo dõi thai sản</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        @*<div class="form-group col-md-2">
+                                <label>Mã nhân viên</label>
+                                @Html.TextBox("cre_userenrollnumber", "", new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label id="cre_hoten" style="margin-top:30px"></label>
+                            </div>*@
+                        @*<div class="col-md-6">
+                                <label for="TimeDate">Chọn nhân viên</label>
+                                @Html.EditorFor(model => model.UserFullName, new { htmlAttributes = new { @class = "form-control input-sm", required = true } })
+                                @Html.HiddenFor(x => x.UserEnrollNumber)
+                            </div>*@
+                        <div class="col-md-6">
+                            <label>Mã nhân viên</label>
+                            @Html.Hidden("cre_manhanvien")
+                            @Html.Editor("cre_fullname", new { htmlAttributes = new { @class = "form-control input-sm", required = true } })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày thông báo</label>
+                            @Html.TextBox("cre_ngaythongbao", "", new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày dự sinh</label>
+                            @Html.TextBox("cre_ngaydusinh", "", new { @class = "form-control input-sm datepicker" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Ngày sinh con</label>
+                            @Html.TextBox("cre_ngaysinhcon", "", new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày con mất</label>
+                            @Html.TextBox("cre_ngayconmat", "", new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Nghỉ sinh từ ngày</label>
+                            @Html.TextBox("cre_nghisinhtungay", "", new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày nghỉ dưỡng sức</label>
+                            @Html.TextBox("cre_ngaynghi_ds", "", new { @class = "form-control input-sm datepicker" })
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Số ngày nghỉ dưỡng sức</label>
+                            @Html.TextBox("cre_songaynghi_ds", "0", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            @*<label>Ghi chú</label>
+                                @Html.TextBox("cre_ghichu", "", new { @class = "form-control input-sm" })*@
+                            <label>Ghi chú</label>
+                            @Html.DropDownList("cre_ghichu", new List<SelectListItem>() {
+                                new SelectListItem { Value = "1", Text = "Bình thường" },
+                                new SelectListItem { Value = "2", Text = "Đi làm sớm sau 4 tháng" },
+                                new SelectListItem { Value = "3", Text = "Đi làm sớm sau 5 tháng" },
+                                new SelectListItem { Value = "4", Text = "Sinh đôi" },
+                                new SelectListItem { Value = "5", Text = "Sinh ba" },
+                                new SelectListItem { Value = "6", Text = "Con mất dưới 2 tháng" },
+                                new SelectListItem { Value = "7", Text = "Con mất trên 2 tháng" },
+                                new SelectListItem { Value = "8", Text = "Chưa sinh" }
+                            }, new { @class = "form-control input-sm chosen-ddl" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_theodoithaisan">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+
+        $("#cre_theodoithaisan").click(function (e) {
+            var _UserEnrollNumber = encodeURIComponent($("#cre_manhanvien").val());
+            var _NgayThongBao = $("#cre_ngaythongbao").val();
+            var _NgayDuSinh = $("#cre_ngaydusinh").val();
+            var _NgaySinhCon = $("#cre_ngaysinhcon").val();
+            var _NgayConMat = $("#cre_ngayconmat").val();
+            var _NghiSinhTuNgay = $("#cre_nghisinhtungay").val();
+            var _NgayNghi_DS = $("#cre_ngaynghi_ds").val();
+            var _SoNgayNghi_DS = $("#cre_songaynghi_ds").val();
+            var _GhiChu = $("#cre_ghichu option:selected").text();
+
+            if (_UserEnrollNumber == '') {
+                $(this).callToast("error", 'Chưa nhập mã nhân viên', '');
+                return;
+            }
+
+            var obj = {
+                "UserEnrollNumber": _UserEnrollNumber,
+                "NgayThongBao": _NgayThongBao,
+                "NgayDuSinh": _NgayDuSinh,
+                "NgaySinhCon": _NgaySinhCon,
+                "NgayConMat": _NgayConMat,
+                "NghiSinhTuNgay": _NghiSinhTuNgay,
+                "NgayNghi_DS": _NgayNghi_DS,
+                "SoNgayNghi_DS": _SoNgayNghi_DS,
+                "GhiChu": _GhiChu,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_TheoDoiThaiSan", "NhanVien")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Nhân viên đã có ngày nghỉ sinh này', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+
+        $("#cre_fullname").focusout(function () {
+            if ($(this).val() == "") {
+                $("#cre_manhanvien").val("");
+            }
+        });
+
+        $("#cre_fullname").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/hcns/nhanvien/GetUserAll",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefix: request.term },
+                    success: function (data) {
+                        response($.map(JSON.parse(data), function (item) {
+                            var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+                            return { label: display, value: display, id: item.UserEnrollNumber, code: item.UserFullCode };
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#cre_manhanvien").val(ui.item.id);
+            }
+        });
+
+        //$("#UserFullName").focusout(function () {
+        //    if ($(this).val() == "") {
+        //        $("#staticModal #UserEnrollNumber").val("");
+        //    }
+        //});
+        //$("#UserFullName").autocomplete({
+        //    source: function (request, response) {
+        //        $.ajax({
+        //            url: "/hcns/nhanvien/GetUserAll",
+        //            type: "POST",
+        //            dataType: "json",
+        //            data: { prefix: request.term },
+        //            success: function (data) {
+        //                response($.map(JSON.parse(data), function (item) {
+        //                    var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+        //                    return { label: display, value: display, id: item.UserEnrollNumber, code: item.UserFullCode };
+        //                }))
+        //            }
+        //        })
+        //    },
+        //    select: function (event, ui) {
+        //        $("#staticModal #UserEnrollNumber").val(ui.item.id);
+        //    }
+        //});
+    });
+</script>

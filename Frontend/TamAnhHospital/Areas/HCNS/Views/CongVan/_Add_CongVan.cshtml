@@ -1,0 +1,198 @@
+﻿@model System.App.Entities.HCNS.HCNS_CongVan
+<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    .datepicker { margin-top: 0; }
+    .panel-body input[type='text'] { max-width: 100%; }
+</style>
+@{
+    List<SelectListItem> selectListItems = new List<SelectListItem>() {
+        new SelectListItem() { Value = "1", Text = "Đã gửi đi" },
+        new SelectListItem() { Value = "2", Text = "Đã nhận" },
+        new SelectListItem() { Value = "3", Text = "Đang xử lý" },
+        new SelectListItem() { Value = "4", Text = "Đã hoàn thành" }
+    };
+    var selectListTT = new SelectList(selectListItems, "Value", "Text");
+}
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 60%;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Thêm mới công văn</h4>
+                </div><!-- ./panel-heading -->
+                @using (Html.BeginForm("Push_Add_CongVan", "CongVan", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+                {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(x => x.ID)
+
+                <div class="panel-body form">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="SO_CV">Số văn bản</label>
+                            @Html.TextBoxFor(x => x.SO_CV, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="col-md-3">
+                            <label for="NGAY_PHAT_HANH">Ngày phát hành</label>
+                            @Html.TextBoxFor(x => x.NGAY_GUI, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="col-md-1">
+                            <label for="THANG_NHAN">Tháng</label>
+                            @Html.TextBoxFor(x => x.THANG_NHAN, new { @class = "form-control input-sm", @type = "number" })
+                        </div>
+                        <div class="col-md-5">
+                            <label for="NOI_NHAN">Nơi nhận</label>
+                            @Html.DropDownListFor(x => x.NOI_NHAN, new SelectList(ViewBag.KhoaPhong, "Key", "Value"), new { @class = "form-control input-sm chosen-dll" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="NGUOI_NHAN">Người nhận</label>
+                            @Html.TextBoxFor(x => x.TEN_NGUOI_NHAN, new { @class = "form-control input-sm" })
+                            @Html.HiddenFor(x => x.NGUOI_NHAN)
+                        </div>
+                        <div class="col-md-3">
+                            <label for="NGAY_NHAN">Ngày nhận</label>
+                            @Html.TextBoxFor(x => x.NGAY_NHAN, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="col-md-1">
+                            <label for="THANG_NHAN">Tháng</label>
+                            @Html.TextBoxFor(x => x.THANG_NHAN, new { @class = "form-control input-sm", @type = "number" })
+                        </div>
+                        <div class="col-md-4">
+                            <label for="NGUOI_THUC_HIEN">Người thực hiện</label>
+                            @Html.TextBoxFor(x => x.TEN_NGUOI_THUC_HIEN, new { @class = "form-control input-sm" })
+                            @Html.HiddenFor(x => x.NGUOI_THUC_HIEN)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="NGAY_XL_DU_KIEN">Ngày xử lý dự kiến</label>
+                            @Html.TextBoxFor(x => x.NGAY_XL_DU_KIEN, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="col-md-3">
+                            <label for="NGAY_XL_DU_KIEN">Ngày xử lý thực tế</label>
+                            @Html.TextBoxFor(x => x.NGAY_XL_THUC_TE, new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="col-md-6">
+                            <label for="LINK_FILE">File đính kèm</label>
+                            @Html.TextBoxFor(x => x.LINK_FILE, new { @class = "form-control input-sm", @type = "file" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="NOI_DUNG">Nội dung</label>
+                            @Html.TextAreaFor(x => x.NOI_DUNG, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="TRANG_THAI">Trạng thái</label>
+                            @Html.DropDownListFor(x => x.TRANG_THAI, selectListTT, new { @class = "form-control input-sm chosen-dll" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <input type="submit" value="Xác nhận" class="btn btn-primary btn-sm" />
+                    <input type="button" value="Đóng" class="btn btn-default btn-sm" data-dismiss="modal" />
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-dll").chosen();
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+            var files = $("#LINK_FILE").get(0).files;
+            var formData = new FormData(this);
+
+            for (var i = 0; i < files.length; i++) {
+                formData.append("LINK_FILE", files[i]);
+            }
+            $.ajax({
+                type: "POST",
+                url: url,
+                //data: form.serialize(),
+                data: formData,
+                dataType: "json",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        $("#btnSearch").focus().click();
+                        $("#staticModal").modal('toggle');
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+
+        $("#TEN_NGUOI_NHAN").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/hcns/congvan/GetUser",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefix: request.term, kp: $("#NOI_NHAN").find("option:selected").val() },
+                    success: function (data) {
+                        response($.map(JSON.parse(data), function (item) {
+                            var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+                            return { label: display, value: display, id: item.UserEnrollNumber };
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#modalForm #NGUOI_NHAN").val(ui.item.id);
+                $("#modalForm #TEN_NGUOI_NHAN").val(ui.item.label);
+            }
+        });
+
+        $("#TEN_NGUOI_THUC_HIEN").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/hcns/nhanvien/GetUserAll",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefix: request.term },
+                    success: function (data) {
+                        response($.map(JSON.parse(data), function (item) {
+                            var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+                            return { label: display, value: display, id: item.UserEnrollNumber };
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#modalForm #NGUOI_THUC_HIEN").val(ui.item.id);
+                $("#modalForm #TEN_NGUOI_THUC_HIEN").val(ui.item.label);
+            }
+        });
+    });
+</script>

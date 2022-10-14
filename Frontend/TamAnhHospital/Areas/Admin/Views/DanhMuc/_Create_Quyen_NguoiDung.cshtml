@@ -1,0 +1,86 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 850px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục Quyền người dùng</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Tên người dùng</label>
+                            @Html.TextBox("cre_ru_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label><input type="checkbox" name="ru_chkAll" onclick="CheckAll(this);" /> Check all</label>
+                        </div>
+                        @foreach (var item in ViewBag.NHOM as IEnumerable<System.App.Entities.DS_DropDownList>)
+                        {
+                            <div class="form-group col-md-3">
+                                <label><input type="checkbox" name="ru_chk" value="@item.ID" /> @item.MoTa</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_ru_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function CheckAll(control) {
+        var val = $(control).prop("checked");
+
+        if (val) {
+            $("input[name='ru_chk']").prop("checked", true);
+        } else {
+            $("input[name='ru_chk']").prop("checked", false);
+        }
+    }
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_ru_btnCreate").click(function (e) {
+            var _Username = $("#cre_ru_ten").val();
+            var id_Objects = [];
+            $("input[name=\"ru_chk\"]:checked").each(function () {
+                id_Objects.push($(this).val());
+            });
+            if (_Username == '') {
+                $(this).callToast("error", 'Chưa nhập tên người dùng', '');
+                return;
+            }
+
+            var obj = {
+                "Username": _Username,
+                "Object": id_Objects.toString(),
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_Quyen_NguoiDung", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Tên người dùng đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

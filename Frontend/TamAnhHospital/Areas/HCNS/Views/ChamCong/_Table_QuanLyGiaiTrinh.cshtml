@@ -1,0 +1,339 @@
+﻿@model System.Data.DataTable
+
+<style>
+    table {
+        width: 100% !important;
+    }
+
+        table tr th {
+            white-space: nowrap;
+            font-size: 12px;
+            padding: 5px !important;
+        }
+
+            table tr th::before, table tr th::after {
+                content: "" !important;
+            }
+
+    .dataTables_wrapper > .row:first-child {
+        display: none;
+    }
+
+    table tbody td {
+        padding: 5px 5px !important;
+        text-align: center;
+        line-height: 16px !important;
+    }
+
+        table tbody td.text-left {
+            padding-left: 5px !important;
+        }
+
+    .bg-yellow {
+        background-color: #fff8cf;
+    }
+
+    .row {
+        margin-bottom: 10px;
+    }
+
+    .form .row {
+        margin-left: -5px;
+        margin-right: -5px;
+        margin-bottom: 10px;
+    }
+
+        .form .row [class*="col-md"] {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+
+    .form input, .form select {
+        max-width: 100%;
+    }
+
+    tr.color-0 {
+    }
+
+    tr.color-1 {
+        background-color: #ffd800;
+    }
+
+    tr.color-2 {
+        background-color: #ffdede;
+    }
+
+    table thead {
+        background-color: #e4e4e4;
+    }
+
+    /*#btnDuyet { position: absolute; right: 0; top: -40px; z-index: 100; display: none; }*/
+</style>
+
+<div class="clearfix" style="margin-bottom: 10px;">
+    <button class="btn btn-info btn-sm pull-left" id="export-ds">Export danh sách</button>
+    <button class="btn btn-danger pull-right input-sm" id="btnHuyDuyet" style="margin-left: 5px;">Từ chối nhanh</button>
+    <button class="btn btn-info pull-right input-sm" id="btnDuyet">Duyệt nhanh</button>
+</div>
+<table class="table table-bordered table-hover" id="table-data">
+    <thead>
+        <tr>
+            <th class="text-center">Mã NV</th>
+            <th class="text-left">Họ và tên</th>
+            <th class="text-left">Khoa Phòng</th>
+            <th class="text-left">Ngày đề xuất</th>
+            <th class="text-left">Loại đề xuất</th>
+            <th class="text-left">Giờ vào</th>
+            <th class="text-left">Giờ ra</th>
+            <th class="text-left">Giải trình</th>
+            <th>Ngày cập nhật</th>
+            <th class="text-center">Kết quả</th>
+            <th>Khoa/Phòng</th>
+            <th class="text-center no-sort"><input type="checkbox" id="checkAll" /></th>
+            <th class="text-center">HCNS</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (System.Data.DataRow row in Model.Rows)
+        {
+            int __status = int.Parse(row["Status"].ToString());
+
+            if (ViewBag.Permission == "HCNS_Manager")
+            {
+                <tr>
+                    <td class="text-left nowrap">@row["UserFullCode"].ToString()</td>
+                    <td class="text-left nowrap">@row["UserFullName"].ToString()</td>
+                    <td class="text-left nowrap">@row["Description"].ToString()</td>
+                    <td class="text-left nowrap">@DateTime.Parse(row["Date"].ToString()).ToString("dd/MM/yyyy")</td>
+                    <td class="text-left nowrap">@row["Des"].ToString()</td>
+                    <td class="text-left nowrap">@(string.IsNullOrEmpty(row["In1F"].ToString()) ? "" : DateTime.Parse(row["In1F"].ToString()).ToString("HH:mm:ss"))</td>
+                    <td class="text-left nowrap">@(string.IsNullOrEmpty(row["Out1F"].ToString()) ? "" : DateTime.Parse(row["Out1F"].ToString()).ToString("HH:mm:ss"))</td>
+                    <td class="text-left">@row["UserNote1"].ToString()</td>
+                    <td class="text-left nowrap">@DateTime.Parse(row["UpdateTime"].ToString()).ToString("dd/MM/yyyy HH:mm")</td>
+
+                    @if (__status == 0)
+                    {
+                        <td>Chưa xử lý</td>
+                        <td class="nowrap">
+                            <a href="javascript:;" data-url="/hcns/chamcong/QuanLyGiaiTrinh_duyet?p=HCNS_Manager&userid=@row["UserEnrollNumber"].ToString()&date=@DateTime.Parse(row["Date"].ToString()).ToString("dd/MM/yyyy")" class="btn-accept">Duyệt/Hủy</a>
+                        </td>
+
+                        <td><input type="checkbox" value="@(DateTime.Parse(row["Date"].ToString()).ToString("dd/MM/yyyy") + "." + row["UserEnrollNumber"].ToString())" name="chk-item" class="chk-item" /></td>
+                        <td></td>
+                    }
+                    else if (__status == 1 || __status == -1)
+                    {
+                        <td>@(__status == 1 ? "Đã duyệt" : "Không duyệt")</td>
+                        <td class="nowrap">
+                            <a href="javascript:;" data-url="/hcns/chamcong/QLGT_Huyduyet1?p=HCNS_Manager&userid=@row["UserEnrollNumber"].ToString()&date=@DateTime.Parse(row["Date"].ToString()).ToString("dd/MM/yyyy")" class="btn-huy">Hủy kết quả</a>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    }
+                    else if (__status == 2 || __status == -2)
+                    {
+                        <td>@(__status == 2 ? "HCNS đã xác nhận" : "HCNS Không duyệt")</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    }
+                </tr>
+            }
+            if (ViewBag.Permission == "HCNS_Admin")
+            {
+                <tr>
+                    <td class="text-left nowrap">@row["UserFullCode"].ToString()</td>
+                    <td class="text-left nowrap">@row["UserFullName"].ToString()</td>
+                    <td class="text-left nowrap">@row["Description"].ToString()</td>
+                    <td class="text-left nowrap">@DateTime.Parse(row["Date"].ToString()).ToString("dd/MM/yyyy")</td>
+                    <td class="text-left nowrap">@row["Des"].ToString()</td>
+                    <td class="text-left nowrap">@(string.IsNullOrEmpty(row["In1F"].ToString()) ? "" : DateTime.Parse(row["In1F"].ToString()).ToString("HH:mm:ss"))</td>
+                    <td class="text-left nowrap">@(string.IsNullOrEmpty(row["Out1F"].ToString()) ? "" : DateTime.Parse(row["Out1F"].ToString()).ToString("HH:mm:ss"))</td>
+                    <td class="text-left">@row["UserNote1"].ToString()</td>
+                    <td class="text-left nowrap">@DateTime.Parse(row["UpdateTime"].ToString()).ToString("dd/MM/yyyy HH:mm")</td>
+
+                    @if (__status == 1 || __status == -1)
+                    {
+                        <td class="text-left nowrap">@(__status == 1 ? "QL Đã duyệt" : "QL Không duyệt")</td>
+                        <td>@row["DeptNote1"].ToString()</td>
+                        if (__status == 1)
+                        {
+                            <td><input type="checkbox" value="@(DateTime.Parse(row["Date"].ToString()).ToString("dd/MM/yyyy") + "." + row["UserEnrollNumber"].ToString())" name="chk-item" class="chk-item" /></td>
+                            <td class="nowrap">
+                                <a href="javascript:;" data-url="/hcns/chamcong/QuanLyGiaiTrinh_duyet?p=HCNS_Admin&userid=@row["UserEnrollNumber"].ToString()&date=@DateTime.Parse(row["Date"].ToString()).ToString("dd/MM/yyyy")" class="btn-accept">Duyệt/Hủy</a>
+                            </td>
+
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                        }
+
+                    }
+                    else if (__status == 2 || __status == -2)
+                    {
+                        <td class="text-left nowrap">@(__status == 2 ? "HCNS Đã duyệt" : "HCNS Không duyệt")</td>
+                        <td></td>
+                        <td></td>
+                        <td class="nowrap"><a href="javascript:;" data-url="/hcns/chamcong/QLGT_Huyduyet1?p=HCNS_Admin&userid=@row["UserEnrollNumber"].ToString()&date=@DateTime.Parse(row["Date"].ToString()).ToString("dd/MM/yyyy")" class="btn-huy">Hủy kết quả</a></td>
+                    }
+                    else
+                    {
+                        <td class="nowrap">Chưa xử lý</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#checkAll', function () {
+            $('.chk-item').not(this).prop('checked', this.checked);
+        });
+
+        $("#export-ds").click(function (e) {
+            var kp = $("#Department option:selected").val();
+            var ngaybd = $("#sdate").val();
+            var ngaykt = $("#edate").val();
+            var manv = $("#UserFullName").val();
+            var tt = $("#status option:selected").val();
+
+            var url = "/hcns/chamcong/ExportExcelGiaiTrinh?ngaybd=" + ngaybd + "&ngaykt=" + ngaykt + "&manv=" + manv + "&kp=" + kp + "&tt=" + tt;
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data, status) {
+                    window.location = url;
+                }
+            });
+            e.preventDefault();
+        });
+
+        //$('input[type="checkbox"]').change(function () {
+        //    var person = [];
+        //    $(_tabledata.$('input[type="checkbox"]').map(function () {
+        //        return $(this).prop("checked") ? person.push($(this).val()) : null;
+        //    }));
+        //    if (person.length > 0) { $("#btnDuyet").show(); }
+        //    else { $("#btnDuyet").hide(); }
+        //});
+        $("#btnDuyet").click(function () {
+            var person = [];
+            $(_tabledata.$('input[type="checkbox"]').map(function () {
+                return $(this).prop("checked") ? person.push($(this).val()) : null;
+            }));
+
+            if (person.length == 0) {
+                $(this).callToast("error", '', "Chưa có bản ghi nào được chọn.");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/hcns/chamcong/Push_DuyetNhanhGiaiTrinh",
+                data: { dateString: person.toString() },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        $(".form-search #btnSearch").focus().click();
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+        });
+        $("#btnHuyDuyet").click(function () {
+            var person = [];
+            $(_tabledata.$('input[type="checkbox"]').map(function () {
+                return $(this).prop("checked") ? person.push($(this).val()) : null;
+            }));
+            if (person.length == 0) {
+                $(this).callToast("error", '', "Chưa có bản ghi nào được chọn.");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/hcns/chamcong/Push_HuyDuyetNhanhGiaiTrinh",
+                data: { dateString: person.toString() },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        $(".form-search #btnSearch").focus().click();
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+        });
+        $(document).on('change', '.all', function () {
+            var cVal = $(this).val();
+            var parent_row = $(this).parent().parent();
+            $(parent_row).find("select").val(cVal);
+        });
+
+        $(".btn-accept").on('click', function (e) {
+            var __url = $(this).attr("data-url");
+            $(this).callModal(__url);
+            e.preventDefault();
+        });
+        $(".btn-huy").on('click', function (e) {
+            var __url = $(this).attr("data-url");
+
+            var r = confirm("Tiếp tục tiến hành hủy kết quả đã duyệt?");
+
+            if (r == true) {
+                $.ajax({
+                    type: "POST",
+                    url: __url,
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).callToast("success", '', 'Cập nhật thành công');
+                            //$("#nhanvien").val(userEnroll);
+                            $(".form-search #btnSearch").focus().click();
+                        }
+                        else {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                        }
+                    }
+                });
+            }
+
+            e.preventDefault();
+        });
+        var _tabledata = $("#table-data").DataTable({
+            "pageLength": 20,
+            "processing": true,
+            "deferRender": true,
+            "columnDefs": [{
+                "targets": 'no-sort',
+                "orderable": false
+            }],
+            "language": {
+                "sProcessing": "Đang xử lý...",
+                "sLengthMenu": "Xem _MENU_ mục",
+                "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                "sInfoPostFix": "",
+                "sSearch": "Tìm:",
+                "sUrl": "",
+                "oPaginate": {
+                    "sFirst": "Đầu",
+                    "sPrevious": "Trước",
+                    "sNext": "Tiếp",
+                    "sLast": "Cuối"
+                }
+            }
+        });
+
+    });
+</script>

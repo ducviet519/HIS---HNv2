@@ -1,0 +1,91 @@
+﻿@model System.App.Entities.HCNS.CC_CheckInOut
+<style type="text/css">
+    .modal-lg { width: 600px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .panel-body { padding: 15px; max-height: 500px; overflow: auto; }
+        .panel-body input, .panel-body select { max-width: inherit; }
+        .panel-body .form-group { margin-bottom: 10px; }
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+        .panel-body textarea { max-width: 100%; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    #load-day > div { float: left; width: 49px; margin-bottom: 5px; }
+        #load-day > div > input[type='checkbox'] { float: left; margin: 1px 5px 0 0; }
+    #staticModal .info { background-color: #e7f3fe; border-left: 6px solid #2196F3; padding: 8px; margin-bottom: 10px; }
+        #staticModal .info p { margin-bottom: 0; font-size: 11px; color: #696969; }
+</style>
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Sửa thông tin công ngày: @Model.TimeDate</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Thời gian cũ</label>
+                            <input type="text" value="@Model.TimeStr" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Thời gian mới</label>
+                            <input type="text" value="" class="form-control time newText" placeholder="00:00:00" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-footer text-center">
+                    <input type="button" value="Xác nhận sửa" class="btn btn-primary btn-sm" id="btnSubmit" />
+                    <input type="button" value="Đóng" class="btn btn-default btn-sm" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.time').mask('00:00:00', { clearIfNotMatch: true });
+        $("#btnSubmit").click(function (e) {
+            var _id = '@Model.UserEnrollNumber';
+            var _date = '@Model.TimeDate';
+            var _time = '@Model.TimeStr';
+            var _newTime = $(".newText").val();
+            $.ajax({
+                type: "POST",
+                url: "/hcns/chamcong/Push_SuaDuLieuCong",
+                data: {
+                    id: _id,
+                    date: _date,
+                    time: _time,
+                    newTime: _newTime
+                },
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        $("#btnSearch").focus().click();
+                    }
+                    else {
+                        if (data.message == '') {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc lịch đặt bị trùng.");
+                        } else {
+                            $(this).callToast("error", '', data.message);
+                        }
+
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+    });
+</script>

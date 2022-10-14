@@ -1,0 +1,123 @@
+﻿@model System.App.Entities.DanhMuc_LichTrinh
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 500px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục Lịch trình</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label>Lịch làm việc</label>
+                            @Html.DropDownList("upd_lt_SchID", ViewBag.SCHEDULE as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        @if (Model.DayID == "1")
+                        {
+                            <div class="form-group col-md-2">
+                                <label style="margin-top:30px">Chủ nhật:</label>
+                            </div>
+                        }
+                        else if (Model.DayID == "2")
+                        {
+                            <div class="form-group col-md-2">
+                                <label style="margin-top:30px">Thứ hai:</label>
+                            </div>
+                        }
+                        else if (Model.DayID == "3")
+                        {
+                            <div class="form-group col-md-2">
+                                <label style="margin-top:30px">Thứ ba:</label>
+                            </div>
+                        }
+                        else if (Model.DayID == "4")
+                        {
+                            <div class="form-group col-md-2">
+                                <label style="margin-top:30px">Thứ tư:</label>
+                            </div>
+                        }
+                        else if (Model.DayID == "5")
+                        {
+                            <div class="form-group col-md-2">
+                                <label style="margin-top:30px">Thứ năm:</label>
+                            </div>
+                        }
+                        else if (Model.DayID == "6")
+                        {
+                            <div class="form-group col-md-2">
+                                <label style="margin-top:30px">Thứ sáu:</label>
+                            </div>
+                        }
+                        else if (Model.DayID == "7")
+                        {
+                            <div class="form-group col-md-2">
+                                <label style="margin-top:30px">Thứ bảy:</label>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-group col-md-2">
+                                <label style="margin-top:30px">Khác:</label>
+                            </div>
+                        }
+                        <div class="form-group col-md-8">
+                            <label>Ca làm việc</label>
+                            @Html.DropDownList("upd_lt_ShiftID", ViewBag.SHIFT as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-2">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_lt_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_lt_btnUpdate").click(function (e) {
+            var _ID = @Model.ID;
+            var _DayID = @Model.DayID;
+            var _SchID = $("select[name='upd_lt_SchID'] option:selected").val();
+            var _ShiftID = $("select[name='upd_lt_ShiftID'] option:selected").val();
+
+            var obj = {
+                "ID": _ID,
+                "DayID": _DayID,
+                "SchID": _SchID,
+                "ShiftID": _ShiftID,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_LichTrinh", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Lịch trình đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

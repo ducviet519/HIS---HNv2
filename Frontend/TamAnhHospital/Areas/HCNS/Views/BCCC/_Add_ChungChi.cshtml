@@ -1,0 +1,159 @@
+﻿@model System.App.Entities.HCNS.ChungChi
+
+<link rel="stylesheet" href="~/Content/jquery-ui.css">
+<script src="~/Scripts/jquery-ui.min.js"></script>
+
+<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .panel-body { padding: 15px; max-height: 500px; overflow: auto; }
+        .panel-body input, .panel-body select { max-width: inherit; }
+        .panel-body .form-group { margin-bottom: 10px; }
+        .panel-body .block > .title { background-color: #3882b6; padding: 5px 8px; color: #fff; font-size: 14px; }
+        .panel-body textarea { max-width: 100%; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    #load-day > div { float: left; width: 49px; margin-bottom: 5px; }
+        #load-day > div > input[type='checkbox'] { float: left; margin: 1px 5px 0 0; }
+    #staticModal .info { background-color: #e7f3fe; border-left: 6px solid #2196F3; padding: 8px; margin-bottom: 10px; }
+        #staticModal .info p { margin-bottom: 0; font-size: 11px; color: #696969; }
+</style>
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                @using (Html.BeginForm("Push_ChungChi", "BCCC", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+                {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(x => x.UserEnrollNumber)
+
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Tạo mới dữ liệu chứng chỉ</h4>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="UserFullName">Chọn nhân viên</label>
+                                @Html.EditorFor(model => model.UserFullName, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label for="Des">Tên chứng chỉ</label>
+                                @Html.TextBoxFor(model => model.Des, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-xs-2">
+                            <div class="form-group">
+                                <label for="Les">Số tiết</label>
+                                @Html.TextBoxFor(x => x.Les, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 col-xs-8">
+                            <div class="form-group">
+                                <label for="IssuedBy">Được cấp bởi</label>
+                                @Html.TextBoxFor(x => x.IssuedBy, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-xs-2">
+                            <div class="form-group">
+                                <label for="SDate">Từ ngày</label>
+                                @Html.TextBoxFor(x => x.SDate, new { @class = "form-control input-sm datepicker" })
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-xs-2">
+                            <div class="form-group">
+                                <label for="EDate">Đến ngày</label>
+                                @Html.TextBoxFor(x => x.EDate, new { @class = "form-control input-sm datepicker" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="form-inline">
+                        <div class="form-group"><input type="submit" value="Cập nhật" class="btn btn-primary" id="btnSubmit" /></div>
+                        <div class="form-group"><input type="button" class="btn btn-default" data-dismiss="modal" value="Đóng" /></div>
+                    </div>
+                </div><!-- ./panel-footer -->
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $("#UserFullName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/hcns/nhanvien/GetUser",
+                    type: "POST",
+                    dataType: "json",
+                    data: { prefix: request.term },
+                    success: function (data) {
+                        response($.map(JSON.parse(data), function (item) {
+                            var display = "[" + item.UserFullCode + "] " + item.UserFullName;
+                            return { label: display, value: display, id: item.UserEnrollNumber };
+                        }))
+                    }
+                })
+            },
+            select: function (event, ui) {
+                $("#modalForm #UserEnrollNumber").val(ui.item.id);
+                $("#modalForm #UserFullName").val(ui.item.label);
+            }
+        });
+
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+            var userEnroll = $("#modalForm #UserEnrollNumber").val();
+
+            if (userEnroll == '') {
+                $(this).callToast("error", '', 'Thông tin nhân viên không đúng, vui lòng chọn lại.');
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        if ($("#searchForm").val() == '') {
+                            $("#searchForm #TextSearch").val($("#staticModalContainer #UserEnrollNumber").val());
+                        }
+                        $("#TextSearch").val(userEnroll);
+                        $("#btnSearch").focus().click();
+                    }
+                    else {
+                        if (data.message == '') {
+                            $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu hoặc lịch đặt bị trùng.");
+                        } else {
+                            $(this).callToast("error", '', data.message);
+                        }
+
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

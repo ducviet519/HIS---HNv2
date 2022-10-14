@@ -1,0 +1,250 @@
+﻿@{
+    ViewBag.Title = "NghiViec";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+    .head-section, .middle-section { margin-bottom: 10px; }
+        .head-section .input-group { display: flex; }
+    .form-group { margin-bottom: 0; }
+    .middle-action { border: 1px solid #ddd; padding: 5px; }
+    #hcns-table_wrapper .row:first-child { display: none; }
+
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+</style>
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Thông tin nhân sự đã nghỉ việc</h4>
+        </div>
+
+        <div class="form">
+            <input type="hidden" value="search" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Mã | Tên nhân viên</label>
+                        <input type="text" class="form-control input-sm" placeholder="Mã nhân viên" id="UserEnrollNumber" name="UserEnrollNumber" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Chọn khoa phòng</label>
+                        @Html.DropDownList("PhongKhoaHC", new SelectList(ViewBag.DSKPHC, "Key", "Value"), "-- Tất cả --", new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select class="form-control input-sm">
+                            <option>--- Chọn trạng thái ---</option>
+                            <option value="1">Nghỉ việc</option>
+                            <option value="2">Nghỉ sinh</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="Tìm kiếm" class="btn btn-info btn-sm" id="btnSearch" style="margin-top: 22px;" />
+                </div>
+            </div>
+        </div>
+    </div><!-- ./head-section -->
+
+    <div class="middle-section">
+        <div class="middle-action">
+            <div class="form-group">
+                @*<a href="javascript:;" id="btnCreate" class="btnCreate btn btn-primary btn-sm"><i class="fa fa-plus"></i> Thêm mới</a>*@
+                <a href="javascript:;" onclick="window.location.reload(false);" class="btn btn-default btn-sm">Tải lại trang</a>
+                @*<a href="javascript:;" class="btn btn-default btn-sm" id="uploadAllFile">Upload test</a>*@
+                <input type="text" class="form-control input-sm" placeholder="Điền từ khóa cần tìm kiếm" id="fsearch" style="float: right; max-width: 300px;" />
+            </div>
+        </div>
+
+        <div id="table-data">
+            @*@Html.Action("NghiViec_Table_Data", "NhanVien", new { areas = "HCNS.Controllers" })*@
+
+            <table class="table table-bordered table-hover" id="hcns-table">
+                <thead>
+                    <tr>
+                        <th width="10"></th>
+                        <th width="20" class="no-sort"></th>
+                        <th width="20" class="no-sort"></th>
+                        <th class="nowrap">Mã NV</th>
+                        <th class="nowrap">Họ và tên</th>
+                        <th class="nowrap">Giới tính</th>
+                        <th class="nowrap">Chức danh</th>
+                        <th class="nowrap">Khoa / Phòng</th>
+                        <th class="nowrap">Ngày sinh</th>
+                        <th class="nowrap">Ngày vào</th>
+                        <th class="nowrap">Ngày nghỉ</th>
+                        <th class="nowrap">Ngày làm việc cuối cùng</th>
+                        <th class="nowrap">Lý do nghỉ</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var _columns = [
+            { "data": {} },
+            {
+                data: { user: "UserEnrollNumber" },
+                "render": function (data) {
+                    return "<a href=\"javascript:;\" data-href=\"/hcns/nhanvien/Sua_NghiViec?id=" + data.UserEnrollNumber + "\" class=\"btnEdit\"><i class=\"fa fa-edit\"></i> Sửa</a>";
+                },
+                "width": "20px"
+            },
+            {
+                className: "text-center",
+                data: {},
+                "render": function (data) {
+                    return "<a href=\"javascript:;\" data-href=\"/hcns/nhanvien/NghiViec_XoaThongTin?user=" + data.UserEnrollNumber + "\" class=\"btnDelete text-center\" style=\"color: #ff0000;\"><i class=\"fa fa-remove\"></i> Xóa</a>";
+                },
+                "width": "20px"
+            },
+            { "data": "UserFullCode" },
+            { "data": "UserFullName" },
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.GioiTinh == "") {
+                        return "-";
+                    }
+                    return data.GioiTinh;
+                }
+            },
+            { "data": "ChucDanh" },
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.Ten_PhongKhoaHC == "") {
+                        return "-";
+                    }
+                    return data.Ten_PhongKhoaHC;
+                }
+            },
+            { "data": "NgaySinh" },
+            { "data": "NgayVao" },
+            { "data": "NgayNghi" },
+            { "data": "NgayLVCC" },
+            { "data": "LyDoNghi" }
+
+        ];
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.head-section .form').keypress(keypressHandler);
+
+        $(document).on('click', '.btnDelete', function () {
+            var r = confirm("Bạn đang thực hiện thao tác xóa thông tin nghỉ việc, có muốn tiếp tục?");
+
+            if (r) {
+                $.ajax({
+                    type: "GET",
+                    url: $(this).attr('data-href'),
+                    success: function (data) {
+                        if (data.result == true) {
+                            $(this).closest("tr").remove();
+                        }
+                    }
+                });
+            }
+        });
+
+        $(document).on('click', '.btnEdit', function () {
+            var url = $(this).attr("data-href");
+            $(this).callModal(url);
+        });
+
+        $("#btnSearch").click(function () {
+            var _id = $("#UserEnrollNumber").val();
+            var _pkhc = $("#PhongKhoaHC option:selected").val();
+            var _gio = $("#SoGioLamViec option:selected").val();
+            var _trangthai = $("#TrangThai option:selected").val();
+
+            var action = $("#action").val();
+
+            var urlParams = "a=" + action;
+            if ($.trim(_id) != "")
+                urlParams += "&search=" + $.trim(_id);
+            if (_pkhc != "")
+                urlParams += "&kphc=" + _pkhc;
+            if (_trangthai != "")
+                urlParams += "&tt=" + _trangthai;
+
+            //$("#table-data").load("/hcns/nhanvien/NghiViec_Table_Data?" + urlParams);
+
+            Reload_DataTable("hcns-table", _columns, "/hcns/nhanvien/NghiViec_TableData?" + urlParams);
+        });
+
+        Reload_DataTable("hcns-table", _columns, "/hcns/nhanvien/NghiViec_TableData");
+
+        $.fn.dataTable.moment('DD/MM/YYYY');
+
+        function Reload_DataTable(id, columns, source) {
+            $.fn.dataTable.moment('DD/MM/YYYY');
+            id = "#" + id;
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 15,
+                "autoWidth": true,
+                "processing": true,
+                "columns": columns,
+                "deferRender": true,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "createdRow": function (row, data, dataIndex) {
+                    //if (data.GoiY == 0 && data.HienThi == 1) {
+                    //    $(row).addClass("row_highlight");
+                    //}
+                },
+                "language": {
+                    "sProcessing": "Đang tải dữ liệu...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+        }
+    });
+</script>

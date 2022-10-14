@@ -1,0 +1,69 @@
+﻿@model System.App.Entities.DanhMuc_LichLamViec
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục Lịch làm việc</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label>Lịch làm việc</label>
+                            @Html.TextBox("upd_lichlv_ten", Model.SchName, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>InOutID</label>
+                            @Html.DropDownList("upd_lichlv_inoutid", ViewBag.INOUTID as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_lichlv_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_lichlv_btnUpdate").click(function (e) {
+            var _SchID = @Model.SchID;
+            var _SchName = $("#upd_lichlv_ten").val();
+            var _InOutID = $("select[name='upd_lichlv_inoutid'] option:selected").val();
+            if (_SchName == '') {
+                $(this).callToast("error", 'Chưa nhập lịch làm việc', '');
+                return;
+            }
+
+            var obj = {
+                "SchID": _SchID,
+                "SchName": _SchName,
+                "InOutID": _InOutID,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_LichLamViec", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Lịch làm việc đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

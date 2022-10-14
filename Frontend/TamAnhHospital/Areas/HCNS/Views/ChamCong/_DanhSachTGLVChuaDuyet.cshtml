@@ -1,0 +1,286 @@
+﻿<style type="text/css">
+    .modal-lg { width: 800px; }
+    .panel-heading { background: #3882B6; }
+        .panel-heading h4 { font-size: 15px; margin: 0; color: #fff; }
+            .panel-heading h4 i { margin-right: 5px; }
+    .form input[type='text'], form select, form textarea { max-width: none; }
+    .form .row { margin-left: -5px; margin-right: -5px; }
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+    .form .infor-box { margin-bottom: 10px; }
+        .form .infor-box .title-box { margin-top: 0; background: #e8e8e8; padding: 7px; font-weight: bold; }
+    .eac-square input { background-image: url("~/images/icon_search.png"); background-repeat: no-repeat; background-position: right 10px center; }
+    .ui-autocomplete { z-index: 9999; }
+    .dataTables_wrapper > .row:first-child { display: none; }
+    .dataTable thead th { background: #3882b6; color: #fff; padding: 10px 8px !important; font-size: 12px; }
+    .modal .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+        .modal .row [class*="col-md"], .modal .row [class*="col-sm"] { padding-right: 5px; padding-left: 5px; }
+    #staticModal thead th { font-size: 12px; }
+</style>
+@{
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM01");
+    var sdate = ""; var edate = "";
+    if (DateTime.UtcNow.AddHours(7).Month == 4 || DateTime.UtcNow.AddHours(7).Month == 6 || DateTime.UtcNow.AddHours(7).Month == 9 || DateTime.UtcNow.AddHours(7).Month == 11)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("30/MM/yyyy");
+    }
+    else if (DateTime.UtcNow.AddHours(7).Month == 1 || DateTime.UtcNow.AddHours(7).Month == 3 || DateTime.UtcNow.AddHours(7).Month == 5 || DateTime.UtcNow.AddHours(7).Month == 7 || DateTime.UtcNow.AddHours(7).Month == 8 || DateTime.UtcNow.AddHours(7).Month == 10 || DateTime.UtcNow.AddHours(7).Month == 12)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("31/MM/yyyy");
+    }
+    else
+    {
+        if (DateTime.UtcNow.AddHours(7).Year / 4 == 0)
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("29/MM/yyyy");
+        }
+        else
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("28/MM/yyyy");
+        }
+    }
+
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+    var userAuth = ViewBag.UserAuth;
+}
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 80%;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h4><i class="fa fa-list"></i>Danh sách thời gian làm việc chưa duyệt</h4>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+
+                <div class="panel-body form">
+                    <div class="form-search">
+                        <div class="row">
+                            <div class="col-md-2 col-xs-2">
+                                <label for="date_cc">Xem từ ngày</label>
+                                <input type="text" id="modal-sdate" class="form-control datepicker input-sm" value="@sdate" autocomplete="off" readonly required />
+                            </div>
+                            <div class="col-md-2 col-xs-2">
+                                <label for="date_cc">đến ngày</label>
+                                <input type="text" id="modal-edate" class="form-control datepicker input-sm" value="@edate" autocomplete="off" readonly required />
+                            </div>
+                            <div class="col-md-3 col-xs-3">
+                                <label>Khoa/Phòng</label>
+                                @Html.DropDownList("Department", new SelectList(ViewBag.KhoaPhong, "Key", "Value", userInfo.KhoaPhong), new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="col-md-2 col-xs-3">
+                                <label for="UserFullName">Nhân viên</label>
+                                <input type="text" id="UserFullName" class="form-control input-sm" value="" autocomplete="off" />
+                            </div>
+                            <div class="col-md-2 col-xs-2">
+                                <button type="button" id="mbtnSearch" class="btn btn-default btn-sm" style="margin-top: 22px;">Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered" style="width: 100%" id="dataFilter">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" width="40">STT</th>
+                                <th rowspan="2" width="40">Mã NV</th>
+                                <th rowspan="2">Họ và tên</th>
+                                <th rowspan="2">Khoa/Phòng</th>
+                                <th rowspan="2" class="text-center">Ngày</th>
+                                <th rowspan="1" colspan="2" class="text-center">Đi muộn về sớm</th>
+                                <th rowspan="1" colspan="2" class="text-center">Làm thêm giờ</th>
+                                <th rowspan="1" colspan="2" class="text-center">Trực trưa</th>
+                            </tr>
+                            <tr>
+                                <th rowspan="1" colspan="1" style="min-width: 40px; max-width: 40px;"></th>
+                                <th rowspan="1" colspan="1" class="no-sort" style="min-width: 40px; max-width: 40px;"><input type="checkbox" id="checkAll_1" /></th>
+                                <th rowspan="1" colspan="1" style="min-width: 40px; max-width: 40px;"></th>
+                                <th rowspan="1" colspan="1" class="no-sort" style="min-width: 40px; max-width: 40px;"><input type="checkbox" id="checkAll_2" /></th>
+                                <th rowspan="1" colspan="1" style="min-width: 40px; max-width: 40px;"></th>
+                                <th rowspan="1" colspan="1" class="no-sort" style="min-width: 40px; max-width: 40px;"><input type="checkbox" id="checkAll_3" /></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div class="panel-footer text-center">
+                    <input type="button" value="Duyệt" class="btn btn-primary btn-sm" id="modal-submit" disabled />
+                    <input type="button" value="Hủy duyệt" class="btn btn-primary btn-sm" id="modal-submit" disabled />
+                    <input type="button" value="Đóng" class="btn btn-default btn-sm" data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#staticModal #Department").chosen();
+
+        $(document).on('click', '#checkAll_1', function () {
+            $('.chk-confirm-1').not(this).prop('checked', this.checked);
+        });
+        $(document).on('click', '#checkAll_2', function () {
+            $('.chk-confirm-2').not(this).prop('checked', this.checked);
+        });
+        $(document).on('click', '#checkAll_3', function () {
+            $('.chk-confirm-3').not(this).prop('checked', this.checked);
+        });
+
+        $("#modal-submit").click(function (e) {
+            var allValsID_1 = [];
+            var allValsDate_1 = [];
+            var allValsID_2 = [];
+            var allValsDate_2 = [];
+            var allValsID_3 = [];
+            var allValsDate_3 = [];
+
+            $("input[name='chk_1']:checked").each(function () {
+                var _date = $(this).attr("data-date");
+                var _id = $(this).attr("data-val");
+                allValsID_1.push(_id);
+                allValsDate_1.push(_date);
+            });
+            $("input[name='chk_2']:checked").each(function () {
+                var _date = $(this).attr("data-date");
+                var _id = $(this).attr("data-val");
+                allValsID_2.push(_id);
+                allValsDate_2.push(_date);
+            });
+            $("input[name='chk_3']:checked").each(function () {
+                var _date = $(this).attr("data-date");
+                var _id = $(this).attr("data-val");
+                allValsID_3.push(_id);
+                allValsDate_3.push(_date);
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/hcns/chamcong/Push_DanhSachTGLVChuaDuyet",
+                data: { ids_1: allValsID_1, dates_1: allValsDate_1, ids_2: allValsID_2, dates_2: allValsDate_2, ids_3: allValsID_3, dates_3: allValsDate_3 },
+                success: function (data) {
+                    if (data.result == true) {
+                        $("#modal-submit").callToast("success", '', 'Cập nhật thành công');
+                        //$("#nhanvien").val(userEnroll);
+                        $("#staticModal #mbtnSearch").focus().click();
+                    }
+                    else {
+                        $(this).callToast("error", '', "Đã có lỗi xảy ra trong quá trình truyền tải dữ liệu.");
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+        var _columns = [
+            { "data": {} },
+            { "data": "UserFullCode" },
+            { "data": "UserFullName" },
+            { "data": "KhoaPhong" },
+            { "data": "Date" },
+            {
+                "data": "WStats1Code"
+            },
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.WStats1 != "" || data.WStats1 != 0) {
+                        return "<input type=\"checkbox\" class=\"chk-confirm-1\" name=\"chk_1\" value=\"false\" data-val=\"" + data.UserEnrollNumber + "\" data-date=\"" + data.Date + "\"></input>";
+                    } else {
+                        return "<input type=\"checkbox\" name=\"chk_1\" value=\"false\" data-val=\"" + data.UserEnrollNumber + "\" data-date=\"" + data.Date + "\" disabled></input>";
+                    }
+                }
+            },
+            { "data": "WStats2Code" },
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.WStats2 != "" || data.WStats2 != 0) {
+                        return "<input type=\"checkbox\" class=\"chk-confirm-2\" name=\"chk_2\" value=\"false\" data-val=\"" + data.UserEnrollNumber + "\" data-date=\"" + data.Date + "\"></input>";
+                    } else {
+                        return "<input type=\"checkbox\" name=\"chk_2\" value=\"false\" data-val=\"" + data.UserEnrollNumber + "\" data-date=\"" + data.Date + "\" disabled></input>";
+                    }
+                }
+            },
+            { "data": "WStats3Code" },
+            {
+                "data": {},
+                "render": function (data) {
+                    if (data.WStats3 != "" || data.WStats3 != 0) {
+                        return "<input type=\"checkbox\" class=\"chk-confirm-3\" name=\"chk_3\" value=\"false\" data-val=\"" + data.UserEnrollNumber + "\" data-date=\"" + data.Date + "\"></input>";
+                    } else {
+                        return "<input type=\"checkbox\" name=\"chk_3\" value=\"false\" data-val=\"" + data.UserEnrollNumber + "\" data-date=\"" + data.Date + "\" disabled></input>";
+                    }
+                }
+            }
+        ];
+
+        Reload_DataTable("dataFilter", _columns, "/hcns/chamcong/Data_DanhSachTGLVChuaDuyet?from=" + $("#modal-sdate").val() + "&to=" + $("#modal-edate").val() + "&kp=" + $("#staticModal #Department option:selected").val() + "&userid=" + $("#staticModal #nhanvien").val());
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+
+        $("#mbtnSearch").click(function () {
+            Reload_DataTable("dataFilter", _columns, "/hcns/chamcong/Data_DanhSachTGLVChuaDuyet?from=" + $("#modal-sdate").val() + "&to=" + $("#modal-edate").val() + "&kp=" + $("#staticModal #Department option:selected").val() + "&userid=" + $("#staticModal #nhanvien").val());
+        });
+
+        function Reload_DataTable(id, column, source) {
+            id = "#" + id;
+
+            if ($.fn.dataTable.isDataTable(id)) {
+                $(id).DataTable().destroy();
+                $(id).find('tbody').empty();
+            }
+            var _tabledata = $(id).DataTable({
+                "ajax": {
+                    "url": source,
+                    "type": "GET",
+                    "datatype": "json",
+                },
+                "pageLength": 20,
+                "autoWidth": true,
+                "processing": true,
+                "columns": column,
+                "deferRender": true,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false
+                }],
+                "createdRow": function (row, data, index) {
+                    if (data.DaCapNhat == true) {
+                        $(row).addClass('complete');
+                    } else {
+                        $(row).addClass('pending');
+                    }
+                },
+                "language": {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "Xem _MENU_ mục",
+                    "sZeroRecords": "Không tìm thấy dòng nào phù hợp",
+                    "sInfo": "Đang xem _START_ đến _END_ trong tổng số _TOTAL_ mục",
+                    "sInfoEmpty": "Đang xem 0 đến 0 trong tổng số 0 mục",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "Đầu",
+                        "sPrevious": "Trước",
+                        "sNext": "Tiếp",
+                        "sLast": "Cuối"
+                    }
+                }
+            });
+            _tabledata.on('page.dt order.dt draw.dt', function () {
+                _tabledata.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1 + _tabledata.page.info().start;
+                });
+            }).draw();
+
+            $(id).on('processing.dt', function (e, settings, processing) {
+                $('#processingIndicator').css('display', processing ? 'block' : 'none');
+            }).dataTable();
+        }
+    });
+</script>

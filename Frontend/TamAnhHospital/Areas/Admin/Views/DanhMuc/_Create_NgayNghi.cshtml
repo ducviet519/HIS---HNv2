@@ -1,0 +1,78 @@
+﻿<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục địa điểm ăn</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Ngày nghỉ</label>
+                            @Html.TextBox("cre_nn_ngaynghi", @DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy"), new { @class = "form-control input-sm datepicker" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Tên ngày nghỉ</label>
+                            @Html.TextBox("cre_nn_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Ngày bù</label>
+                            @Html.TextBox("cre_nn_ngaybu", @DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy"), new { @class = "form-control input-sm datepicker" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_nn_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+
+        $("#cre_nn_btnCreate").click(function (e) {
+            var _HDate = $("input[name='cre_nn_ngaynghi']").val();
+            var _Holiday = $("#cre_nn_ten").val();
+            var _NgayBu = $("input[name='cre_nn_ngaybu']").val();
+            if (_HDate == '') {
+                $(this).callToast("error", 'Chưa nhập ngày nghỉ', '');
+                return;
+            }
+            if (_Holiday == '') {
+                $(this).callToast("error", 'Chưa nhập tên ngày nghỉ', '');
+                return;
+            }
+
+            var obj = {
+                "HDate": _HDate,
+                "Holiday": _Holiday,
+                "NgayBu": _NgayBu,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_NgayNghi", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Ngày nghỉ đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

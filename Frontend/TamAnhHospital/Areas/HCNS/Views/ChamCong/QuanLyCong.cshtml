@@ -1,0 +1,170 @@
+﻿@{
+    ViewBag.Title = "Quản lý công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    tr.expiring-soon td { background-color: #fff9d8 !important; }
+
+    tr.expried td { background-color: #f1f1f1 !important; }
+
+    .dataTables_wrapper > .row:first-child { display: none; }
+
+    .dataTable thead th { background: #3882b6; color: #fff; padding: 10px 8px !important; }
+
+    .dataTable tbody tr.pending { background: #fff3d2; }
+
+    .dataTable tbody tr.selected td { background: #eee; }
+
+    .dataTable tbody td p { margin-bottom: 5px; }
+
+        .dataTable tbody td p:last-child { margin-bottom: 0; }
+
+    .form .row { margin-left: -5px; margin-right: -5px; margin-bottom: 10px; }
+
+        .form .row [class*="col-md"] { padding-right: 5px; padding-left: 5px; }
+
+    .form input { max-width: 100%; }
+
+    .flex-row { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: flex-start; width: 100%; }
+
+    .flex-col { display: flex; flex-direction: column; flex-flow: column; flex-wrap: nowrap; justify-content: flex-start; }
+
+        .flex-col.flex-fill { width: 100%; }
+
+    .flex-right { margin-left: auto; width: 30%; padding-top: 68px; }
+
+    .flex-left { flex-grow: 1; max-width: 100%; padding-right: 10px; }
+
+    .chosen-container-single .chosen-single { height: 30px !important; line-height: 30px !important; }
+
+    .form-search .row { margin-left: -5px; margin-right: -5px; }
+
+    .form-search .col-md-1, .form-search .col-md-2, .form-search .col-md-3, .form-search .col-xs-1, .form-search .col-xs-2, .form-search .col-xs-3 { padding-left: 5px; padding-right: 5px; }
+
+    .title-bar { border-bottom: 1px solid #ccc; }
+
+        .title-bar h4 { margin: 0; }
+</style>
+@{
+    var userAuth = ViewBag.UserAuth as string;
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM01");
+    var sdate = ""; var edate = "";
+    if (DateTime.UtcNow.AddHours(7).Month == 4 || DateTime.UtcNow.AddHours(7).Month == 6 || DateTime.UtcNow.AddHours(7).Month == 9 || DateTime.UtcNow.AddHours(7).Month == 11)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("30/MM/yyyy");
+    }
+    else if (DateTime.UtcNow.AddHours(7).Month == 1 || DateTime.UtcNow.AddHours(7).Month == 3 || DateTime.UtcNow.AddHours(7).Month == 5 || DateTime.UtcNow.AddHours(7).Month == 7 || DateTime.UtcNow.AddHours(7).Month == 8 || DateTime.UtcNow.AddHours(7).Month == 10 || DateTime.UtcNow.AddHours(7).Month == 12)
+    {
+        sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+        edate = DateTime.UtcNow.AddHours(7).ToString("31/MM/yyyy");
+    }
+    else
+    {
+        if (DateTime.UtcNow.AddHours(7).Year / 4 == 0)
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("29/MM/yyyy");
+        }
+        else
+        {
+            sdate = DateTime.UtcNow.AddHours(7).ToString("01/MM/yyyy");
+            edate = DateTime.UtcNow.AddHours(7).ToString("28/MM/yyyy");
+        }
+    }
+}
+<div class="row title-bar">
+    <div class="col-md-12">
+        <h4>Quản lý công nhân viên</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-search">
+            <div class="row">
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">Xem từ ngày</label>
+                    <input type="text" id="sdate" class="form-control timepicker input-sm" value="@ViewBag.StartDate" autocomplete="off" readonly required />
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <label for="date_cc">đến ngày</label>
+                    <input type="text" id="edate" class="form-control timepicker input-sm" value="@ViewBag.EndDate" autocomplete="off" readonly required />
+                </div>
+                <div class="col-md-3 col-xs-3">
+                    <label>Khoa/Phòng</label>
+                    @if (userAuth == "HCNS_Admin")
+                    {
+                        @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value", userInfo.KhoaPhong), "Xem tất cả", new { @class = "form-control input-sm" })
+                    }
+                    else
+                    {
+                        @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Key", "Value", userInfo.KhoaPhong), new { @class = "form-control input-sm" })
+                    }
+                </div>
+                <div class="col-md-1 col-xs-2">
+                    <label>Mã nhân viên</label>
+                    <input type="text" class="form-control input-sm" placeholder="Nhập thông tin..." id="nhanvien" autocomplete="off" />
+                </div>
+                <div class="col-md-2 col-xs-3">
+                    <button type="button" id="btnSearch" class="btn btn-primary btn-sm" style="margin-top: 22px;">Xem công</button>
+                    <button type="button" id="btnExport" class="btn btn-info btn-sm" style="margin-top: 22px;">Xuất Excel</button>
+                </div>
+            </div>
+        </div>
+        <div id="loadPartial"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        AutoHeight();
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+        $('.form-search').keypress(keypressHandler);
+
+        function AutoHeight() {
+            var __height = $(window).height() - 60;
+            var __contentHeight = $(".fixed_header tbody").height();
+            var __setHeight = 0;
+
+            if (__contentHeight <= __height)
+                __setHeight = __height;
+            else
+                __setHeight = __contentHeight;
+
+            $(".fixed_header tbody").height(__setHeight);
+        }
+
+        $('.timepicker').datepicker({ format: 'dd/mm/yyyy' });
+        $("#Department").chosen();
+        //$("#loadPartial").load("/hcns/chamcong/table_quanlycong?s=" + $("#sdate").val() + "&e=" + $("#edate").val());
+
+        $("#btnExport").click(function () {
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+            var _department = $("#Department option:selected").val();
+            var _nhanvien = $("#nhanvien").val();
+
+            var url = "/hcns/chamcong/QLCong_Excel?s=" + _from + "&e=" + _to + "&makp=" + _department + "&manv=" + _nhanvien;
+            window.location = url;
+        });
+
+
+        $("#btnSearch").click(function () {
+            var _from = $("#sdate").val();
+            var _to = $("#edate").val();
+            var _department = $("#Department option:selected").val();
+            var _nhanvien = $("#nhanvien").val();
+
+            //$("#table-data").load("/hcns/nhanvien/Khaibaovang_Table_Data?" + urlParams);
+            $("#loadPartial").load("/hcns/chamcong/table_quanlycong?s=" + _from + "&e=" + _to + "&makp=" + _department + "&manv=" + _nhanvien);
+        });
+    });
+</script>

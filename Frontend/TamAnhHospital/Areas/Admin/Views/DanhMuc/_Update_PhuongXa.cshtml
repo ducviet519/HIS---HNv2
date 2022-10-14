@@ -1,0 +1,85 @@
+﻿@model System.App.Entities.DanhMuc_PhuongXa
+
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Sửa danh mục Phường xã</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label>Tên phường xã</label>
+                            @Html.TextBox("upd_px_ten", Model.Name, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Đơn vị hành chính</label>
+                            @Html.TextBox("upd_px_donvi", Model.WLevel, new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Quận huyện</label>
+                            @Html.DropDownList("upd_px_quanhuyen", ViewBag.QUANHUYEN as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Thành phố</label>
+                            @Html.DropDownList("upd_px_thanhpho", ViewBag.THANHPHO as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="upd_px_btnUpdate">Sửa</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#upd_px_btnUpdate").click(function (e) {
+            var _ID = @Model.ID;
+            var _Name = $("#upd_px_ten").val();
+            var _WLevel = $("#upd_px_donvi").val();
+            var _Dis = $("select[name='upd_px_quanhuyen'] option:selected").val();
+            var _CityID = $("select[name='upd_px_thanhpho'] option:selected").val();
+            if (_Name == '') {
+                $(this).callToast("error", 'Chưa nhập tên phường xã', '');
+                return;
+            }
+            if (_WLevel == '') {
+                $(this).callToast("error", 'Chưa nhập đơn vị hành chính', '');
+                return;
+            }
+
+            var obj = {
+                "ID": _ID,
+                "Name": _Name,
+                "WLevel": _WLevel,
+                "Dis": _Dis,
+                "CityID": _CityID,
+            };
+            $.ajax({
+                url: '@Url.Action("Edit_PhuongXa", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Sửa thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'Tên phường xã đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

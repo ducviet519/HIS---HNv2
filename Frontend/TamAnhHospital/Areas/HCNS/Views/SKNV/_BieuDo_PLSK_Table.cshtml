@@ -1,0 +1,109 @@
+﻿@model IEnumerable<System.App.Entities.HCNS.BieuDo_PLSK>
+<div id="chartContainer_plsk" style="height: 1500px; max-width: 100%; margin: 0px auto; ">
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("chartContainer_plsk", {
+            animationEnabled: true,
+            theme: "light2",
+            title: {
+                fontSize: 22,
+                text: "Biểu đồ theo dõi phân loại sức khỏe"
+            },
+            axisX: {
+                labelFontSize: 16,
+                titleWrap: false,
+                labelAutoFit: false,
+                interval: 1
+            },
+            axisY: {
+                title: "",
+                labelFontSize: 16,
+                labelAutoFit: false
+            },
+            legend: {
+                cursor: "pointer",
+                fontSize: 16
+            },
+            toolTip: {
+                shared: true
+            },
+            data: [{
+                type: "bar",
+                showInLegend: true,
+                name: "Không phân loại",
+                color: "#ff9c6b",
+                dataPoints: [
+                    @foreach(var item in Model)
+                    {
+                        if(item.PLSK == 0)
+                        {
+                            @(Html.Raw("{y: " + item.SoLuong + ", label: '" + item.KhoaPhong + "'},"));
+                        }
+                    }
+                ]
+            },{
+                type: "bar",
+                showInLegend: true,
+                name: "Loại 1",
+                color: "silver",
+                dataPoints: [
+                    @foreach(var item in Model)
+                    {
+                        if(item.PLSK == 1)
+                        {
+                            @(Html.Raw("{y: " + item.SoLuong + ", label: '" + item.KhoaPhong + "'},"));
+                        }
+                    }
+                ]
+            },
+                {
+                type: "bar",
+                showInLegend: true,
+                name: "Loại 2",
+                color: "#0090d3",
+                dataPoints: [
+                    @foreach(var item in Model)
+                    {
+                        if(item.PLSK == 2)
+                        {
+                            @(Html.Raw("{y: " + item.SoLuong + ", label: '" + item.KhoaPhong + "'},"));
+                        }
+                    }
+                ]
+            },
+                {
+                type: "bar",
+                showInLegend: true,
+                name: "Loại 3",
+                color: "#A57164",
+                dataPoints: [
+                    @foreach(var item in Model)
+                    {
+                        if(item.PLSK == 3)
+                        {
+                            @(Html.Raw("{y: " + item.SoLuong + ", label: '" + item.KhoaPhong + "'},"));
+                        }
+                    }
+                ]
+            },{
+                type: "bar",
+                showInLegend: true,
+                name: "Loại 4",
+                color: "#fff951",
+                dataPoints: [
+                    @foreach(var item in Model)
+                    {
+                        if(item.PLSK == 4)
+                        {
+                            @(Html.Raw("{y: " + item.SoLuong + ", label: '" + item.KhoaPhong + "'},"));
+                        }
+                    }
+                ]
+            }]
+        });
+        chart.render();
+
+    });
+</script>

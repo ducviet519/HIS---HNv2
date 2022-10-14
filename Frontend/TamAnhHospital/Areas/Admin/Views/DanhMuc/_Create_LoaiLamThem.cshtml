@@ -1,0 +1,78 @@
+﻿
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Thêm mới danh mục Loại làm thêm</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label>ID</label>
+                            @Html.TextBox("cre_llt_id", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Mã loại làm thêm</label>
+                            @Html.TextBox("cre_llt_ma", "", new { @class = "form-control input-sm" })
+                        </div>
+                        <div class="form-group col-md-7">
+                            <label>Tên loại làm thêm</label>
+                            @Html.TextBox("cre_llt_ten", "", new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-sm btn-primary" id="cre_llt_btnCreate">Thêm</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+
+        $("#cre_llt_btnCreate").click(function (e) {
+            var _ID = $("#cre_llt_id").val();
+            var _Code = $("#cre_llt_ma").val();
+            var _Des = $("#cre_llt_ten").val();
+            if (_ID == '') {
+                $(this).callToast("error", 'Chưa nhập ID', '');
+                return;
+            }
+            if (_Code == '') {
+                $(this).callToast("error", 'Chưa nhập mã loại làm thêm', '');
+                return;
+            }
+            if (_Des == '') {
+                $(this).callToast("error", 'Chưa nhập tên loại làm thêm', '');
+                return;
+            }
+
+            var obj = {
+                "ID": _ID,
+                "Code": _Code,
+                "Des": _Des,
+            };
+            $.ajax({
+                url: '@Url.Action("AddNew_LoaiLamThem", "DanhMuc")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Tạo thành công.', data.message);
+                    $(".btnCloseModal").focus().click();
+                    Load_Data();
+                } else {
+                    $(this).callToast("error", 'ID hoặc mã loại làm thêm đã tồn tại', data.message);
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

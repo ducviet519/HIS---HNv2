@@ -1,0 +1,164 @@
+﻿
+@model System.App.Entities.HCNS.Room
+@{
+    var userAuth = ViewBag.userAuth as string[];
+}
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog" style="width: 760px;">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                <div class="panel-heading">
+                    <h5><i class="fa fa-list"></i> Đăng ký phòng mới</h5>
+                    <a href="javascript:;" data-dismiss="modal" class="btnCloseModal"><i class="fa fa-close"></i></a>
+                </div><!-- ./panel-heading -->
+                <div class="panel-body form">
+                    @Html.HiddenFor(x => x.ID)
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="Department_ID">Bộ phận</label>
+                            @Html.DropDownListFor(x => x.Department_ID, ViewBag.DepartmentSelect as List<SelectListItem>, new { @class = "form-control input-sm", @disabled = true })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="RoomType_ID">Loại phòng</label>
+                            @Html.DropDownListFor(x => x.RoomType_ID, ViewBag.TypeSelect as List<SelectListItem>, new { @class = "form-control input-sm chosen-ddl" })
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <label for="DateReg">Ngày đặt</label>
+                            @Html.TextBoxFor(x => x.DateReg, new { @class = "form-control input-sm datepicker", @required = true })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="StartTime">Từ</label>
+                            @Html.TextBoxFor(x => x.StartTime, new { @class = "form-control input-sm time", @required = true, @placeholder = "00:00" })
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="EndTime">đến</label>
+                            @Html.TextBoxFor(x => x.EndTime, new { @class = "form-control input-sm time", @required = true, @placeholder = "00:00" })
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="PurposeUsed">Mục đích sử dụng</label>
+                            @Html.TextBoxFor(x => x.PurposeUsed, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 form-group">
+                            <label for="Accessories">Thiết bị bổ sung:</label>
+                            <div class="clearfix"></div>
+                            @{
+                                var accessorySplit = Model.Accessories == null ? new string[0] : Model.Accessories.Split(',');
+                            }
+                            @foreach (var item in ViewBag.Accessories as IEnumerable<System.App.Entities.HCNS.RoomAccessory>)
+                            {
+                                if (accessorySplit.Contains(item.Name))
+                                {
+                                    <p class="pull-left" style="width: 25%;"><input type="checkbox" value="@item.Name" name="Accessories" class="pull-left" style="margin: 1px 5px 0 0;" checked /> @item.Name</p>
+                                }
+                                else
+                                {
+                                    <p class="pull-left" style="width: 25%;"><input type="checkbox" value="@item.Name" name="Accessories" class="pull-left" style="margin: 1px 5px 0 0;" /> @item.Name</p>
+                                }
+
+                            }
+
+                            <p class="pull-left" style="width: 100%;">
+                                <label><input type="checkbox" name="IT" class="pull-left" style="margin: 1px 5px 0 0;" value="1" @(Model.IT == 1 ? "checked" : "") /> Yêu cầu IT hỗ trợ</label>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="Note">Ghi chú</label>
+                            @Html.TextAreaFor(x => x.Note, new { @class = " form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="Note">Tình trạng</label>
+                            @if (userAuth.Contains(System.App.Entities.Common.StaticParams.HCNS_RoomAdmin))
+                            {
+                                @Html.DropDownListFor(x => x.Status, new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "-1", Text = "Hủy lịch" },
+                                    new SelectListItem() { Value = "0", Text = "Chưa thực hiện" },
+                                    new SelectListItem() { Value = "1", Text = "Đã chuẩn bị xong" },
+                                    new SelectListItem() { Value = "2", Text = "Đã thực hiện" }
+                                }, new { @class = "form-control input-sm chosen-ddl" });
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(x => x.Status, new List<SelectListItem>() {
+                                    new SelectListItem() { Value = "-1", Text = "Hủy lịch" },
+                                    new SelectListItem() { Value = "0", Text = "Chưa thực hiện" }
+                                }, new { @class = "form-control input-sm chosen-ddl" });
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="button" class="btn btn-primary btn-sm btn-submit">Lưu dữ liệu</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" id="dismissModal">Đóng cửa sổ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#Department_ID option:first").remove();
+        $("#RoomType_ID option:first").remove();
+        $(".chosen-ddl").chosen();
+        $('.time').mask('00:00', { clearIfNotMatch: true });
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+
+        $(".btn-submit").on('click', function (e) {
+            var accessories = [];
+
+            var parent = $("#staticModal").find('.form');
+            $("input[name='Accessories']:checked").each(function () {
+                accessories.push($(this).val());
+            });
+            var it_support = ($(parent).find("input[name='IT']:checked").val() == undefined ? 0 : 1);
+            var obj = {
+                ID: $(parent).find("#ID").val(),
+                Department_ID: $("#Department_ID option:selected").val(),
+                RoomType_ID: $("#RoomType_ID option:selected").val(),
+                DateReg: $("#DateReg").val(),
+                StartTime: $("#StartTime").val(),
+                EndTime: $("#EndTime").val(),
+                PurposeUsed: $(parent).find("#PurposeUsed").val(),
+                Accessories: accessories.toString(),
+                Note: $(parent).find("#Note").val(),
+                Status: $("#Status option:selected").val(),
+                IT: it_support
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/hcns/room/PushUpdate?" + $.param(obj),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", 'Cập nhật thành công', '');
+                        $("#btnSearch").focus().click();
+                        $("#dismissModal").focus().click();
+                    }
+                    else {
+                        if (data.message == "") {
+                            $(this).callToast("error", 'Lỗi cập nhật dữ liệu, vui lòng kiểm tra lại.', '');
+                        } else {
+                            $(this).callToast("error", data.message, '');
+                        }
+                    }
+
+                }
+            });
+            e.preventDefault();
+        });
+    });
+</script>

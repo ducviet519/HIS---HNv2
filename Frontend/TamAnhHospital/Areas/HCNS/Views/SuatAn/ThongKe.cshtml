@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = "Thống kê suất ăn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var userInfo = ViewBag.UserInfo as System.App.Entities.HCNS.HCNS_NhanVien;
+    var currentDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMMdd");
+    var limitDate = DateTime.UtcNow.AddHours(7).ToString("yyyyMM25");
+    var sdate = "";
+    var edate = "";
+    sdate = DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy");
+    edate = DateTime.UtcNow.AddHours(7).ToString("dd/MM/yyyy");
+    var thoidiem_t = "Lu";
+    var auth = ViewBag.Auth as string[];
+}
+
+<style type="text/css">
+    .head-section, .middle-section {
+        margin-bottom: 10px;
+    }
+
+        .head-section .input-group {
+            display: flex;
+        }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .middle-action {
+        border: 1px solid #ddd;
+        padding: 5px;
+    }
+
+    #fo-table_wrapper .row:first-child {
+        display: none;
+    }
+
+    .form .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+        .form .row [class*="col-md"] {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+</style>
+
+<div class="section-body">
+    <div class="head-section">
+        <div class="title">
+            <h4>Thống kê suất ăn</h4>
+        </div>
+        <div class="form">
+            <input type="hidden" value="s" name="action" id="action" />
+            <div class="row action">
+                <div class="col-md-2 col-xs-3">
+                    <label>Thời điểm</label>
+                    <select class="form-control input-sm" id="tk_thoidiem">
+                        <option value="Br">Bữa sáng</option>
+                        <option value="Lu" selected>Bữa trưa</option>
+                        <option value="Di">Bữa tối</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-xs-3">
+                    <label>Khoa/Phòng</label>
+                    @Html.DropDownList("tk_department", ViewBag.Departments as List<SelectListItem>, new { @class = "form-control chosen-ddl input-sm" })
+                    @*@Html.DropDownList("tk_department", new SelectList(ViewBag.Departments, "Key", "Value"), new { @class = "form-control input-sm" })*@
+                </div>
+                <div class="col-md-1 col-xs-3">
+                    <label>Từ ngày</label>
+                    <input type="text" class="form-control input-sm datepicker" name="tk_tungay" autocomplete="off" value="@sdate" />
+                </div>
+                <div class="col-md-1 col-xs-3">
+                    <label>Đến ngày</label>
+                    <input type="text" class="form-control input-sm datepicker" name="tk_denngay" autocomplete="off" value="@edate" />
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="tk_btnSubmit" class="btn btn-default btn-sm" style="margin-top: 22px;"><i class="fa fa-search"></i> Tìm kiếm</button>
+                    <button type="button" id="tk_btnExport" class="btn btn-info btn-sm" style="margin-top: 22px;"><i class="fa fa-file-export"></i> Xuất File</button>
+                    @if (@auth.Contains(System.App.Entities.Common.StaticParams.HCNS_Admin))
+                    {
+                        <button type="button" id="tk_btnPushData" class="btn btn-info btn-sm" style="margin-top: 22px;"><i class="fa fa-file-export"></i> Đổ dữ liệu</button>
+                    }
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="middle-section">
+        <div id="tk_loadPartial">
+            @Html.Action("thongke_table", "suatan", new { dept = userInfo.KhoaPhong, tungay = sdate, denngay = edate, thoidiem = thoidiem_t })
+        </div>
+    </div><!-- ./middle-section -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $(function () {
+            $(".chosen-ddl").chosen();
+        });
+        $("#tk_btnExport").click(function () {
+            var tungay = $("[name='tk_tungay']").val();
+            var denngay = $("[name='tk_denngay']").val();
+            var khoaphong = encodeURI($("#tk_department option:selected").val() == "" ? "" : $("#tk_department option:selected").val());
+            var thoidiem = encodeURI($("#tk_thoidiem option:selected").val());
+            var url = "/hcns/suatan/ThongKe_Excel/?tungay=" + tungay + "&denngay=" + denngay + "&dept=" + khoaphong + "&thoidiem=" + thoidiem;
+            window.location = url;
+        });
+        $("#tk_btnSubmit").click(function () {
+            var tungay = $("[name='tk_tungay']").val();
+            var denngay = $("[name='tk_denngay']").val();
+            var khoaphong = encodeURI($("#tk_department option:selected").val() == "" ? "" : $("#tk_department option:selected").val());
+            var thoidiem = encodeURI($("#tk_thoidiem option:selected").val());
+            var url = "/hcns/suatan/ThongKe_table?tungay=" + tungay + "&denngay=" + denngay + "&dept=" + khoaphong + "&thoidiem=" + thoidiem;
+            $("#tk_loadPartial").load(url);
+        });
+        $("#tk_btnPushData").click(function () {
+            var obj = {
+                "From": $("[name='tk_tungay']").val(),
+                "To": $("[name='tk_denngay']").val(),
+            };
+            $.ajax({
+                url: '@Url.Action("PushData", "suatan")',
+                type: 'POST',
+                cache: false,
+                contentType: "application/json",
+                data: JSON.stringify(obj)
+            }).success(function (data) {
+                if (data.result == true) {
+                    $(this).callToast("success", 'Đổ dữ liệu vân tay thành công', data.message);
+                } else {
+                    $(this).callToast("error", 'Lỗi trong quá trình xử lý', data.message);
+                }
+            });
+        });
+    });
+</script>

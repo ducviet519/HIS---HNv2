@@ -1,0 +1,171 @@
+﻿@model System.App.Entities.HCNS.HCNS_NhanVien
+<style type="text/css">
+    .modal-lg {
+        width: 800px;
+    }
+
+    .panel-heading {
+        background: #3882B6;
+    }
+
+        .panel-heading h4 {
+            font-size: 15px;
+            margin: 0;
+            color: #fff;
+        }
+
+            .panel-heading h4 i {
+                margin-right: 5px;
+            }
+
+    .panel-body {
+        padding: 15px;
+        max-height: 500px;
+        overflow: auto;
+    }
+
+        .panel-body input, .panel-body select {
+            max-width: inherit;
+        }
+
+        .panel-body .form-group {
+            margin-bottom: 10px;
+        }
+
+        .panel-body .block > .title {
+            background-color: #3882b6;
+            padding: 5px 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .panel-body textarea {
+            max-width: 100%;
+        }
+
+    .form input[type='text'], form select, form textarea {
+        max-width: none;
+    }
+
+    .form .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+        .form .row [class*="col-md"] {
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+
+    .form .infor-box {
+        margin-bottom: 10px;
+    }
+
+        .form .infor-box .title-box {
+            margin-top: 0;
+            background: #e8e8e8;
+            padding: 7px;
+            font-weight: bold;
+        }
+</style>
+<div id='staticModal' class='modal fade'>
+    <div class="modal-dialog">
+        <div id='staticModalContainer'>
+            <div class="model-panel panel">
+                @using (Html.BeginForm("Update_NghiViec", "NhanVien", FormMethod.Post, new { enctype = "multipart/form-data", id = "modalForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.UserEnrollNumber)
+
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-list"></i>SỬA THÔNG TIN NGHỈ VIỆC [@Model.UserEnrollNumber] @Model.UserFullName</h4>
+                    </div><!-- ./panel-heading -->
+
+                    <div class="panel-body form">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-6">
+                                <div class="form-group">
+                                    <label for="NgayNghi">Ngày nghỉ</label>
+                                    @Html.TextBoxFor(x => x.NgayNghi, new { @class = "form-control input-sm datepicker", autocomplete = "off" })
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                <div class="form-group">
+                                    <label for="NgayLVCC">Ngày làm việc cuối cùng</label>
+                                    @Html.TextBoxFor(x => x.NgayLVCC, new { @class = "form-control input-sm datepicker", autocomplete = "off" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="DaNghi">Trạng thái nghỉ</label>
+                                    <select class="form-control input-sm" id="DaNghi" name="DaNghi">
+                                        <option value="1">Nghỉ việc</option>
+                                        <option value="2">Nghỉ sinh</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="TinhLuong">Tính lương</label>
+                                    <select class="form-control input-sm" id="TinhLuong" name="TinhLuong">
+                                        <option value="0">Không</option>
+                                        <option value="1">Có</option>
+                                    </select>
+                                    @*<label for="TinhLuong">Tính lương</label>
+                                        @Html.DropDownList("TinhLuong", new List<SelectListItem>() {
+                                                new SelectListItem() { Value = "0", Text = "Không", Selected = true },
+                                                new SelectListItem() { Value = "1", Text = "Có" }
+                                        }, new { @class = "form-control input-sm chosen-ddl" })*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="LyDoNghi">Lý do xin nghỉ</label>
+                                    @Html.TextAreaFor(x => x.LyDoNghi, new { @class = "form-control input-sm", autocomplete = "off" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="form-inline">
+                            <div class="form-group"><input type="submit" value="Cập nhật" class="btn btn-primary" id="btnSubmit" /></div>
+                            <div class="form-group"><input type="button" class="btn btn-default" data-dismiss="modal" value="Đóng" /></div>
+                        </div>
+                    </div><!-- ./panel-footer -->
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#modalForm").submit(function (e) {
+            var form = $(this);
+            var url = form.attr('action');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.result == true) {
+                        $(this).callToast("success", '', 'Cập nhật thành công');
+                        setTimeout(location.reload.bind(location), 2000);
+                    }
+                    else {
+                        $(this).callToast("error", '', data.mess);
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+    });
+</script>
