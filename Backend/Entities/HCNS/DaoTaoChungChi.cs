@@ -23,6 +23,10 @@ namespace System.App.Entities.HCNS
         public List<DaoTaoChungChi> DaoTaoChungChiLists { get; set; }
 
         public DaoTaoChungChi DaoTaoChungChi { get; set; }
+
+        public TrangThai TrangThai { get; set; }
+
+        public LoaiDaoTao LoaiDaoTao { get; set; }
     }
 
     public class SearchDaoTao 
@@ -39,5 +43,11 @@ namespace System.App.Entities.HCNS
         [Display(Name = "Chờ duyệt")] CD = 0,
         [Display(Name = "Xác nhận")] XN = 1,
         [Display(Name = "Từ chối")] TC = -1,
+    }
+
+    public enum LoaiDaoTao
+    {
+        [Display(Name = "Ngắn hạn")] NH = 0,
+        [Display(Name = "Dài hạn")] DH = 1,
     }
 }

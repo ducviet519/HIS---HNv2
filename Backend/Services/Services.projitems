@@ -31,7 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)HCNS\ZK_Service.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\DoiChieuSuatAn_Interface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\Employee_Interface.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\HCNS\DaoTaoChungChi_Interface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\HCNS\IDaoTaoChungChi_Services.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\HCNS\IBCCC.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\HDLD_Interface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IKhaiBaoVang.cs" />

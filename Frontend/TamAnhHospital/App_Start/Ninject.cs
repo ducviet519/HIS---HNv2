@@ -57,6 +57,8 @@ namespace TamAnhHospital.Security
             kernel.Bind<IDanhMuc_Service>().To<DanhMuc_Service>();
             //FO
             //kernel.Bind<IFO_Service>().To<FO_Service>();
+            //ChungChiDaoTao
+            kernel.Bind<IDaoTaoChungChi_Services>().To<DaoTaoChungChi_Services>();
         }
     }
 }

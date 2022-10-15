@@ -2,6 +2,10 @@
 @{
     var userAuth = ViewBag.userAuth as string[];
 }
+<style>
+    
+</style>
+
 <div id='staticModal' class='modal fade'>
     <div class="modal-dialog" style="width: 760px;">
         <div id='staticModalContainer'>
@@ -13,10 +17,10 @@
                 <div class="panel-body form">
                     <div class="form-row">
                         <label class="col-md-2">Mã nhân viên:</label>
-                        <div class="col-md-2"><input type="text" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm" /></div>
-                        <label class="col-md-3">Tên nhân viên: Nguyễn Văn A</label>
-                        <label class="col-md-2">Chức danh: Bác sĩ</label>
-                        <label class="col-md-3">Khoa phòng: Khoa Nhi</label>
+                        <div class="col-md-2"><input type="text" id="txtMaNhanVien" name="MaNhanVien" class="form-control input-sm" onchange="change()" /></div>
+                        <label class="col-md-3" id="txtTenNhanVien"></label>
+                        <label class="col-md-2" id="txtChucDanh"></label>
+                        <label class="col-md-3" id="txtKhoaPhong"></label>
                     </div>
                     <div class="form-row">
                         <label class="col-md-2">Tên khóa đào tạo:</label>
@@ -29,15 +33,15 @@
                     <div class="form-row">
                         <label for="TuNgay" class="col-md-2">Từ ngày:</label>
                         <div class="col-md-2">
-                            <input type="text" id="TuNgay" name="TuNgay" class="form-control input-sm" />
+                            <input type="text" id="TuNgay" name="TuNgay" class="form-control input-sm datepicker" />
                         </div>
                         <label class="text-right" style="padding-right:0; padding-left:10px">Đến ngày:</label>
                         <div class="col-md-2">
-                            <input type="text" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm" />
+                            <input type="text" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm datepicker" />
                         </div>
                         <label class="text-right" style="padding-right:0; padding-left:10px">Số tiết:</label>
                         <div class="col-md-1">
-                            <input type="text" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm" />
+                            <input type="number" id="MaNhanVien" name="MaNhanVien" class="form-control input-sm" />
                         </div>
                         <label class="text-right" style="padding-right:0; padding-left:10px">Chi phí:</label>
                         <div class="col-md-2">
@@ -50,7 +54,16 @@
                     </div>
                     <div class="form-row">
                         <label class="col-md-2">Loại đào tạo:</label>
-                        <div class="col-md-10"><input type="text" class="form-control input-sm" id="" name="" /></div>
+                        <div class="col-md-2">
+                            @Html.EnumDropDownListFor(model => model.LoaiDaoTao, new { @class = "form-control chosen-ddl input-sm", id = "LoaiDaoTao" })
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="col-md-2">Ảnh CC/GCN:</label>
+                        <div class="col-md-10 text-center">
+                            <input type="file" class="d-none" accept="audio/*|video/*|video/x-m4v|video/webm|video/x-ms-wmv|video/x-msvideo|video/3gpp|video/flv|video/x-flv|video/mp4|video/quicktime|video/mpeg|video/ogv|.ts|.mkv|image/*|image/heic|image/heif" onchange="previewFiles()" id="inputUp" multiple>
+                            <a class="mediaUp mr-4"><i class="material-icons mr-2" data-tippy="add (Video, Audio, Photo)" onclick="trgger('inputUp')">perm_media</i></a>
+                        </div>
                     </div>
                     <div class="form-row">
                         <label class="col-md-2">Lý do:</label>
@@ -58,7 +71,10 @@
                     </div>
                 </div>
                 <div class="panel-footer text-center">
-                    <button type="button" class="btn btn-primary btn-sm btn-submit">Lưu dữ liệu</button>
+                    <button type="button" class="btn btn-info btn-sm">Tải ảnh</button>
+                    <button type="button" class="btn btn-primary btn-sm">Duyệt</button>
+                    <button type="button" class="btn btn-warning btn-sm">Từ chối</button>
+                    <button type="button" class="btn btn-success btn-sm btn-submit">Cập nhật</button>
                     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" id="dismissModal">Đóng cửa sổ</button>
                 </div>
             </div>
@@ -66,5 +82,69 @@
     </div>
 </div>
 <script type="text/javascript">
+    $(function () {
+        $(".chosen-ddl").chosen();
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+    });
+    $(function () {
+        $("#txtMaNhanVien").change(function () {
+            var x = document.getElementById("txtMaNhanVien");
+            x.value = x.value.toUpperCase();
 
+            var maNhanVien = $('#txtMaNhanVien').val()
+            var tenNhanVien = document.getElementById("txtTenNhanVien");
+            var chucDanh = document.getElementById("txtChucDanh");
+            var khoaPhong = document.getElementById("txtKhoaPhong");
+            $.ajax({
+                type: "POST",
+                url: "/HCNS/DaoTaoChungChi/GetNhanVienInfo",
+                dataType: 'json',
+                data: { manv: maNhanVien },
+                success: function (data) {
+                    console.log(data);
+                    tenNhanVien.innerText = "Tên nhân viên: " + data.UserFullName;
+                    chucDanh.innerText = "Chức danh: " + data.ChucDanh;
+                    khoaPhong.innerText = "Khoa phòng: " + data.Ten_KhoaPhong;
+                },
+                error: function (xhr) {
+                    alert('Không tìm thấy nhân viên có mã: ' + maNhanVien);
+                }
+            });
+        });
+    });
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('.image-upload-wrap').hide();
+
+                $('.file-upload-image').attr('src', e.target.result);
+                $('.file-upload-content').show();
+
+                $('.image-title').html(input.files[0].name);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+
+        } else {
+            removeUpload();
+        }
+    }
+
+    function removeUpload() {
+        $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+        $('.file-upload-content').hide();
+        $('.image-upload-wrap').show();
+    }
+    $('.image-upload-wrap').bind('dragover', function () {
+        $('.image-upload-wrap').addClass('image-dropping');
+    });
+    $('.image-upload-wrap').bind('dragleave', function () {
+        $('.image-upload-wrap').removeClass('image-dropping');
+    });
 </script>

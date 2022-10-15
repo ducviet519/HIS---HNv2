@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 namespace System.App.Services.HCNS
 {
     
-    class DaoTaoChungChi_Services : DaoTaoChungChi_Interface
+    class DaoTaoChungChi_Services : IDaoTaoChungChi_Services
     {
         private readonly DaoTaoChungChi_Repo _daoTaoChungChi_Repo;
-        public DaoTaoChungChi_Services(DaoTaoChungChi_Repo daoTaoChungChi_Repo)
+        public DaoTaoChungChi_Services()
         {
-            _daoTaoChungChi_Repo = daoTaoChungChi_Repo;
+            _daoTaoChungChi_Repo = new DaoTaoChungChi_Repo();
         }
         
         public async Task<string> AddDaoTaoAsync(DaoTaoChungChi model)
@@ -30,32 +30,24 @@ namespace System.App.Services.HCNS
             return await _daoTaoChungChi_Repo.EditDaoTaoAsync(StaticParams.connectionStringWiseEyeWebOn, model);
         }
 
-        public async Task<List<DaoTaoChungChi>> GetAllDaoTaoListAsync()
+        public async Task<IEnumerable<DaoTaoChungChi>> GetAllDaoTaoListAsync()
         {
             return await _daoTaoChungChi_Repo.GetAllDaoTaoListAsync(StaticParams.connectionStringWiseEyeWebOn);
         }
 
         public async Task<DaoTaoChungChi> GetDaoTaoByIDAsync(int id)
         {
-            return await _daoTaoChungChi_Repo.GetDaoTaoByIDAsync(StaticParams.connectionStringWiseEyeWebOn,id);
+            return await _daoTaoChungChi_Repo.GetDaoTaoByIDAsync(StaticParams.connectionStringWiseEyeWebOn, id);
         }
 
-        #region Khử dấu cho string        
-        public static string convertToUnSign(string s)
+        public async Task<IEnumerable<DaoTaoChungChi>> SearchDaoTaoAsync(SearchDaoTao search)
         {
-            Regex regex = new Regex("\\p{IsCombiningDiacriticalMarks}+");
-            string temp = s.Normalize(NormalizationForm.FormD);
-            return regex.Replace(temp, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D');
-        }
-        #endregion
-        public async Task<List<DaoTaoChungChi>> SearchDaoTaoAsync(SearchDaoTao search)
-        {
-            List<DaoTaoChungChi> data = await _daoTaoChungChi_Repo.GetAllDaoTaoListAsync(StaticParams.connectionStringWiseEyeWebOn);
+            IEnumerable<DaoTaoChungChi> data = await _daoTaoChungChi_Repo.GetAllDaoTaoListAsync(StaticParams.connectionStringWiseEyeWebOn);
             #region Lọc data theo dữ liệu tìm kiếm
             if (!String.IsNullOrEmpty(search.SearchMaNV))
             {
                 data = data.Where(d => d.UserFullCode != null && d.UserFullCode.ToUpper().Contains(search.SearchMaNV.ToUpper())
-                                || d.UserFullName != null && convertToUnSign(d.UserFullName.ToUpper()).Contains(convertToUnSign(search.SearchMaNV.ToUpper()))
+                                || d.UserFullName != null && StaticParams.ConvertToUnSign(d.UserFullName.ToUpper()).Contains(StaticParams.ConvertToUnSign(search.SearchMaNV.ToUpper()))
                                 ).ToList();
             }
             if (!String.IsNullOrEmpty(search.SearchKhoaPhong))
@@ -72,11 +64,16 @@ namespace System.App.Services.HCNS
             }
             if (!String.IsNullOrEmpty(search.SearchTenCC))
             {
-                data = data.Where(d => convertToUnSign(d.TrangThai.ToUpper()).Contains(convertToUnSign(search.SearchTenCC.ToUpper()))).ToList();
+                data = data.Where(d => StaticParams.ConvertToUnSign(d.TrangThai.ToUpper()).Contains(StaticParams.ConvertToUnSign(search.SearchTenCC.ToUpper()))).ToList();
             }
             #endregion
 
             return data;
+        }
+
+        public async Task<HCNS_NhanVien> TimThongTinNhanVienAsync(HCNS_NhanVien nv)
+        {
+            return await _daoTaoChungChi_Repo.TimThongTinNhanVienAsync(StaticParams.connectionStringWiseEyeWebOn, nv);
         }
     }
 }

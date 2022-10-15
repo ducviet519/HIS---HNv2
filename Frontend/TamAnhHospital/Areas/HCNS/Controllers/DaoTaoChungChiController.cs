@@ -13,12 +13,13 @@ namespace HCNS.Controllers
 {
     public class DaoTaoChungChiController : Controller
     {
-        //private readonly DaoTaoChungChi_Interface _daoTaoChungChi;
+        private readonly IDaoTaoChungChi_Services _daoTaoChungChiServices;
 
-        //public DaoTaoChungChiController(DaoTaoChungChi_Interface daoTaoChungChi)
-        //{
-        //    _daoTaoChungChi = daoTaoChungChi;
-        //}
+        public DaoTaoChungChiController(IDaoTaoChungChi_Services daoTaoChungChiServices)
+        {
+            _daoTaoChungChiServices = daoTaoChungChiServices;
+        }
+
         // GET: HCNS/DaoTaoChungChi
         public ActionResult Index(SearchDaoTao search = null)
         {
@@ -34,7 +35,15 @@ namespace HCNS.Controllers
         //    return View(model);
         //}
 
-       public ActionResult AddDaoTao()
+        [HttpPost]
+        public async Task<JsonResult> GetNhanVienInfo(string manv)
+        {
+            HCNS_NhanVien data = new HCNS_NhanVien();
+            data = await _daoTaoChungChiServices.TimThongTinNhanVienAsync(new HCNS_NhanVien() { UserFullCode = manv });
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+        
+       public PartialViewResult AddDaoTao()
         {
             return PartialView("_AddDaoTao");
         }

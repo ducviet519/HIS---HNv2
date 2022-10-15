@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace System.App.Services.Interfaces
 {
-    public interface DaoTaoChungChi_Interface
-    {
-        Task<List<DaoTaoChungChi>> GetAllDaoTaoListAsync();
 
-        Task<List<DaoTaoChungChi>> SearchDaoTaoAsync(SearchDaoTao search);
+    public interface IDaoTaoChungChi_Services
+    {
+        Task<IEnumerable<DaoTaoChungChi>> GetAllDaoTaoListAsync();
+
+        Task<IEnumerable<DaoTaoChungChi>> SearchDaoTaoAsync(SearchDaoTao search);
 
         Task<DaoTaoChungChi> GetDaoTaoByIDAsync(int id);
 
@@ -18,6 +19,6 @@ namespace System.App.Services.Interfaces
 
         Task<string> EditDaoTaoAsync(DaoTaoChungChi model);
 
-
+        Task<HCNS_NhanVien> TimThongTinNhanVienAsync(HCNS_NhanVien nv);
     }
 }
